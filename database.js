@@ -59,7 +59,7 @@ exports.getUserImage = function(uuid){
 exports.getUserGroups = function(uuid){
   return usersCont[uuid]['groups'];
 }
-exports.groupEditFriendly = function(name,gid,uuid){
+exports.groupNameEdit = function(name,gid,uuid){
       if(!usersCont[uuid]['groups']){
         usersCont[uuid]['groups']={};
       }

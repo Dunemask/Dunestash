@@ -122,8 +122,8 @@ app.get('/delete-file',isUser,function (req,res){
     res.redirect(req.header('Referer') || '/');
   }
 });
-app.post('/groupedit',isUser,function (req,res){
-  db.groupEditFriendly(req.body.groupName,req.body.gid,req.session.user_id);
+app.post('/group-name-edit',isUser,function (req,res){
+  db.groupNameEdit(req.body.groupName,req.body.gid,req.session.user_id);
   res.redirect(req.header('Referer') || '/');
 });
 app.post('/sharefile', isUser, function (req,res ){
