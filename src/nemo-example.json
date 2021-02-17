@@ -1,0 +1,23 @@
+{
+  "nemo":{
+    "files":{
+      "0":{
+        "owned":{
+          "File1.txt":{
+            "edit":["2"],
+            "view":["1"]
+          }
+        },
+        "linked":{
+          "File2.txt":"1"
+        },
+          "groupfiles":{
+            "gid1":["File1.txt"]
+          }
+      }
+    },
+    "groups":{
+      "gid1":["0","1"]
+    }
+  }
+}

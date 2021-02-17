@@ -1,0 +1,9 @@
+{
+ "users": {
+  "0": {
+   "username": "admin",
+   "password": "password",
+   "storage": 1000
+  }
+ }
+}

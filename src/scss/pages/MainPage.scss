@@ -1,0 +1,43 @@
+@import "../index.scss";
+.story{
+  clear: both;
+  padding-top:50px;
+  overflow:auto;
+}
+
+.about-wrapper{
+  display:inline-block;
+  border-radius: $defaultBorderRadius;
+  background-color:$backgroundShade;
+  border-collapse: separate;
+}
+.about{
+  max-width:680px;
+  display:block;
+}
+
+.about p {
+  display: inline-block; }
+
+.connections {
+  float: right;
+
+}
+
+.connections a {
+  text-decoration: none;
+  font-size: 24px;
+  color:$boldWhite;
+  padding: 0px 4px; }
+
+.connections a:hover {
+    opacity: .7}
+
+.DM-Foot h1 {
+  float: left;
+  font-size: 14px;
+}
+  .DM-Foot h1::first-letter {
+    padding-left: 10px;
+    font-size: 20px;
+  }

@@ -1,0 +1,171 @@
+@import "../colors";
+
+@keyframes successTrans {
+  0% {
+        height: 100%;
+        background-color:rgba(0,164,0,.75);
+        color:(255,255,255,1);
+    }
+    100% {
+        background-color:rgba(0,164,0,0.0);
+        color:(255,255,255,0);
+        height:0;
+    }
+}
+@keyframes failTrans {
+  0% {
+        height: 100%;
+        background-color: rgba(164,0,0,.75);
+        color:(255,255,255,1);
+    }
+    100% {
+        background-color:rgba(164,0,0,0.0);
+        height:0;
+        color:(255,255,255,0);
+    }
+}
+
+.statusIndicatorFail{
+  position:absolute;
+  width: 100%;
+  animation: failTrans 1.9s forwards;
+  overflow: hidden;
+}
+.statusIndicatorSuccess{
+  animation: successTrans 1.7s forwards;
+  position:absolute;
+  width: 100%;
+  overflow: hidden;
+}
+.topBar{
+    background-color: $backgroundShade;
+    width: 100%;
+    display:inline-block;
+}
+
+.barTitle {
+  font-size: 22px;
+  float:left;
+  //padding-left: 20px;
+  max-width:223px;
+  padding-right:10px;
+ }
+ .barTitle h1{
+   text-align: left;
+   overflow: hidden;
+   white-space: nowrap;
+ }
+
+
+.nav{
+  line-height: 36px;
+  padding: 24px 0px;
+  display:inline-block;
+  float:left;
+}
+
+.nav a {
+
+  text-decoration: none;
+  font-size: 20px;
+  color: $fadedWhite;
+  padding: 0px 4px;
+  overflow: hidden;
+  white-space: nowrap;
+ }
+
+.nav a:hover {
+  text-shadow: none;
+  background: white -webkit-gradient(linear, 100% 0, 0 0, from($fadedWhite), color-stop(0.5, $navShimmer), to($fadedWhite));
+  background-position: -4rem top;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-animation-name: shimmer;
+  -webkit-animation-duration: 4s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-background-size: 4rem 100%;
+    }
+
+@-webkit-keyframes shimmer {
+  0% {
+    background-position: -4rem top;
+    /*50px*/ }
+  70% {
+    background-position: 12.5rem top;
+    /*200px*/ }
+  100% {
+    background-position: 12.5rem top;
+    /*200px*/ } }
+
+.userIconContainer{
+  padding-top: 19px;
+}
+#userIcon{
+float:left;
+height:40px;
+width:40px;
+border:2px solid $background;
+border-radius: 50%;
+}
+#userIcon:hover{
+  opacity:0.7;
+}
+.userHandler{
+  float:left;
+  display:block;
+  padding:0px 10px;
+}
+
+.userControlContainer{
+  position:absolute;
+  padding-left: 20px;
+  max-width:200px;
+  z-index: 999;
+
+}
+.loginLinks{
+  display:inline-block;
+  white-space: nowrap;
+  overflow:hidden;
+  float:left;
+  margin: 0 0;
+  border-collapse: separate;
+  padding-right: 10px;
+  padding:10px 0px;
+  background-color: $sectionHighlightDarker;
+  border-radius: 16px;
+}
+.loginLinks ul {
+  margin-top: 0;
+  padding: 0;
+  list-style-type: none;
+}
+.loginLinks li {
+  float:left;
+  width:100%;
+	padding: 5px 5px;
+	border: 0 none;
+  text-align: left;
+	cursor: pointer;
+  padding-left:20px;
+}
+.loginLinks a{
+    text-decoration: none;
+  	color:$boldWhite;
+    font-size: 24px;
+    line-height: 26px;
+}
+
+.loginLinks a:hover, .loginLinks a:focus{
+  text-shadow: none;
+  background: white -webkit-gradient(linear, 100% 0, 0 0, from($fadedWhite), color-stop(0.5, $navShimmer), to($fadedWhite));
+  background-position: -4rem top;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-animation-name: shimmer;
+  -webkit-animation-duration: 4s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-background-size: 4rem 100%;
+}

@@ -1,0 +1,130 @@
+@import "../index.scss","../components/UploadCircle.scss","../components/BlueSlider.scss";
+//Imports "_colors.scss","../components/Topbar.scss"
+
+
+.fileSelection{
+  border-radius: 10px;
+  background-color:$backgroundShadeDarker;
+  display:inline-block;
+  padding:20px;
+  margin: 0 auto;
+}
+
+.fileSelection input[type=file] {
+    display: none;
+}
+
+.fileSelection label {
+    color: $boldWhite;
+    line-height: 26px;
+}
+.selectUpload{
+      padding-left:20px;
+}
+.uploadButton{
+  padding-left: 20px;
+}
+@keyframes uploadFileHover {
+    0%{
+        color: $dunemaskD;
+    }
+
+    50% {
+        color: $boldWhite;
+    }
+    100%{
+        color: $dunemaskD;
+    }
+}
+
+@keyframes uploadSubHover {
+    0% {
+        background-color: $dyingGrey;
+        color: $boldWhite;
+    }
+
+    50% {
+        color: $uploadLime;
+        background-color: $boldWhite;
+    }
+    100% {
+        background-color: $dyingGrey;
+        color: $boldWhite;
+    }
+}
+
+.fileSelection input[type=submit] {
+    padding: 5px 15px;
+    background: $dyingGrey;
+    color:white;
+    border: 0 none;
+    cursor: pointer;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    font-size: 24px;
+    line-height: 26px;
+}
+
+.fileSelection input[type=submit]:hover {
+    animation: uploadSubHover 3s infinite;
+}
+
+.fileSelection:focus label, .fileSelection label:hover {
+    cursor: pointer;
+    animation: uploadFileHover 4s infinite;
+}
+
+.switchWrapper{
+  padding-top: 24px;
+  padding-left: 10px;
+}
+
+#publicSwitch{
+  padding-left: 20px;
+  display:inline-flex;
+}
+
+#filewrapper{
+  display:inline-block;
+  vertical-align: top;
+  padding-top:50px;
+}
+.selectionContainer{
+  width:100%;
+}
+
+.selectedFileContainer{
+  padding-top: 20px;
+  display:inline-block;
+}
+#lower-file-data{
+  background-color: $backgroundShadeDarker;
+  padding:20px;
+  border-radius: 5px;
+}
+
+.progress-bar{
+  border:2px solid $uploadLime;
+}
+
+.progress-bar-fill{
+  height:100%;
+  width:0%;
+  background: $uploadLime;
+  display:flex;
+  align-items: center;
+  font-weight: bold;
+  transition: width 0.22s;
+}
+
+.progres-bar-text{
+  color:$boldWhite;
+}
+
+.processing{
+  display:inline-flex;
+}
+.loader-wrapper{
+  padding-left:10px;
+  padding-top: 25px;
+}

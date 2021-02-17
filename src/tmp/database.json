@@ -1,0 +1,14 @@
+{
+ "users": {
+  "0": {
+   "username": "admin",
+   "password": "password",
+   "storage": 1000
+  },
+  "1": {
+   "username": "student",
+   "password": "cookie",
+   "storage": 2
+  }
+ }
+}
