@@ -30,19 +30,19 @@ const isUser = (req, res, next) => {
   }
 };
 //Router Requests
-app.get("/", function (req, res) {
+app.get("/", (req, res) => {
   res.render("Portal.jsx", {
     userId: req.session.user_id,
     pageContent: "MainPage",
   });
 });
-app.get("/upload", isUser, function (req, res) {
+app.get("/upload", isUser, (req, res) => {
   res.render("Portal.jsx", {
     userId: req.session.user_id,
     pageContent: "UploadFilesPage",
   });
 });
-app.get("/files", isUser, function (req, res) {
+app.get("/files", isUser, (req, res) => {
   var files = fs.readdirSync(__dirname + "/uploads/" + req.session.user_id);
   let title =
     db.getUser(req.session.user_id).charAt(0).toUpperCase() +
@@ -68,7 +68,7 @@ app.get("/files", isUser, function (req, res) {
     downloadsPageProps,
   });
 });
-app.get("/share", isUser, function (req, res) {
+app.get("/share", isUser, (req, res) => {
   if (
     db.authorizedToEditFile(
       req.query.nemo,
@@ -85,10 +85,10 @@ app.get("/share", isUser, function (req, res) {
   }
 });
 //File Actions
-app.post("/upload", isUser, function (req, res) {
+app.post("/upload", isUser, (req, res) => {
   req.socket.setTimeout(10 * 60 * 1000);
   let approved;
-  ath.userUpload(req, res, function (err) {
+  ath.userUpload(req, res, (err) => {
     approved = ath.approveFile(req); //Ensure the file gets passed
     if (!req.file || err) {
       console.log("ERROR!");
@@ -106,7 +106,7 @@ app.post("/upload", isUser, function (req, res) {
     });
   });
 });
-app.get("/download", isUser, function (req, res) {
+app.get("/download", isUser, (req, res) => {
   if (
     db.authorizedToViewFile(
       req.query.nemo,
@@ -121,7 +121,7 @@ app.get("/download", isUser, function (req, res) {
     res.redirect(req.header("Referer") || "/");
   }
 });
-app.get("/rawdata", isUser, function (req, res) {
+app.get("/rawdata", isUser, (req, res) => {
   if (
     db.authorizedToViewFile(
       req.query.nemo,
@@ -142,7 +142,7 @@ app.get("/rawdata", isUser, function (req, res) {
     res.redirect(req.header("Referer") || "/");
   }
 });
-app.get("/delete-file", isUser, function (req, res) {
+app.get("/delete-file", isUser, (req, res) => {
   //delete-file?nemo=0&target=File1.txt
   if (
     db.authorizedToEditFile(
@@ -165,11 +165,11 @@ app.get("/delete-file", isUser, function (req, res) {
     res.redirect(req.header("Referer") || "/");
   }
 });
-app.post("/groupedit", isUser, function (req, res) {
+app.post("/groupedit", isUser, (req, res) => {
   db.groupEditFriendly(req.body.groupName, req.body.gid, req.session.user_id);
   res.redirect(req.header("Referer") || "/");
 });
-app.post("/share", isUser, function (req, res) {
+app.post("/share", isUser, (req, res) => {
   if (
     db.authorizedToEditFile(
       req.query.nemo,
@@ -191,20 +191,20 @@ app.post("/share", isUser, function (req, res) {
   }
 });
 //User Actions
-app.get("/profile", isUser, function (req, res) {
+app.get("/profile", isUser, (req, res) => {
   res.render("Portal.jsx", {
     userId: req.session.user_id,
     pageContent: "UserProfilePage",
   });
 });
-app.get("/profile-password-change", isUser, function (req, res) {
+app.get("/profile-password-change", isUser, (req, res) => {
   res.render("Portal.jsx", {
     userId: req.session.user_id,
     pageContent: "PasswordChange",
   });
 });
-app.post("/profileImageUpload", isUser, function (req, res) {
-  ath.imageUpload(req, res, function (err) {
+app.post("/profileImageUpload", isUser, (req, res) => {
+  ath.imageUpload(req, res, (err) => {
     let status;
     let statusTag;
     let overrideImagePath;
@@ -214,17 +214,16 @@ app.post("/profileImageUpload", isUser, function (req, res) {
     if (req.fileValidationError) {
       statusTag = "Only jpeg and png image types are accepted";
     }
-      res.render("Portal.jsx", {
-        userId: req.session.user_id,
-        pageContent: "UserProfilePage",
-        currentStatus: status,
-        currentStatusTag: statusTag,
-        userImage:db.getTemporaryUserImage(req.session.user_id)
-      });
-
+    res.render("Portal.jsx", {
+      userId: req.session.user_id,
+      pageContent: "UserProfilePage",
+      currentStatus: status,
+      currentStatusTag: statusTag,
+      userImage: db.getTemporaryUserImage(req.session.user_id),
+    });
   });
 });
-app.post("/profileDetailsRevert",isUser,function(req,res){
+app.post("/profileDetailsRevert", isUser, (req, res) => {
   db.removeTemporaryUserImage(req.session.user_id);
   res.render("Portal.jsx", {
     userId: req.session.user_id,
@@ -233,7 +232,7 @@ app.post("/profileDetailsRevert",isUser,function(req,res){
     currentStatusTag: "Changes Reverted",
   });
 });
-app.post("/passwordChange", isUser, function (req, res) {
+app.post("/passwordChange", isUser, (req, res) => {
   let status;
   let statusTag;
   if (
@@ -258,7 +257,7 @@ app.post("/passwordChange", isUser, function (req, res) {
     currentStatusTag: statusTag,
   });
 });
-app.post("/profileDetailsUpdate", isUser, function (req, res) {
+app.post("/profileDetailsUpdate", isUser, (req, res) => {
   let overrideImagePath;
   let statusTag;
   let status;
@@ -331,17 +330,17 @@ app.post("/profileDetailsUpdate", isUser, function (req, res) {
   }
 });
 //Authentication
-app.get("/logout", function (req, res) {
+app.get("/logout", (req, res) => {
   delete req.session.user_id;
   res.redirect(req.header("Referer") || "/");
   if (req.session.returnTo) {
     delete req.session.returnTo;
   }
 });
-app.post("/logout", function (req, res) {
+app.post("/logout", (req, res) => {
   res.redirect("/logout");
 });
-app.get("/login", function (req, res) {
+app.get("/login", (req, res) => {
   let status;
   let statusTag;
   //If there is an origin, redirect to origin once they're authenticated.
@@ -370,7 +369,7 @@ app.get("/login", function (req, res) {
     currentStatusTag: statusTag,
   });
 });
-app.post("/login", function (req, res) {
+app.post("/login", (req, res) => {
   let username = req.body.username ? req.body.username : undefined;
   let password = req.body.password;
   let isValid = db.validateCredentials(username, password);
@@ -385,13 +384,13 @@ app.post("/login", function (req, res) {
   res.redirect(returnTo);
 });
 //Routing "Errors"
-app.get("/page-not-found", function (req, res) {
+app.get("/page-not-found", (req, res) => {
   res.render("Portal.jsx", {
     userId: req.session.user_id,
     pageContent: "PageNotFound",
   });
 });
-app.get("/not-authorized", function (req, res) {
+app.get("/not-authorized", (req, res) => {
   if (req.session.user_id != undefined) {
     res.render("Portal.jsx", {
       userId: req.session.user_id,
@@ -401,28 +400,27 @@ app.get("/not-authorized", function (req, res) {
     res.redirect(`/login?origin=${req.query.origin || "/"}&loggedout=true`);
   }
 });
-app.get("*", function (req, res) {
+app.get("*", (req, res) => {
   res.redirect("/page-not-found");
 });
 //Serve App
-function startServer() {
-  server = app.listen(port, function () {
+startServer = () => {
+  server = app.listen(port, () => {
     console.log("Node version:" + process.versions.node);
     console.log(`Duneserver listening on port ${port}!`);
   });
   server.timeout = 10 * 60 * 1000;
-  server.on("connection", function (socket) {
+  server.on("connection", (socket) => {
     // 10 minutes timeout
     socket.setTimeout(10 * 60 * 1000);
   });
-
-  process.on("SIGINT", function () {
+  process.on("SIGINT", () => {
     console.log("Recieved Shutdown Signal - Updating Database");
     db.updateAllStorage();
     process.exit();
   });
-  setInterval(function () {
+  setInterval(() => {
     db.updateAllStorage();
   }, 60 * 60 * 1000); //Update Users Json every hour
-}
+};
 startServer();
