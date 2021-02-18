@@ -192,9 +192,6 @@ app.post("/share", isUser, function (req, res) {
 });
 //User Actions
 app.get("/profile", isUser, function (req, res) {
-  if(req.query.imageChanged!='true'){
-    db.removeTemporaryUserImage(req.session.user_id);
-  }
   res.render("Portal.jsx", {
     userId: req.session.user_id,
     pageContent: "UserProfilePage",
@@ -217,16 +214,13 @@ app.post("/profileImageUpload", isUser, function (req, res) {
     if (req.fileValidationError) {
       statusTag = "Only jpeg and png image types are accepted";
     }
-    if(statusTag || status){
       res.render("Portal.jsx", {
         userId: req.session.user_id,
         pageContent: "UserProfilePage",
         currentStatus: status,
         currentStatusTag: statusTag,
+        userImage:db.getTemporaryUserImage(req.session.user_id)
       });
-    }else{
-      res.redirect('/profile?imageChanged=true');
-    }
 
   });
 });

@@ -53,10 +53,16 @@ exports.getUserImage = function(uuid){
   let userImage =`/files/images/user-images/${uuid}`;
   if (!fs.existsSync(__dirname+"/www"+userImage) || uuid== undefined) {
     userImage=defaultImage;
-  }else if(fs.existsSync(__dirname+"/www"+userImage+"-tmp")){
-    userImage =`/files/images/user-images/${uuid}-tmp`;
   }
   return userImage;
+}
+exports.getTemporaryUserImage = function(uuid){
+  let userImage =`/files/images/user-images/${uuid}`;
+  if(fs.existsSync(__dirname+"/www"+userImage+"-tmp")){
+    return `/files/images/user-images/${uuid}-tmp`;
+  }else{
+    return exports.getUserImage(uuid);
+  }
 }
 exports.removeTemporaryUserImage = function(uuid){
   let userImage = __dirname+`/www/files/images/user-images/${uuid}`;

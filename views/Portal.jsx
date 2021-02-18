@@ -20,10 +20,11 @@ module.exports = class Portal extends React.Component {
       activeUsername =
         activeUsername.charAt(0).toUpperCase() + activeUsername.slice(1); //Uppercase first letter of their username
     }
+    let userImage = props.userImage? props.userImage: db.getUserImage(props.userId);
     let currentStatus = props.currentStatus;
     let currentStatusTag = props.currentStatusTag;
     this.NavbarArguments = {
-      userImage: db.getUserImage(props.userId),
+      userImage,
       activeUsername,
       currentStatus,
       currentStatusTag,
