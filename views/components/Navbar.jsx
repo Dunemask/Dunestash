@@ -1,5 +1,5 @@
-var React = require("react");
-class Topbar extends React.Component {
+import React from 'react';
+module.exports = class Navbar extends React.Component {
   constructor(props) {
     super(props);
     this.activeUsername = props.activeUsername;
@@ -81,5 +81,3 @@ class Topbar extends React.Component {
     );
   }
 }
-
-module.exports = Topbar;

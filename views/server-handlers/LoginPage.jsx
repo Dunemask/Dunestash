@@ -1,4 +1,4 @@
-var React = require('react');
+import React from 'react';
 module.exports = class Loginpage extends React.Component {
 	render(){
 	  return (

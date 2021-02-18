@@ -1,4 +1,4 @@
-var React = require('react');
+import React from 'react';
 module.exports = class MainPage extends React.Component {
   render() {
   return (
@@ -9,7 +9,7 @@ module.exports = class MainPage extends React.Component {
             <div className="about">
                 <h2>About</h2>
                 <p>
-                  This is a file sharing application written by Dunemask!
+                  File sharing application written in NodeJS!
                 </p>
             </div>
             <div className="connections">

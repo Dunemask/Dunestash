@@ -194,6 +194,9 @@ app.get('/not-authorized',function(req,res){
       res.redirect(`/login?origin=${req.query.origin || '/'}&loggedout=true`);
     }
 });
+app.get('*',function(req,res){
+  res.redirect('/page-not-found');
+})
 //Serve App
 function startServer() {
     server = app.listen(port, function () {

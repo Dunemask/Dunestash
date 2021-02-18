@@ -1,6 +1,6 @@
-var React = require('react');
-var Topbar = require('../components/Topbar');
-const title="Permission Error"
+import React from 'react';
+import Navbar from '../components/Navbar';
+const title="Permission Error";
 module.exports = class UserNotAuthenticatedPage extends React.Component{
   render(){
     return (
