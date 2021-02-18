@@ -1,4 +1,4 @@
-var React = require('react');
+import React from 'react';
 module.exports = class PasswordChange extends React.Component {
   constructor(props) {
   super(props);

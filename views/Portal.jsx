@@ -1,8 +1,7 @@
 const db = require("../database.js");
 const fs = require("fs");
 import React from "react";
-import Topbar from "./components/Topbar";
-import FloatyBackground from "./components/FloatyBackground";
+import Navbar from "./components/Navbar";
 import MainPage from "./pages/MainPage";
 import DownloadsPage from "./pages/DownloadsPage";
 import UploadFilesPage from "./pages/UploadFilesPage";
@@ -27,7 +26,7 @@ module.exports = class Portal extends React.Component {
     }
     let currentStatus = props.currentStatus;
     let currentStatusTag = props.currentStatusTag;
-    this.topBarArguments = {
+    this.NavbarArguments = {
       userImage,
       activeUsername,
       currentStatus,
@@ -52,7 +51,7 @@ module.exports = class Portal extends React.Component {
           break;
         case "UserProfilePage":
           return {
-            content: <UserProfilePage {...this.topBarArguments} />,
+            content: <UserProfilePage {...this.NavbarArguments} />,
             title: "My Profile",
           };
           break;
@@ -99,7 +98,7 @@ module.exports = class Portal extends React.Component {
           <title>{this.buildPageContent().title}</title>
         </head>
         <body>
-          <Topbar {...this.topBarArguments}> </Topbar>
+          <Navbar {...this.NavbarArguments}> </Navbar>
           <div className="page-content">{this.buildPageContent().content}</div>
         </body>
       </html>
