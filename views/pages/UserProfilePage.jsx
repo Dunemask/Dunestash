@@ -8,7 +8,7 @@ module.exports = class UserProfilePage extends React.Component {
   <div className="profile-content">
             <div className="userPanel">
               <div className="panelIconContainer">
-              <form encType="multipart/form-data" action="/userImageUpload" method="POST" id="userImageUpload" >
+              <form encType="multipart/form-data" action="/profileImageUpload" method="POST" id="userImageUpload" >
               <label>
                 <input type="file" name="userImage" id="imageUpload" accept="image/png, image/jpeg"/>
                 <img src={this.props.userImage}
@@ -17,7 +17,7 @@ module.exports = class UserProfilePage extends React.Component {
                 </label>
               </form>
                 <div className="userFields">
-                <form action="/fieldsChange" id="fieldsChange" method="POST">
+                <form action="/profileDetailsUpdate" id="fieldsChange" method="POST">
                   <div className="usernameFieldContainer">
                   <label htmlFor="usernameField">Username</label>
                   <input type="text" id="usernameField" name="usernameField" placeholder={this.props.activeUsername} defaultValue={this.props.activeUsername}  required></input>

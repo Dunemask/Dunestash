@@ -1,5 +1,4 @@
 const db = require("../database.js");
-const fs = require("fs");
 import React from "react";
 import Navbar from "./components/Navbar";
 import MainPage from "./pages/MainPage";
@@ -15,72 +14,69 @@ module.exports = class Portal extends React.Component {
   constructor(props) {
     super(props);
     let activeUsername;
+    //Cannot simply use ? because a uuid could be 0 or 1
     if (props.userId != undefined) {
       activeUsername = db.getUser(props.userId);
       activeUsername =
-        activeUsername.charAt(0).toUpperCase() + activeUsername.slice(1);
-    }
-    let userImage = props.overrideImagePath;
-    if (!userImage) {
-      userImage = db.getUserImage(props.userId);
+        activeUsername.charAt(0).toUpperCase() + activeUsername.slice(1); //Uppercase first letter of their username
     }
     let currentStatus = props.currentStatus;
     let currentStatusTag = props.currentStatusTag;
     this.NavbarArguments = {
-      userImage,
+      userImage: db.getUserImage(props.userId),
       activeUsername,
       currentStatus,
       currentStatusTag,
     };
     this.pageContent = props.pageContent;
   }
+  buildPageContent() {
+    switch (this.pageContent) {
+      case "MainPage":
+        return { content: <MainPage />, title: "Home" };
+        break;
+      case "DownloadsPage":
+        return {
+          content: <DownloadsPage {...this.props.downloadsPageProps} />,
+          title: this.props.downloadsPageProps.title,
+        };
+        break;
+      case "UploadFilesPage":
+        return { content: <UploadFilesPage />, title: "Upload" };
+        break;
+      case "UserProfilePage":
+        return {
+          content: <UserProfilePage {...this.NavbarArguments} />,
+          title: "My Profile",
+        };
+        break;
+      case "LoginPage":
+        return { content: <LoginPage />, title: "Login" };
+        break;
+      case "FailurePage":
+        return { content: <FailurePage />, title: "Login" };
+        break;
+      case "PageNotFound":
+        return { content: <PageNotFound />, title: "404 No Cookies" };
+        break;
+      case "UserNotAuthenticated":
+        return {
+          content: <UserNotAuthenticated />,
+          title: "User Not Authorized",
+        };
+        break;
+      case "PasswordChange":
+        return { content: <PasswordChange />, title: "Password Change" };
+        break;
+      case "SharePage":
+        return {
+          content: <SharePage {...this.props.target} />,
+          title: "Share",
+        };
+        break;
+    }
+  }
   render() {
-    this.buildPageContent = function () {
-      switch (this.pageContent) {
-        case "MainPage":
-          return { content: <MainPage />, title: "Home" };
-          break;
-        case "DownloadsPage":
-          return {
-            content: <DownloadsPage {...this.props.downloadsPageProps} />,
-            title: this.props.downloadsPageProps.title,
-          };
-          break;
-        case "UploadFilesPage":
-          return { content: <UploadFilesPage />, title: "Upload" };
-          break;
-        case "UserProfilePage":
-          return {
-            content: <UserProfilePage {...this.NavbarArguments} />,
-            title: "My Profile",
-          };
-          break;
-        case "LoginPage":
-          return { content: <LoginPage />, title: "Login" };
-          break;
-        case "FailurePage":
-          return { content: <FailurePage />, title: "Login" };
-          break;
-        case "PageNotFound":
-          return { content: <PageNotFound />, title: "404 No Cookies" };
-          break;
-        case "UserNotAuthenticated":
-          return {
-            content: <UserNotAuthenticated />,
-            title: "User Not Authorized",
-          };
-          break;
-        case "PasswordChange":
-          return { content: <PasswordChange />, title: "Password Change" };
-          break;
-        case "SharePage":
-          return {
-            content: <SharePage {...this.props.target} />,
-            title: "Share",
-          };
-          break;
-      }
-    };
     return (
       <html>
         <head>

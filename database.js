@@ -53,18 +53,22 @@ exports.getUserImage = function(uuid){
   let userImage =`/files/images/user-images/${uuid}`;
   if (!fs.existsSync(__dirname+"/www"+userImage) || uuid== undefined) {
     userImage=defaultImage;
+  }else if(fs.existsSync(__dirname+"/www"+userImage+"-tmp")){
+    userImage =`/files/images/user-images/${uuid}-tmp`;
   }
   return userImage;
 }
+exports.removeTemporaryUserImage = function(uuid){
+  let userImage = __dirname+`/www/files/images/user-images/${uuid}`;
+  let userImageTmp =userImage+"-tmp";
+  if(fs.existsSync(userImageTmp)){
+    fs.unlinkSync(userImageTmp);
+    return true;
+  }
+  return false;
+}
 exports.getUserGroups = function(uuid){
   return usersCont[uuid]['groups'];
-}
-exports.groupEditFriendly = function(name,gid,uuid){
-      if(!usersCont[uuid]['groups']){
-        usersCont[uuid]['groups']={};
-      }
-      usersCont[uuid]['groups'][gid]=name;
-      userStorageChanged=true;
 }
 exports.validateCredentials = function(user,pass){
   let working=false;
@@ -105,6 +109,13 @@ exports.changePassword = function(uuid,password){
   usersCont[uuid]['password']=password;
   userStorageChanged=true;
   return;
+}
+exports.groupEditFriendly = function(name,gid,uuid){
+      if(!usersCont[uuid]['groups']){
+        usersCont[uuid]['groups']={};
+      }
+      usersCont[uuid]['groups'][gid]=name;
+      userStorageChanged=true;
 }
 //Update Databases
 exports.updateUserStorage = function(forceUpdate){
