@@ -3,12 +3,14 @@
   "ignore": [
     ".git",
     "node_modules/**/node_modules",
-    "database.json"
+    "database.json",
+    "nemo.json",
+    "uploads/"
   ],
   "verbose": true,
   "events": {
-      "restart": "scss --sourcemap=none --update src/scss/:www/css/",
-      "start": "scss --sourcemap=none --update src/scss/:www/css/"
+      "restart": "npm run build-css",
+      "start": "npm run build-css"
     },
   "ext": "js,scss,json"
 }
