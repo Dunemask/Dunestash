@@ -1,35 +1,3 @@
-@keyframes successTrans {
-  0% {
-    height: 100%;
-    background-color: rgba(0, 164, 0, 0.75);
-    color: 255, 255, 255, 1; }
-  100% {
-    background-color: rgba(0, 164, 0, 0);
-    color: 255, 255, 255, 0;
-    height: 0; } }
-
-@keyframes failTrans {
-  0% {
-    height: 100%;
-    background-color: rgba(164, 0, 0, 0.75);
-    color: 255, 255, 255, 1; }
-  100% {
-    background-color: rgba(164, 0, 0, 0);
-    height: 0;
-    color: 255, 255, 255, 0; } }
-
-.statusIndicatorFail {
-  position: absolute;
-  width: 100%;
-  animation: failTrans 1.9s forwards;
-  overflow: hidden; }
-
-.statusIndicatorSuccess {
-  animation: successTrans 1.7s forwards;
-  position: absolute;
-  width: 100%;
-  overflow: hidden; }
-
 .topBar {
   background-color: rgba(23, 23, 23, 0.8);
   width: 100%;
@@ -180,8 +148,7 @@ p, a {
   font-size: 18px;
   font-style: normal;
   font-variant: normal;
-  font-weight: 400;
-  line-height: 20px; }
+  font-weight: 400; }
 
 blockquote {
   font-family: "Dejavu Sans";
@@ -198,6 +165,38 @@ pre {
   font-variant: normal;
   font-weight: 400;
   line-height: 18.5714px; }
+
+@keyframes successTrans {
+  0% {
+    height: 100%;
+    background-color: rgba(0, 164, 0, 0.75);
+    color: 255, 255, 255, 1; }
+  100% {
+    background-color: rgba(0, 164, 0, 0);
+    color: 255, 255, 255, 0;
+    height: 0; } }
+
+@keyframes failTrans {
+  0% {
+    height: 100%;
+    background-color: rgba(164, 0, 0, 0.75);
+    color: 255, 255, 255, 1; }
+  100% {
+    background-color: rgba(164, 0, 0, 0);
+    height: 0;
+    color: 255, 255, 255, 0; } }
+
+.statusIndicatorFail {
+  position: absolute;
+  width: 100%;
+  animation: failTrans 1.9s forwards;
+  overflow: hidden; }
+
+.statusIndicatorSuccess {
+  animation: successTrans 1.7s forwards;
+  position: absolute;
+  width: 100%;
+  overflow: hidden; }
 
 html {
   margin-left: auto;

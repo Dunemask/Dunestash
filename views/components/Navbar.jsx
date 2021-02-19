@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 module.exports = class Navbar extends React.Component {
   constructor(props) {
     super(props);
@@ -80,4 +80,4 @@ module.exports = class Navbar extends React.Component {
       </div> // <!--topbar-->
     );
   }
-}
+};
