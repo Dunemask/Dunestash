@@ -47,9 +47,8 @@ module.exports = class FilesPage extends React.Component {
                         {" "}
                         <i className="fa fa-trash"></i>
                       </a>
-                        <span className="filedate">{file.date} </span>
+                      <span className="filedate">{file.date} </span>
                     </div>
-
                   </div>
                 </li>
               ))}
