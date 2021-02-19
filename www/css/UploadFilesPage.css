@@ -148,8 +148,7 @@ p, a {
   font-size: 18px;
   font-style: normal;
   font-variant: normal;
-  font-weight: 400;
-  line-height: 20px; }
+  font-weight: 400; }
 
 blockquote {
   font-family: "Dejavu Sans";
@@ -316,11 +315,11 @@ input:checked + .slider:before {
 
 @keyframes uploadFileHover {
   0% {
-    color: #e20006; }
+    color: #24a0ed; }
   50% {
     color: white; }
   100% {
-    color: #e20006; } }
+    color: #24a0ed; } }
 
 @keyframes uploadSubHover {
   0% {

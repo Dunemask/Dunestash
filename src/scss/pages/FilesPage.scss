@@ -36,6 +36,12 @@
   max-width: 780px;
   text-align: justify;
 }
+.fileActions{
+  display:block;
+    padding: 5px 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
 
 .links li {
   margin: auto;
@@ -43,23 +49,38 @@
 }
 
 .links a {
-  padding: 15px 0;
   display: inline-block;
   text-decoration: none;
-  font-size: 24px;
-  color: $cornsilkLink;
-  white-space: nowrap;
+  font-size: 20px;
+  color: $cornsilkLink;;
   overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.links i{
+  padding-top:10px;
 }
 
 .links a:hover {
   color: $boldWhite;
 }
+.filedate{
+  float:right;
+  padding-left: 14px;
+  padding-top: 15px;
+  color: $cornsilkLink;;
+  font-size:14px;
+}
+
 .getLink {
   text-overflow: clip;
   white-space: nowrap;
   overflow: hidden;
   width: 65%;
+}
+
+.getLink:hover{
+  color: $dunemaskD;
 }
 
 .nemoFileOptions {
@@ -79,4 +100,37 @@
 }
 .deleteLink {
   padding-left: 10px;
+}
+
+@keyframes fileTypeHover{
+    0% {
+        background-color: $backgroundShadeDarker;
+        color: $boldWhite;
+    }
+
+    50% {
+        color: $optionBlue;
+        background-color: $boldWhite;
+    }
+    100% {
+        background-color: $backgroundShadeDarker;
+        color: $boldWhite;
+    }
+}
+.filetype-toggle{
+  padding-top:20px;
+}
+
+.filetype-toggle a{
+  padding: 5px 15px;
+  background: $backgroundShadeDarker;
+  color:white;
+  border: 0 none;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 24px;
+  line-height: 26px;
+}
+.filetype-toggle a:hover{
+  animation: fileTypeHover 3s infinite;
 }

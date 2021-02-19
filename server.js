@@ -43,29 +43,49 @@ app.get("/upload", isUser, (req, res) => {
   });
 });
 app.get("/files", isUser, (req, res) => {
-  var files = fs.readdirSync(__dirname + "/uploads/" + req.session.user_id);
-  let title =
-    db.getUser(req.session.user_id).charAt(0).toUpperCase() +
-    db.getUser(req.session.user_id).slice(1) +
-    "'s Files";
-  var ownedFiles = db.getOwnedFiles(req.session.user_id);
-  let userGroups = db.getUserGroups(req.session.user_id);
-  let linkedFiles = db.getLinkedFiles(req.session.user_id);
+  let title, displayFiles, filenames, splitFile;
   console.log(`Rendering Files For ${db.getUser(req.session.user_id)}:`);
-  console.log("Owned:", ownedFiles);
-  console.log("Groups:", userGroups);
-  console.log("LinkedFiles:", linkedFiles);
-  let downloadsPageProps = {
-    title: "User Files",
-    ownedFiles,
-    userGroups,
-    linkedFiles,
-    userId: req.session.user_id,
-  };
+  displayFiles = [];
+  if (req.query.type == "linked") {
+    title = "Linked Files";
+    filenames = db.getLinkedFiles(req.session.user_id);
+    Object.keys(filenames).forEach((filename) => {
+      fileString = filename.slice(0, filename.lastIndexOf("-"));
+      dateExtensionString = filename.slice(filename.lastIndexOf(fileString) + 1);
+      date = ath.easyDate(dateExtensionString.slice(filename.lastIndexOf("-"),dateExtensionString.indexOf('.')));
+      if(date!=""){
+        fileString+=dateExtensionString.slice(dateExtensionString.indexOf('.'),dateExtensionString.length);
+      }else{
+        fileString = filename;
+      }
+      displayFiles.push({
+        nemo: filenames[filename],
+        target: filename,
+        filename: fileString,
+        date,
+      });
+    });
+  } else {
+    title = "Files";
+    filenames = db.getOwnedFiles(req.session.user_id);
+    Object.keys(filenames).forEach((filename) => {
+      fileString = filename.slice(0, filename.lastIndexOf("-"));
+      dateExtensionString = filename.slice(filename.lastIndexOf(fileString) + 1);
+      date = ath.easyDate(dateExtensionString.slice(filename.lastIndexOf("-"),dateExtensionString.indexOf('.')));
+      fileString+=dateExtensionString.slice(dateExtensionString.indexOf('.'),dateExtensionString.length);
+      displayFiles.push({
+        nemo: req.session.user_id,
+        target: filename,
+        filename: fileString,
+        date,
+      });
+    });
+  }
   res.render("Portal.jsx", {
     userId: req.session.user_id,
-    pageContent: "DownloadsPage",
-    downloadsPageProps,
+    pageContent: "FilesPage",
+    displayFiles,
+    title,
   });
 });
 app.get("/share", isUser, (req, res) => {

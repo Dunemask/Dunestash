@@ -2,7 +2,7 @@ const db = require("../database.js");
 import React from "react";
 import Navbar from "./components/Navbar";
 import MainPage from "./pages/MainPage";
-import DownloadsPage from "./pages/DownloadsPage";
+import FilesPage from "./pages/FilesPage";
 import UploadFilesPage from "./pages/UploadFilesPage";
 import UserProfilePage from "./pages/UserProfilePage";
 import PasswordChange from "./pages/PasswordChange";
@@ -36,10 +36,10 @@ module.exports = class Portal extends React.Component {
       case "MainPage":
         return { content: <MainPage />, title: "Home" };
         break;
-      case "DownloadsPage":
+      case "FilesPage":
         return {
-          content: <DownloadsPage {...this.props.downloadsPageProps} />,
-          title: this.props.downloadsPageProps.title,
+          content: <FilesPage {...{displayFiles:this.props.displayFiles,title:this.props.title}} />,
+          title: this.props.title,
         };
         break;
       case "UploadFilesPage":
