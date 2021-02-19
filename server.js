@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const fs = require("fs");
 const db = require("./database.js");
 const ath = require("./athenuem.js");
+const pr = require("./prerender.js");
 //Define Constants
 const app = express();
 const port = 3000;
@@ -43,48 +44,13 @@ app.get("/upload", isUser, (req, res) => {
   });
 });
 app.get("/files", isUser, (req, res) => {
-  let title, displayFiles, filenames, splitFile;
-  displayFiles = [];
-  if (req.query.type == "linked") {
-    title = "Linked Files";
-    filenames = db.getLinkedFiles(req.session.user_id);
-    Object.keys(filenames).forEach((filename) => {
-      fileString = filename.slice(0, filename.lastIndexOf("-"));
-      dateExtensionString = filename.slice(filename.lastIndexOf(fileString) + 1);
-      date = ath.easyDate(dateExtensionString.slice(filename.lastIndexOf("-"),dateExtensionString.indexOf('.')));
-      if(date!=""){
-        fileString+=dateExtensionString.slice(dateExtensionString.indexOf('.'),dateExtensionString.length);
-      }else{
-        fileString = filename;
-      }
-      displayFiles.push({
-        nemo: filenames[filename],
-        target: filename,
-        filename: fileString,
-        date,
-      });
-    });
-  } else {
-    title = "Files";
-    filenames = db.getOwnedFiles(req.session.user_id);
-    Object.keys(filenames).forEach((filename) => {
-      fileString = filename.slice(0, filename.lastIndexOf("-"));
-      dateExtensionString = filename.slice(filename.lastIndexOf(fileString) + 1);
-      date = ath.easyDate(dateExtensionString.slice(filename.lastIndexOf("-"),dateExtensionString.indexOf('.')));
-      fileString+=dateExtensionString.slice(dateExtensionString.indexOf('.'),dateExtensionString.length);
-      displayFiles.push({
-        nemo: req.session.user_id,
-        target: filename,
-        filename: fileString,
-        date,
-      });
-    });
-  }
+  let linkedMode = req.query.type == "linked";
+  let filePrerender = pr.filesPageRender(linkedMode,req.session.user_id);
   res.render("Portal.jsx", {
     userId: req.session.user_id,
     pageContent: "FilesPage",
-    displayFiles,
-    title,
+    displayFiles:filePrerender.displayFiles,
+    title:filePrerender.title,
   });
 });
 app.get("/share", isUser, (req, res) => {
