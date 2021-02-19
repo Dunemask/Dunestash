@@ -44,7 +44,6 @@ app.get("/upload", isUser, (req, res) => {
 });
 app.get("/files", isUser, (req, res) => {
   let title, displayFiles, filenames, splitFile;
-  console.log(`Rendering Files For ${db.getUser(req.session.user_id)}:`);
   displayFiles = [];
   if (req.query.type == "linked") {
     title = "Linked Files";

@@ -2,3 +2,4 @@ node_modules/
 src/database.json
 src/nemo.json
 uploads/
+.sass-cache/
