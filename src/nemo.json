@@ -1,18 +1,15 @@
 {
- "nemo": {
-  "files": {
-   "0": {
-    "owned": {
-     "Minecraft_Plans-1613100250006.mkd": {},
-     "gnome-shell-theme-1613100260779.gresource": {}
+  "nemo": {
+    "files": {
+      "0": {
+        "owned": {
+          "Minecraft_Plans-1613100250006.mkd": {},
+          "gnome-shell-theme-1613100260779.gresource": {}
+        },
+        "linked": {},
+        "groupfiles": {}
+      }
     },
-    "linked": {
-     "File2.txt": "1",
-     "File3.txt": "42"
-    },
-    "groupfiles": {}
-   }
-  },
-  "groups": {}
- }
+    "groups": {}
+  }
 }

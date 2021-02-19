@@ -1,19 +1,11 @@
 @import "../index.scss";
-//Imports "_colors.scss","../components/Topbar.scss"
-.links-wrapper {
-  margin: 0 auto;
-  display: block;
-  border-collapse: separate;
-  padding-top:50px;
-}
-
-.links {
+.displayFile {
   display: block;
   flex: 1;
   text-align: center;
-  padding-top:25px;
+  padding-top:50px;
 }
-.links ul {
+.displayFile ul {
   margin: auto;
   padding: 0;
   list-style-type: none;
@@ -21,7 +13,6 @@
   background-color: $backgroundShade;
   min-width: 300px;
   max-width: 780px;
-  text-align: justify;
 }
 .fileActions{
   display:block;
@@ -30,24 +21,25 @@
     white-space: nowrap;
 }
 
-.links li {
+.displayFile li {
   padding:1px 40px;
 }
 
-.links a {
+.displayFile a {
   display: inline-block;
   text-decoration: none;
   font-size: 20px;
   color: $cornsilkLink;;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding:0px;
 }
 
-.links i{
+.displayFile i{
   padding-top:10px;
 }
 
-.links a:hover {
+.displayFile a:hover {
   color: $boldWhite;
 }
 .filedate{
@@ -87,35 +79,55 @@
   padding-left: 10px;
 }
 
-@keyframes fileTypeHover{
+.direct-share{
+  padding-top:20px;
+    margin:50px auto;
+    background-color: $backgroundShadeDarker;
+    width:400px;
+    height:480px;
+    border-radius: 10px;
+}
+
+#userShareField{
+  font-size: 18px;
+  color:$boldWhite;
+  line-height: 18px;
+  border:1px solid $sectionHighlight;
+  border-radius: 5px;
+  background-color:$sectionHighlightDarker;
+  padding:10px;
+  max-width: 330px;
+}
+
+@keyframes uploadSubHover {
     0% {
-        background-color: $backgroundShadeDarker;
+        background-color: $dyingGrey;
         color: $boldWhite;
     }
 
     50% {
-        color: $optionBlue;
+        color: $uploadLime;
         background-color: $boldWhite;
     }
     100% {
-        background-color: $backgroundShadeDarker;
+        background-color: $dyingGrey;
         color: $boldWhite;
     }
 }
-.filetype-toggle{
-  padding-top:10px;
+
+.userShareContainer input[type=submit] {
+    padding: 5px 15px;
+    background-color: $sectionHighlightDarker;
+    color:white;
+    border: 0 none;
+    cursor: pointer;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    font-size: 24px;
+    text-decoration: none;
+    height:38px;
 }
 
-.filetype-toggle a{
-  padding: 5px 15px;
-  background: $backgroundShadeDarker;
-  color:white;
-  border: 0 none;
-  cursor: pointer;
-  text-decoration: none;
-  font-size: 24px;
-  line-height: 26px;
-}
-.filetype-toggle a:hover{
-  animation: fileTypeHover 3s infinite;
+.userShareContainer input[type=submit]:hover {
+    animation: uploadSubHover 3s infinite;
 }

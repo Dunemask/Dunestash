@@ -223,27 +223,20 @@ textarea:focus,
 button:focus {
   outline: none; }
 
-.links-wrapper {
-  margin: 0 auto;
-  display: block;
-  border-collapse: separate;
-  padding-top: 50px; }
-
-.links {
+.displayFile {
   display: block;
   flex: 1;
   text-align: center;
-  padding-top: 25px; }
+  padding-top: 50px; }
 
-.links ul {
+.displayFile ul {
   margin: auto;
   padding: 0;
   list-style-type: none;
   border-radius: 10px;
   background-color: rgba(23, 23, 23, 0.8);
   min-width: 300px;
-  max-width: 780px;
-  text-align: justify; }
+  max-width: 780px; }
 
 .fileActions {
   display: block;
@@ -251,21 +244,22 @@ button:focus {
   overflow: hidden;
   white-space: nowrap; }
 
-.links li {
+.displayFile li {
   padding: 1px 40px; }
 
-.links a {
+.displayFile a {
   display: inline-block;
   text-decoration: none;
   font-size: 20px;
   color: #e0e0e0;
   overflow: hidden;
-  text-overflow: ellipsis; }
+  text-overflow: ellipsis;
+  padding: 0px; }
 
-.links i {
+.displayFile i {
   padding-top: 10px; }
 
-.links a:hover {
+.displayFile a:hover {
   color: white; }
 
 .filedate {
@@ -299,29 +293,46 @@ button:focus {
 .deleteLink {
   padding-left: 10px; }
 
-@keyframes fileTypeHover {
+.direct-share {
+  padding-top: 20px;
+  margin: 50px auto;
+  background-color: rgba(20, 20, 20, 0.92);
+  width: 400px;
+  height: 480px;
+  border-radius: 10px; }
+
+#userShareField {
+  font-size: 18px;
+  color: white;
+  line-height: 18px;
+  border: 1px solid #313131;
+  border-radius: 5px;
+  background-color: rgba(30, 30, 30, 0.92);
+  padding: 10px;
+  max-width: 330px; }
+
+@keyframes uploadSubHover {
   0% {
-    background-color: rgba(20, 20, 20, 0.92);
+    background-color: #4D493A;
     color: white; }
   50% {
-    color: #24a0ed;
+    color: limegreen;
     background-color: white; }
   100% {
-    background-color: rgba(20, 20, 20, 0.92);
+    background-color: #4D493A;
     color: white; } }
 
-.filetype-toggle {
-  padding-top: 10px; }
-
-.filetype-toggle a {
+.userShareContainer input[type=submit] {
   padding: 5px 15px;
-  background: rgba(20, 20, 20, 0.92);
+  background-color: rgba(30, 30, 30, 0.92);
   color: white;
   border: 0 none;
   cursor: pointer;
-  text-decoration: none;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
   font-size: 24px;
-  line-height: 26px; }
+  text-decoration: none;
+  height: 38px; }
 
-.filetype-toggle a:hover {
-  animation: fileTypeHover 3s infinite; }
+.userShareContainer input[type=submit]:hover {
+  animation: uploadSubHover 3s infinite; }

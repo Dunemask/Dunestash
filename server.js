@@ -45,28 +45,42 @@ app.get("/upload", isUser, (req, res) => {
 });
 app.get("/files", isUser, (req, res) => {
   let linkedMode = req.query.type == "linked";
-  let filePrerender = pr.filesPageRender(linkedMode,req.session.user_id);
+  let filePrerender = pr.filesPageRender(req.session.user_id, linkedMode);
   res.render("Portal.jsx", {
     userId: req.session.user_id,
     pageContent: "FilesPage",
-    displayFiles:filePrerender.displayFiles,
-    title:filePrerender.title,
+    displayFiles: filePrerender.displayFiles,
+    title: filePrerender.title,
   });
 });
 app.get("/share", isUser, (req, res) => {
   if (
+    req.query.nemo != undefined &&
+    req.query.target != undefined &&
     db.authorizedToEditFile(
       req.query.nemo,
       req.query.target,
       req.session.user_id
     )
   ) {
+    let groups = db.getUserGroups(req.session.user_id);
+    let fileDisplay = pr.fileDisplayBuilder(req.query.target);
+    let displayFile = new pr.DisplayFile(
+      req.query.nemo,
+      req.query.target,
+      fileDisplay.fileString,
+      fileDisplay.date,
+      pr.linkedOptions(req.query.nemo, req.query.target, req.session.user_id)
+    );
+    //pr.sharePageRender(req.session.user_id,req.query.nemo,req.query.target)
     res.render("Portal.jsx", {
       userId: req.session.user_id,
-      pageContent: "Share",
+      pageContent: "SharePage",
+      groups,
+      displayFile,
     });
   } else {
-    res.redirect(req.header("Referer") || "/");
+    res.redirect("/");
   }
 });
 //File Actions
@@ -155,6 +169,10 @@ app.post("/groupedit", isUser, (req, res) => {
   res.redirect(req.header("Referer") || "/");
 });
 app.post("/share", isUser, (req, res) => {
+  let unames = req.body.userShareField.replaceAll(" ","");
+  unames = unames.split(",");
+  let uuid,
+    shareFailed = false;
   if (
     db.authorizedToEditFile(
       req.query.nemo,
@@ -162,15 +180,38 @@ app.post("/share", isUser, (req, res) => {
       req.session.user_id
     )
   ) {
-    let sharedSuccessfully = db.shareFile(
-      req.body.file,
-      req.body.options,
-      req.session.user_id
-    );
-    let redirect = sharedSuccessfully
-      ? req.header("Referer")
-      : req.header("Referer") + "?error=1";
-    res.redirect(redirect);
+    for (const username of unames) {
+      uuid = db.getUuid(username);
+      if (uuid == undefined) {
+        shareFailed = true;
+      }
+      if (shareFailed || !db.shareFile(req.body.file, req.body.options, uuid)) {
+        shareFailed = true;
+        break;
+      }
+    }
+    let filePrerender = pr.filesPageRender(req.session.user_id, false);
+    if (shareFailed) {
+      //Load User's Owned Files
+      res.render("Portal.jsx", {
+        userId: req.session.user_id,
+        pageContent: "FilesPage",
+        displayFiles: filePrerender.displayFiles,
+        title: filePrerender.title,
+        currentStatus: "Error",
+        currentStatusTag:
+          "Error Sharing Requested Files (Did you type the usernames right?)",
+      });
+    } else {
+      res.render("Portal.jsx", {
+        userId: req.session.user_id,
+        pageContent: "FilesPage",
+        displayFiles: filePrerender.displayFiles,
+        title: filePrerender.title,
+        currentStatus: "Success",
+        currentStatusTag: "File has been successfully shared!",
+      });
+    }
   } else {
     res.redirect("/not-authorized");
   }

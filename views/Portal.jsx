@@ -20,7 +20,9 @@ module.exports = class Portal extends React.Component {
       activeUsername =
         activeUsername.charAt(0).toUpperCase() + activeUsername.slice(1); //Uppercase first letter of their username
     }
-    let userImage = props.userImage? props.userImage: db.getUserImage(props.userId);
+    let userImage = props.userImage
+      ? props.userImage
+      : db.getUserImage(props.userId);
     let currentStatus = props.currentStatus;
     let currentStatusTag = props.currentStatusTag;
     this.NavbarArguments = {
@@ -38,7 +40,14 @@ module.exports = class Portal extends React.Component {
         break;
       case "FilesPage":
         return {
-          content: <FilesPage {...{displayFiles:this.props.displayFiles,title:this.props.title}} />,
+          content: (
+            <FilesPage
+              {...{
+                displayFiles: this.props.displayFiles,
+                title: this.props.title,
+              }}
+            />
+          ),
           title: this.props.title,
         };
         break;
@@ -71,7 +80,14 @@ module.exports = class Portal extends React.Component {
         break;
       case "SharePage":
         return {
-          content: <SharePage {...this.props.target} />,
+          content: (
+            <SharePage
+              {...{
+                displayFile: this.props.displayFile,
+                groups: this.props.groups,
+              }}
+            />
+          ),
           title: "Share",
         };
         break;

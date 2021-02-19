@@ -78,6 +78,10 @@ exports.removeTemporaryUserImage = function (uuid) {
 exports.getUserGroups = function (uuid) {
   return usersCont[uuid]["groups"];
 };
+exports.getGroupMembers = function (gid){
+  if (!nemo.groups || !nemo.groups[gid]) return;
+  return nemo.groups[gid];
+};
 exports.validateCredentials = function (user, pass) {
   let working = false;
   if (!user) return false;
@@ -225,7 +229,7 @@ exports.getOwnedFiles = function (id) {
   return nemo.files[id].owned;
 };
 exports.getGroupFiles = function (gid, id) {
-  if (!nemo.groups || !nemo.groups.gid) return;
+  if (!nemo.groups || !nemo.groups[gid]) return;
   if (!nemo.groups[gid].includes(id)) return;
 
   let groupFiles = [];
