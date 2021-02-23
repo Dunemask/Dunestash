@@ -45,6 +45,7 @@ module.exports = class Portal extends React.Component {
               {...{
                 displayFiles: this.props.displayFiles,
                 title: this.props.title,
+                linkedMode:this.props.linkedMode
               }}
             />
           ),

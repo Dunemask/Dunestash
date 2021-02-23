@@ -51,6 +51,7 @@ app.get("/files", isUser, (req, res) => {
     pageContent: "FilesPage",
     displayFiles: filePrerender.displayFiles,
     title: filePrerender.title,
+    linkedMode
   });
 });
 app.get("/share", isUser, (req, res) => {

@@ -111,11 +111,33 @@
   background: $backgroundShadeDarker;
   color:white;
   border: 0 none;
-  cursor: pointer;
   text-decoration: none;
   font-size: 24px;
   line-height: 26px;
 }
 .filetype-toggle a:hover{
   animation: fileTypeHover 3s infinite;
+}
+#nofileslink{
+  color:white;
+  text-decoration: none;
+  font-family: "Dejavu Sans";
+  font-size: 33px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 700;
+  line-height: 36.3px;
+}
+#nofileslink:hover{
+  text-shadow: none;
+  background: white -webkit-gradient(linear, 100% 0, 0 0, from($fadedWhite), color-stop(0.5, $navShimmer), to($fadedWhite));
+  background-position: -4rem top;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-animation-name: shimmer;
+  -webkit-animation-duration: 4s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-background-size: 4rem 100%;
+
 }
