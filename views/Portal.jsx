@@ -45,7 +45,7 @@ module.exports = class Portal extends React.Component {
               {...{
                 displayFiles: this.props.displayFiles,
                 title: this.props.title,
-                linkedMode:this.props.linkedMode
+                linkedMode: this.props.linkedMode,
               }}
             />
           ),
@@ -92,6 +92,9 @@ module.exports = class Portal extends React.Component {
           title: "Share",
         };
         break;
+      default:
+        return { content: <PageNotFound />, title: "404 No Cookies" };
+        break;
     }
   }
   render() {
@@ -104,11 +107,14 @@ module.exports = class Portal extends React.Component {
             type="text/css"
             href={`/css/${this.pageContent}.css`}
           ></link>
+          <script
+            src="https://use.fontawesome.com/86339af6a5.js"
+            defer
+          ></script>
           <meta
             name="viewport"
             content="width=device-width, initial-scale=.75"
           ></meta>
-          <script src="https://use.fontawesome.com/86339af6a5.js"></script>
           <title>{this.buildPageContent().title}</title>
         </head>
         <body>
