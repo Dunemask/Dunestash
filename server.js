@@ -31,10 +31,16 @@ const isUser = (req, res, next) => {
 };
 //Router Requests
 app.get("/", (req, res) => {
-  res.render("Portal.jsx", {
+  let status = {type:"Error",tag:"Succesfully Loaded"}
+  let props = {name:"Tim"}
+  res.render("pages/Home.jsx",{uuid:req.session.user_id,status,props})
+
+
+
+  /*res.render("Portal.jsx", {
     userId: req.session.user_id,
     pageContent: "MainPage",
-  });
+  });*/
 });
 app.get("/upload", isUser, (req, res) => {
   res.render("Portal.jsx", {

@@ -2,27 +2,28 @@ import React from "react";
 module.exports = class Navbar extends React.Component {
   constructor(props) {
     super(props);
-    this.activeUsername = props.activeUsername;
+    this.username = props.username;
     this.userImage = props.userImage;
-    this.currentStatus = props.currentStatus;
-    this.currentStatusTag = props.currentStatusTag;
+    this.status = props.status;
+    //this.currentStatus = props.currentStatus;
+    //this.currentStatusTag = props.currentStatusTag;
   }
   extraStyle() {
-    if (!this.currentStatus) return;
+    if (!this.status) return;
     let tagType;
-    if (this.currentStatus.toLowerCase().includes("success"))
+    if (this.status.type.toLowerCase().includes("success"))
       tagType = "statusIndicatorSuccess";
-    if (this.currentStatus.toLowerCase().includes("error"))
+    if (this.status.type.toLowerCase().includes("error"))
       tagType = "statusIndicatorFail";
-    if (this.currentStatusTag)
+    if (this.status.tag)
       return (
         <div className={tagType}>
-          <h1>{this.currentStatusTag}</h1>
+          <h1>{this.status.tag}</h1>
         </div>
       );
     return (
       <div className={tagType}>
-        <h1>{this.currentStatusTag}</h1>
+        <h1>{this.status.tag}</h1>
       </div>
     );
   }
@@ -53,14 +54,14 @@ module.exports = class Navbar extends React.Component {
           <div className="userControlContainer">
             <div className="loginLinks">
               <ul>
-                {this.activeUsername && (
+                {this.username && (
                   <li>
                     <h3>
-                      <a href="/profile">{this.activeUsername}</a>
+                      <a href="/profile">{this.username}</a>
                     </h3>
                   </li>
                 )}
-                {this.activeUsername ? (
+                {this.username ? (
                   <li>
                     <a className="loginLink" href="/logout">
                       Logout
