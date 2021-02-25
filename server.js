@@ -103,10 +103,7 @@ app.get("/share", isUser, (req, res) => {
       req.session.user_id
     )
   ) {
-    res.render("Portal.jsx", {
-      userId: req.session.user_id,
-      pageContent: "Share",
-    });
+    console.log("Load Share Page");
   } else {
     res.redirect(req.header("Referer") || "/");
   }
@@ -344,9 +341,11 @@ const profilePasswordUpdate = (req, res) => {
 //Authentication
 app.get("/logout", (req, res) => {
   delete req.session.user_id;
-  res.redirect(req.header("Referer") || "/");
   if (req.session.returnTo) {
+      res.redirect(req.session.returnTo);
     delete req.session.returnTo;
+  }else{
+    res.redirect(req.header("Referer") || "/");
   }
 });
 app.post("/logout", (req, res) => {
@@ -391,20 +390,12 @@ app.post("/login", (req, res) => {
 });
 //Routing "Errors"
 app.get("/page-not-found", (req, res) => {
-  res.render("Portal.jsx", {
-    userId: req.session.user_id,
-    pageContent: "PageNotFound",
-  });
+  res.render("pages/Page404.jsx",{uuid:req.session.user_id})
 });
 app.get("/not-authorized", (req, res) => {
-  if (req.session.user_id != undefined) {
-    res.render("Portal.jsx", {
-      userId: req.session.user_id,
-      pageContent: "UserNotAuthenticated",
-    });
-  } else {
-    res.redirect(`/login?origin=${req.query.origin || "/"}&loggedout=true`);
-  }
+  req.session.returnTo = `/login?origin=${req.query.origin}`;
+  res.render("pages/NotAuthorized.jsx",{uuid:req.session.user_id});
+
 });
 app.get("*", (req, res) => {
   res.redirect("/page-not-found");
