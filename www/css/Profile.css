@@ -1,18 +1,7 @@
-.topBar {
+.navbar {
   background-color: rgba(23, 23, 23, 0.8);
   width: 100%;
   display: inline-block; }
-
-.barTitle {
-  font-size: 22px;
-  float: left;
-  max-width: 223px;
-  padding-right: 10px; }
-
-.barTitle h1 {
-  text-align: left;
-  overflow: hidden;
-  white-space: nowrap; }
 
 .nav {
   line-height: 36px;
@@ -51,31 +40,32 @@
     background-position: 12.5rem top;
     /*200px*/ } }
 
-.userIconContainer {
+.user-icon-container {
   padding-top: 19px; }
 
-#userIcon {
+#user-icon {
   float: left;
   height: 40px;
   width: 40px;
   border: 2px solid #232323;
   border-radius: 50%; }
 
-#userIcon:hover {
+#user-icon:hover {
   opacity: 0.7; }
 
-.userHandler {
+.user-display {
   float: left;
   display: block;
   padding: 0px 10px; }
 
-.userControlContainer {
+.user-control-container {
+  margin-top: 65px;
   position: absolute;
   padding-left: 20px;
   max-width: 200px;
   z-index: 999; }
 
-.loginLinks {
+.login-links {
   display: inline-block;
   white-space: nowrap;
   overflow: hidden;
@@ -85,29 +75,30 @@
   padding-right: 10px;
   padding: 10px 0px;
   background-color: rgba(30, 30, 30, 0.92);
-  border-radius: 16px; }
+  border-radius: 2px; }
 
-.loginLinks ul {
+.login-links ul {
   margin-top: 0;
   padding: 0;
   list-style-type: none; }
 
-.loginLinks li {
-  float: left;
+.login-links li {
+  margin: 0px;
+  height: 100%;
   width: 100%;
-  padding: 5px 5px;
+  padding: 6px 12px;
   border: 0 none;
-  text-align: left;
-  cursor: pointer;
-  padding-left: 20px; }
+  text-align: justify;
+  cursor: pointer; }
 
-.loginLinks a {
+.login-links a {
+  margin: 0px;
   text-decoration: none;
   color: white;
-  font-size: 24px;
-  line-height: 26px; }
+  font-size: 24px; }
 
-.loginLinks a:hover, .loginLinks a:focus {
+.login-links a:hover,
+.login-links a:focus {
   text-shadow: none;
   background: white -webkit-gradient(linear, 100% 0, 0 0, from(white), color-stop(0.5, #4c4c4c), to(white));
   background-position: -4rem top;
@@ -124,24 +115,21 @@ h1 {
   font-size: 33px;
   font-style: normal;
   font-variant: normal;
-  font-weight: 700;
-  line-height: 36.3px; }
+  font-weight: 700; }
 
 h2, label {
   font-family: "Dejavu Sans";
   font-size: 28px;
   font-style: normal;
   font-variant: normal;
-  font-weight: 700;
-  line-height: 36.3px; }
+  font-weight: 700; }
 
 h3 {
   font-family: "Dejavu Sans";
   font-size: 24px;
   font-style: normal;
   font-variant: normal;
-  font-weight: 700;
-  line-height: 15.4px; }
+  font-weight: 700; }
 
 p, a {
   font-family: "Dejavu Sans";
@@ -163,10 +151,9 @@ pre {
   font-size: 13px;
   font-style: normal;
   font-variant: normal;
-  font-weight: 400;
-  line-height: 18.5714px; }
+  font-weight: 400; }
 
-@keyframes successTrans {
+@keyframes status-indicator-success-transition {
   0% {
     height: 100%;
     background-color: rgba(0, 164, 0, 0.75);
@@ -176,7 +163,7 @@ pre {
     color: 255, 255, 255, 0;
     height: 0; } }
 
-@keyframes failTrans {
+@keyframes status-indicator-fail-transition {
   0% {
     height: 100%;
     background-color: rgba(164, 0, 0, 0.75);
@@ -186,14 +173,14 @@ pre {
     height: 0;
     color: 255, 255, 255, 0; } }
 
-.statusIndicatorFail {
+.status-indicator-fail {
   position: absolute;
   width: 100%;
-  animation: failTrans 1.9s forwards;
+  animation: status-indicator-fail-transition 1.9s forwards;
   overflow: hidden; }
 
-.statusIndicatorSuccess {
-  animation: successTrans 1.7s forwards;
+.status-indicator-success {
+  animation: status-indicator-success-transition 1.7s forwards;
   position: absolute;
   width: 100%;
   overflow: hidden; }
@@ -223,93 +210,55 @@ textarea:focus,
 button:focus {
   outline: none; }
 
-.displayFile {
-  display: block;
-  flex: 1;
-  text-align: center;
-  padding-top: 50px; }
-
-.displayFile ul {
-  margin: auto;
-  padding: 0;
-  list-style-type: none;
-  border-radius: 10px;
-  background-color: rgba(23, 23, 23, 0.8);
-  min-width: 300px;
-  max-width: 780px; }
-
-.fileActions {
-  display: block;
-  padding: 5px 0;
-  overflow: hidden;
-  white-space: nowrap; }
-
-.displayFile li {
-  padding: 1px 40px; }
-
-.displayFile a {
-  display: inline-block;
-  text-decoration: none;
-  font-size: 20px;
-  color: #e0e0e0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0px; }
-
-.displayFile i {
-  padding-top: 10px; }
-
-.displayFile a:hover {
-  color: white; }
-
-.filedate {
-  float: right;
-  padding-left: 14px;
-  padding-top: 13px;
-  color: #e0e0e0;
-  font-size: 14px; }
-
-.getLink {
-  text-overflow: clip;
-  white-space: nowrap;
-  overflow: hidden;
-  width: 65%; }
-
-.getLink:hover {
-  color: #e20006; }
-
-.nemoFileOptions {
-  display: inline-block; }
-
-.nemoFileOptions a {
-  padding-left: 5px; }
-
-.downloadLink {
-  padding-left: 10px; }
-
-.shareLink {
-  padding-left: 10px; }
-
-.deleteLink {
-  padding-left: 10px; }
-
-.direct-share {
-  padding-top: 20px;
+.user-panel {
   margin: 50px auto;
   background-color: rgba(20, 20, 20, 0.92);
   width: 400px;
   height: 480px;
   border-radius: 10px; }
 
-#userShareField {
-  font-size: 18px;
+.panel-icon-container {
+  margin: auto;
+  padding-top: 30px;
+  pointer-events: all; }
+
+#panel-icon {
+  margin-left: auto;
+  margin-right: auto;
+  pointer-events: all;
+  width: 150px;
+  height: 150px;
+  border: 5px solid #232323;
+  border-radius: 50%; }
+
+#panel-icon:hover {
+  opacity: 0.8;
+  cursor: pointer; }
+
+.panel-iconChange {
+  height: 50px;
+  width: 100px; }
+
+#image-upload {
+  visibility: hidden;
+  height: 0px;
+  width: 0px; }
+
+#username-entry {
+  font-size: 24px;
   color: white;
-  line-height: 18px;
+  line-height: 30px;
   border: 1px solid #313131;
   border-radius: 5px;
   background-color: rgba(30, 30, 30, 0.92);
   padding: 10px;
   max-width: 330px; }
+
+.username-entry-container {
+  padding: 20px 0; }
+
+.username-entry-container h1 {
+  text-align: left; }
 
 @keyframes uploadSubHover {
   0% {
@@ -322,7 +271,7 @@ button:focus {
     background-color: #4D493A;
     color: white; } }
 
-.userShareContainer input[type=submit] {
+#user-information-form input[type=submit], .user-information-form-actions a {
   padding: 5px 15px;
   background-color: rgba(30, 30, 30, 0.92);
   color: white;
@@ -334,5 +283,35 @@ button:focus {
   text-decoration: none;
   height: 38px; }
 
-.userShareContainer input[type=submit]:hover {
+#user-information-form input[type=submit]:hover, .user-information-form-actions a:hover {
   animation: uploadSubHover 3s infinite; }
+
+.password-change-link {
+  padding: 5px; }
+
+.password-change-link a {
+  text-decoration: none;
+  font-size: 20px;
+  color: white;
+  padding: 0px 4px;
+  overflow: hidden;
+  white-space: nowrap; }
+
+.password-change-link a:hover {
+  text-shadow: none;
+  background: white -webkit-gradient(linear, 100% 0, 0 0, from(white), color-stop(0.5, #4c4c4c), to(white));
+  background-position: -4rem top;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-animation-name: shimmer;
+  -webkit-animation-duration: 4s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-background-size: 4rem 100%; }
+
+.user-information-form-actions {
+  display: inline-block;
+  padding-top: 10px; }
+
+.user-information-form-action {
+  padding: 10px 0px; }

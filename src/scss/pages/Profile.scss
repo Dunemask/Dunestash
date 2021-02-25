@@ -1,18 +1,18 @@
 @import "../index.scss";
 //Imports "_colors.scss","../components/Topbar.scss"
-.userPanel{
-  margin:50px auto;
+.user-panel{
+  margin:$contentTopGap auto;
   background-color: $backgroundShadeDarker;
   width:400px;
   height:480px;
   border-radius: 10px;
 }
-.panelIconContainer{
+.panel-icon-container{
   margin:auto;
   padding-top: 30px;
     pointer-events:all;
 }
-#panelIcon{
+#panel-icon{
   margin-left: auto;
   margin-right: auto;
   pointer-events:all;
@@ -21,22 +21,22 @@
   border:5px solid $background;
   border-radius:50%;
 }
-#panelIcon:hover{
+#panel-icon:hover{
       opacity:0.8;
       cursor:pointer;
 }
-.panelIconChange{
+.panel-iconChange{
   height:50px;
   width:100px;
 }
 
-#imageUpload{
+#image-upload{
   visibility:hidden;
   height:0px;
   width:0px;
 }
 
-#usernameField{
+#username-entry{
   font-size: 24px;
   color:$boldWhite;
   line-height: 30px;
@@ -46,10 +46,10 @@
   padding:10px;
   max-width: 330px;
 }
-.usernameFieldContainer{
+.username-entry-container{
   padding:20px 0;
 }
-.usernameFieldContainer h1{
+.username-entry-container h1{
   text-align: left;
 }
 @keyframes uploadSubHover {
@@ -68,7 +68,7 @@
     }
 }
 
-#fieldsChange input[type=submit], .form-actions a {
+#user-information-form input[type=submit], .user-information-form-actions a {
     padding: 5px 15px;
     background-color: $sectionHighlightDarker;
     color:white;
@@ -81,14 +81,14 @@
     height:38px;
 }
 
-#fieldsChange input[type=submit]:hover, .form-actions a:hover {
+#user-information-form input[type=submit]:hover, .user-information-form-actions a:hover {
     animation: uploadSubHover 3s infinite;
 }
-.changePasswordTriggerWrapper{
+.password-change-link{
   padding:5px;
 }
 
-.changePasswordTriggerWrapper a{
+.password-change-link a{
   text-decoration: none;
   font-size: 20px;
   color: $fadedWhite;
@@ -97,7 +97,7 @@
   white-space: nowrap;
 }
 
-.changePasswordTriggerWrapper a:hover{
+.password-change-link a:hover{
   text-shadow: none;
   background: white -webkit-gradient(linear, 100% 0, 0 0, from($fadedWhite), color-stop(0.5, $navShimmer), to($fadedWhite));
   background-position: -4rem top;
@@ -110,11 +110,11 @@
   -webkit-background-size: 4rem 100%;
     }
 
-.form-actions{
+.user-information-form-actions{
   display:inline-block;
   padding-top:10px;
 }
 
-.form-action{
+.user-information-form-action{
   padding:10px 0px;
 }

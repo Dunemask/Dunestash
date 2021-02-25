@@ -1,5 +1,4 @@
 @import "../index.scss";
-//Imports "_colors.scss","../components/Topbar.scss"
 .links-wrapper {
   margin: 0 auto;
   display: block;
@@ -23,7 +22,7 @@
   max-width: 780px;
   text-align: justify;
 }
-.fileActions{
+.file-actions{
   display:block;
     padding: 5px 0;
     overflow: hidden;
@@ -50,7 +49,7 @@
 .links a:hover {
   color: $boldWhite;
 }
-.filedate{
+.file-date{
   float:right;
   padding-left: 14px;
   padding-top: 13px;
@@ -58,32 +57,32 @@
   font-size:14px;
 }
 
-.getLink {
+.link-get {
   text-overflow: clip;
   white-space: nowrap;
   overflow: hidden;
   width: 65%;
 }
 
-.getLink:hover{
+.link-get:hover{
   color: $dunemaskD;
 }
 
-.nemoFileOptions {
+.file-options {
   display: inline-block;
 }
 
-.nemoFileOptions a {
+.file-options a {
   padding-left: 5px;
 }
 
-.downloadLink {
+.link-download {
   padding-left: 10px;
 }
-.shareLink {
+.link-share {
   padding-left: 10px;
 }
-.deleteLink {
+.link-delete {
   padding-left: 10px;
 }
 
@@ -118,17 +117,16 @@
 .filetype-toggle a:hover{
   animation: fileTypeHover 3s infinite;
 }
-#nofileslink{
+#no-files-link{
   color:white;
   text-decoration: none;
   font-family: "Dejavu Sans";
-  font-size: 33px;
+  font-size: 32px;
   font-style: normal;
   font-variant: normal;
   font-weight: 700;
-  line-height: 36.3px;
 }
-#nofileslink:hover{
+#no-files-link:hover  {
   text-shadow: none;
   background: white -webkit-gradient(linear, 100% 0, 0 0, from($fadedWhite), color-stop(0.5, $navShimmer), to($fadedWhite));
   background-position: -4rem top;

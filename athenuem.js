@@ -32,7 +32,7 @@ exports.imageUpload = multer({
     }
     cb(null, true);
   },
-}).single("userImage");
+}).single("user-image");
 //Files Handle-------------------------------------------------------------------
 exports.userUploadStorage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -57,15 +57,14 @@ exports.userUploadStorage = multer.diskStorage({
 exports.userUpload = multer({
   storage: exports.userUploadStorage,
   limits: { fileSize: defaultFileUploadSize },
-}).single("userUpload");
+}).single("user-selected-upload-file");
 exports.approveFile = function (req) {
-  let status = "Success";
-  let statusTitle;
+  let status = {type:"Success",tag:"Upload Successful!"};
   let file = req.file;
   if (!file) {
-    status = "Error";
-    statusTitle = "No File Uploaded!";
-    return { status: status, statusTitle: statusTitle };
+    status.type = "Error";
+    status.tag = "No File Uploaded!";
+    return status;
   } //Return if there is no File
   let dirLimit = db.getUserStorageSize(req.session.user_id);
   let size = 0;
@@ -79,10 +78,10 @@ exports.approveFile = function (req) {
     } catch (err) {
       console.error(err);
     }
-    status = "Error";
-    statusTitle = "User Storage Full!";
-    return { status: status, statusTitle: statusTitle };
+    status.type = "Error";
+    status.tag = "User Storage Full!";
+    return status;
   }
-  return { status: status, statusTitle: statusTitle };
+  return status;
 };
 //End Multer -------------------------------------------------------------------
