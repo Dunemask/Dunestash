@@ -156,7 +156,7 @@ app.post("/groupedit", isUser, (req, res) => {
   res.redirect(req.header("Referer") || "/");
 });
 app.post("/share", isUser, (req, res) => {
-  let unames = req.body.userShareField.replaceAll(" ", "");
+  let unames = req.body['user-share-field'].replaceAll(" ", "");
   unames = unames.split(",");
   let uuid, shareFailed = false;
   if (

@@ -210,13 +210,13 @@ textarea:focus,
 button:focus {
   outline: none; }
 
-.displayFile {
+.display-file {
   display: block;
   flex: 1;
   text-align: center;
   padding-top: 50px; }
 
-.displayFile ul {
+.display-file ul {
   margin: auto;
   padding: 0;
   list-style-type: none;
@@ -225,16 +225,16 @@ button:focus {
   min-width: 300px;
   max-width: 780px; }
 
-.fileActions {
+.file-actions {
   display: block;
   padding: 5px 0;
   overflow: hidden;
   white-space: nowrap; }
 
-.displayFile li {
+.display-file li {
   padding: 1px 40px; }
 
-.displayFile a {
+.display-file a {
   display: inline-block;
   text-decoration: none;
   font-size: 20px;
@@ -243,41 +243,38 @@ button:focus {
   text-overflow: ellipsis;
   padding: 0px; }
 
-.displayFile i {
+.display-file i {
   padding-top: 10px; }
 
-.displayFile a:hover {
+.display-file a:hover {
   color: white; }
 
-.filedate {
+.file-date {
   float: right;
   padding-left: 14px;
   padding-top: 13px;
   color: #e0e0e0;
   font-size: 14px; }
 
-.getLink {
+.link-get {
   text-overflow: clip;
   white-space: nowrap;
   overflow: hidden;
   width: 65%; }
 
-.getLink:hover {
+.link-get:hover {
   color: #e20006; }
 
-.nemoFileOptions {
+.file-options {
   display: inline-block; }
 
-.nemoFileOptions a {
+.file-options a {
   padding-left: 5px; }
 
-.downloadLink {
+.link-download {
   padding-left: 10px; }
 
-.shareLink {
-  padding-left: 10px; }
-
-.deleteLink {
+.link-delete {
   padding-left: 10px; }
 
 .direct-share {
@@ -288,7 +285,7 @@ button:focus {
   height: 480px;
   border-radius: 10px; }
 
-#userShareField {
+#user-share-field {
   font-size: 18px;
   color: white;
   line-height: 18px;
@@ -309,7 +306,7 @@ button:focus {
     background-color: #4D493A;
     color: white; } }
 
-.userShareContainer input[type=submit] {
+.user-share-container input[type=submit] {
   padding: 5px 15px;
   background-color: rgba(30, 30, 30, 0.92);
   color: white;
@@ -321,5 +318,5 @@ button:focus {
   text-decoration: none;
   height: 38px; }
 
-.userShareContainer input[type=submit]:hover {
+.user-share-container input[type=submit]:hover {
   animation: uploadSubHover 3s infinite; }

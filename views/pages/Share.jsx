@@ -16,35 +16,35 @@ module.exports = class Share extends Page {
       <>
         {this.BuildPage(
           <div className="share">
-            <div className="displayFile">
+            <div className="display-file">
               <h1>Share</h1>
               <ul>
                 <li key={this.file.target}>
-                  <div className="fileActions">
-                    <div className="getLinkContainer">
+                  <div className="file-actions">
+                    <div className="link-container-get">
                       <a
                         href={`/rawdata?nemo=${this.file.nemo}&target=${this.file.target}`}
-                        className="getLink"
+                        className="link-get"
                       >
                         {this.file.filename}
                       </a>
                     </div>
-                    <div className="nemoFileOptions">
+                    <div className="file-options">
                       <a
                         href={`/download?nemo=${this.file.nemo}&target=${this.file.target}`}
-                        className="downloadLink"
+                        className="link-download"
                       >
                         <i className="fa fa-download"></i>
                       </a>
                       {this.file.options.delete && (
                         <a
                           href={`/delete-file?nemo=${this.file.nemo}&target=${this.file.target}`}
-                          className="deleteLink"
+                          className="link-delete"
                         >
                           <i className="fa fa-trash"></i>
                         </a>
                       )}
-                      <span className="filedate">{this.file.date} </span>
+                      <span className="file-date">{this.file.date} </span>
                     </div>
                   </div>
                 </li>
@@ -52,10 +52,10 @@ module.exports = class Share extends Page {
             </div>
             <div className="direct-share">
               <h2>Direct Share</h2>
-              <div className="userShareContainer">
+              <div className="user-share-container">
                 <form
                   action={`/share?nemo=${this.file.nemo}&target=${this.file.target}`}
-                  id="userShare"
+                  id="user-share"
                   method="POST"
                 >
                   <div className="form-action">
@@ -64,8 +64,8 @@ module.exports = class Share extends Page {
                   <p>Seperate each username with a comma</p>
                   <input
                     type="text"
-                    id="userShareField"
-                    name="userShareField"
+                    id="user-share-field"
+                    name="user-share-field"
                     required
                   ></input>
                 </form>
