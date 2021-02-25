@@ -3,7 +3,6 @@ import React from "react";
 import Navbar from "./components/Navbar";
 module.exports = class Page extends React.Component {
   constructor(props) {
-    console.log(props);
     super(props);
     let username, userImage;
     //Cannot simply use ? because a uuid could be 0 or 1
@@ -17,13 +16,16 @@ module.exports = class Page extends React.Component {
       username,
       status: props.status,
     };
+    this.username = username;
+    this.userImage = userImage;
+    this.title = props.title;
     this.Favicon = <link rel="shortcut icon" href="/favicon.png"></link>;
     this.Navbar = <Navbar {...this.NavbarArguments}> </Navbar>;
     this.Stylesheet = (
       <link
         rel="stylesheet"
         type="text/css"
-        href={`/css/${props.title}.css`}
+        href={props.stylesheet ?? `/css/${this.title}.css`}
       ></link>
     );
     this.FontAwesome = (
@@ -35,18 +37,29 @@ module.exports = class Page extends React.Component {
         content="width=device-width, initial-scale=.75"
       ></meta>
     );
+    this.Scripts = props.scripts;
+    this.NavScript = (
+      <script type="text/javascript" src="/js/navbar.js" defer></script>
+    );
     this.BuildPage = (child) => {
       return (
         <html>
           <head>
             {this.Favicon}
             {this.ViewportMeta}
-            {this.FontAwesome}
             {this.Stylesheet}
+            {this.NavScript}
+            {this.FontAwesome}
+            {this.Scripts &&
+              this.Scripts.map((script, index) => (
+                <script key={script} src={`/js/${script}`} defer></script>
+              ))}
+            <title>{this.title}</title>
           </head>
           <body>
-          {this.Navbar}
-          {child}</body>
+            {this.Navbar}
+            {child}
+          </body>
         </html>
       ); //Close Return
     };

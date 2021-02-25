@@ -1,0 +1,120 @@
+@import "../index.scss", "../components/UploadCircle.scss",
+  "../components/BlueSlider.scss";
+
+.file-selection {
+  border-radius: 10px;
+  background-color: $backgroundShadeDarker;
+  display: inline-block;
+  padding: 20px;
+  margin: 0 auto;
+}
+
+.file-selection input[type="file"] {
+  display: none;
+}
+
+.file-selection label {
+  color: $boldWhite;
+  line-height: 26px;
+}
+.file-select-button {
+  padding-left: 20px;
+}
+.file-upload-button {
+  padding-left: 20px;
+}
+@keyframes uploadFileHover {
+  0% {
+    color: $optionBlue;
+  }
+
+  50% {
+    color: $boldWhite;
+  }
+  100% {
+    color: $optionBlue;
+  }
+}
+
+@keyframes uploadSubHover {
+  0% {
+    background-color: $dyingGrey;
+    color: $boldWhite;
+  }
+
+  50% {
+    color: $uploadLime;
+    background-color: $boldWhite;
+  }
+  100% {
+    background-color: $dyingGrey;
+    color: $boldWhite;
+  }
+}
+
+.file-selection input[type="submit"] {
+  padding: 5px 15px;
+  background: $dyingGrey;
+  color: white;
+  border: 0 none;
+  cursor: pointer;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  font-size: 24px;
+  line-height: 26px;
+}
+
+.file-selection input[type="submit"]:hover {
+  animation: uploadSubHover 3s infinite;
+}
+
+.file-selection:focus label,
+.file-selection label:hover {
+  cursor: pointer;
+  animation: uploadFileHover 4s infinite;
+}
+
+#file-wrapper {
+  display: inline-block;
+  vertical-align: top;
+  padding-top: 50px;
+}
+.file-selection-container {
+  width: 100%;
+}
+
+.selected-file-container {
+  padding-top: 20px;
+  display: inline-block;
+}
+#lower-file-data {
+  background-color: $backgroundShadeDarker;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.upload-progress-bar {
+  border: 2px solid $uploadLime;
+}
+
+.upload-progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: $uploadLime;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  transition: width 0.22s;
+}
+
+.upload-progres-bar-text {
+  color: $boldWhite;
+}
+
+.processing {
+  display: inline-flex;
+}
+.loader-wrapper {
+  padding-left: 10px;
+  padding-top: 25px;
+}

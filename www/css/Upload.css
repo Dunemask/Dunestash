@@ -280,24 +280,24 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%; }
 
-.fileSelection {
+.file-selection {
   border-radius: 10px;
   background-color: rgba(20, 20, 20, 0.92);
   display: inline-block;
   padding: 20px;
   margin: 0 auto; }
 
-.fileSelection input[type=file] {
+.file-selection input[type="file"] {
   display: none; }
 
-.fileSelection label {
+.file-selection label {
   color: white;
   line-height: 26px; }
 
-.selectUpload {
+.file-select-button {
   padding-left: 20px; }
 
-.uploadButton {
+.file-upload-button {
   padding-left: 20px; }
 
 @keyframes uploadFileHover {
@@ -319,7 +319,7 @@ input:checked + .slider:before {
     background-color: #4D493A;
     color: white; } }
 
-.fileSelection input[type=submit] {
+.file-selection input[type="submit"] {
   padding: 5px 15px;
   background: #4D493A;
   color: white;
@@ -330,30 +330,23 @@ input:checked + .slider:before {
   font-size: 24px;
   line-height: 26px; }
 
-.fileSelection input[type=submit]:hover {
+.file-selection input[type="submit"]:hover {
   animation: uploadSubHover 3s infinite; }
 
-.fileSelection:focus label, .fileSelection label:hover {
+.file-selection:focus label,
+.file-selection label:hover {
   cursor: pointer;
   animation: uploadFileHover 4s infinite; }
 
-.switchWrapper {
-  padding-top: 24px;
-  padding-left: 10px; }
-
-#publicSwitch {
-  padding-left: 20px;
-  display: inline-flex; }
-
-#filewrapper {
+#file-wrapper {
   display: inline-block;
   vertical-align: top;
   padding-top: 50px; }
 
-.selectionContainer {
+.file-selection-container {
   width: 100%; }
 
-.selectedFileContainer {
+.selected-file-container {
   padding-top: 20px;
   display: inline-block; }
 
@@ -362,10 +355,10 @@ input:checked + .slider:before {
   padding: 20px;
   border-radius: 5px; }
 
-.progress-bar {
+.upload-progress-bar {
   border: 2px solid limegreen; }
 
-.progress-bar-fill {
+.upload-progress-bar-fill {
   height: 100%;
   width: 0%;
   background: limegreen;
@@ -374,7 +367,7 @@ input:checked + .slider:before {
   font-weight: bold;
   transition: width 0.22s; }
 
-.progres-bar-text {
+.upload-progres-bar-text {
   color: white; }
 
 .processing {

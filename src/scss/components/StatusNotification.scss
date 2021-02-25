@@ -1,5 +1,5 @@
 @import "../colors";
-@keyframes successTrans {
+@keyframes status-indicator-success-transition {
   0% {
         height: 100%;
         background-color:rgba(0,164,0,.75);
@@ -11,7 +11,7 @@
         height:0;
     }
 }
-@keyframes failTrans {
+@keyframes status-indicator-fail-transition {
   0% {
         height: 100%;
         background-color: rgba(164,0,0,.75);
@@ -24,14 +24,14 @@
     }
 }
 
-.statusIndicatorFail{
+.status-indicator-fail{
   position:absolute;
   width: 100%;
-  animation: failTrans 1.9s forwards;
+  animation: status-indicator-fail-transition 1.9s forwards;
   overflow: hidden;
 }
-.statusIndicatorSuccess{
-  animation: successTrans 1.7s forwards;
+.status-indicator-success{
+  animation: status-indicator-success-transition 1.7s forwards;
   position:absolute;
   width: 100%;
   overflow: hidden;

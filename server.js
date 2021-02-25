@@ -31,36 +31,34 @@ const isUser = (req, res, next) => {
 };
 //Router Requests
 app.get("/", (req, res) => {
-  let status = {type:"Error",tag:"Succesfully Loaded"}
-  let props = {name:"Tim"}
-  res.render("pages/Home.jsx",{uuid:req.session.user_id,status,props})
-
-
-
-  /*res.render("Portal.jsx", {
-    userId: req.session.user_id,
-    pageContent: "MainPage",
-  });*/
+  res.render("pages/About.jsx", { uuid: req.session.user_id });
 });
 app.get("/upload", isUser, (req, res) => {
-  res.render("Portal.jsx", {
-    userId: req.session.user_id,
-    pageContent: "UploadFilesPage",
-  });
+  res.render("pages/Upload.jsx", { uuid: req.session.user_id });
 });
 app.get("/files", isUser, (req, res) => {
   let title, displayFiles, filenames, splitFile;
   displayFiles = [];
-  if (req.query.type == "linked") {
-    title = "Linked Files";
+  const linkedMode= req.query.type == "linked";
+  if (linkedMode) {
     filenames = db.getLinkedFiles(req.session.user_id);
     Object.keys(filenames).forEach((filename) => {
       fileString = filename.slice(0, filename.lastIndexOf("-"));
-      dateExtensionString = filename.slice(filename.lastIndexOf(fileString) + 1);
-      date = ath.easyDate(dateExtensionString.slice(filename.lastIndexOf("-"),dateExtensionString.indexOf('.')));
-      if(date!=""){
-        fileString+=dateExtensionString.slice(dateExtensionString.indexOf('.'),dateExtensionString.length);
-      }else{
+      dateExtensionString = filename.slice(
+        filename.lastIndexOf(fileString) + 1
+      );
+      date = ath.easyDate(
+        dateExtensionString.slice(
+          filename.lastIndexOf("-"),
+          dateExtensionString.indexOf(".")
+        )
+      );
+      if (date != "") {
+        fileString += dateExtensionString.slice(
+          dateExtensionString.indexOf("."),
+          dateExtensionString.length
+        );
+      } else {
         fileString = filename;
       }
       displayFiles.push({
@@ -71,13 +69,22 @@ app.get("/files", isUser, (req, res) => {
       });
     });
   } else {
-    title = "Files";
     filenames = db.getOwnedFiles(req.session.user_id);
     Object.keys(filenames).forEach((filename) => {
       fileString = filename.slice(0, filename.lastIndexOf("-"));
-      dateExtensionString = filename.slice(filename.lastIndexOf(fileString) + 1);
-      date = ath.easyDate(dateExtensionString.slice(filename.lastIndexOf("-"),dateExtensionString.indexOf('.')));
-      fileString+=dateExtensionString.slice(dateExtensionString.indexOf('.'),dateExtensionString.length);
+      dateExtensionString = filename.slice(
+        filename.lastIndexOf(fileString) + 1
+      );
+      date = ath.easyDate(
+        dateExtensionString.slice(
+          filename.lastIndexOf("-"),
+          dateExtensionString.indexOf(".")
+        )
+      );
+      fileString += dateExtensionString.slice(
+        dateExtensionString.indexOf("."),
+        dateExtensionString.length
+      );
       displayFiles.push({
         nemo: req.session.user_id,
         target: filename,
@@ -86,12 +93,7 @@ app.get("/files", isUser, (req, res) => {
       });
     });
   }
-  res.render("Portal.jsx", {
-    userId: req.session.user_id,
-    pageContent: "FilesPage",
-    displayFiles,
-    title,
-  });
+  res.render("pages/Files.jsx",{uuid: req.session.user_id,displayFiles,linkedMode});
 });
 app.get("/share", isUser, (req, res) => {
   if (
@@ -114,21 +116,15 @@ app.post("/upload", isUser, (req, res) => {
   req.socket.setTimeout(10 * 60 * 1000);
   let approved;
   ath.userUpload(req, res, (err) => {
-    approved = ath.approveFile(req); //Ensure the file gets passed
+    let status = ath.approveFile(req); //Ensure the file gets passed
     if (!req.file || err) {
-      console.log("ERROR!");
       console.log(err);
-      approved.status = "ERROR";
-      approved.statusTitle = "File Upload Error!";
+      status.type = "ERROR";
+      status.tag = "File Upload Error!";
     } else {
       db.addFile(req.file.filename, req.session.user_id);
     }
-    res.render("Portal.jsx", {
-      userId: req.session.user_id,
-      pageContent: "UploadFilesPage",
-      currentStatus: approved.status,
-      currentStatusTag: approved.statusTitle,
-    });
+    res.render("pages/Upload.jsx", { uuid: req.session.user_id, status });
   });
 });
 app.get("/download", isUser, (req, res) => {
@@ -217,77 +213,33 @@ app.post("/share", isUser, (req, res) => {
 });
 //User Actions
 app.get("/profile", isUser, (req, res) => {
-  res.render("Portal.jsx", {
-    userId: req.session.user_id,
-    pageContent: "UserProfilePage",
-  });
-});
-app.get("/profile-password-change", isUser, (req, res) => {
-  res.render("Portal.jsx", {
-    userId: req.session.user_id,
-    pageContent: "PasswordChange",
-  });
-});
-app.post("/profileImageUpload", isUser, (req, res) => {
-  ath.imageUpload(req, res, (err) => {
-    let status;
-    let statusTag;
-    let overrideImagePath;
-    if (err || req.file == undefined) {
-      status = "Error";
-    }
-    if (req.fileValidationError) {
-      statusTag = "Only jpeg and png image types are accepted";
-    }
-    res.render("Portal.jsx", {
-      userId: req.session.user_id,
-      pageContent: "UserProfilePage",
-      currentStatus: status,
-      currentStatusTag: statusTag,
-      userImage: db.getTemporaryUserImage(req.session.user_id),
-    });
-  });
-});
-app.post("/profileDetailsRevert", isUser, (req, res) => {
-  db.removeTemporaryUserImage(req.session.user_id);
-  res.render("Portal.jsx", {
-    userId: req.session.user_id,
-    pageContent: "UserProfilePage",
-    currentStatus: "Success",
-    currentStatusTag: "Changes Reverted",
-  });
-});
-app.post("/passwordChange", isUser, (req, res) => {
-  let status;
-  let statusTag;
-  if (
-    db.validateCredentialsOnUuid(req.session.user_id, req.body.originalPassword)
-  ) {
-    if (req.body.newPassword == req.body.confirmNewPassword) {
-      db.changePassword(req.session.user_id, req.body.newPassword + "");
-      statusTag = "Password Changed";
-      status = "Success";
-    } else {
-      statusTag = "Passwords Don't Match";
-      status = "Error";
-    }
+  if (req.query.type == "password") {
+    res.render("pages/PasswordChange.jsx", { uuid: req.session.user_id });
   } else {
-    statusTag = "Original Password Incorrect";
-    status = "Error";
+    res.render("pages/Profile.jsx", { uuid: req.session.user_id });
   }
-  res.render("Portal.jsx", {
-    userId: req.session.user_id,
-    pageContent: "UserProfilePage",
-    currentStatus: status,
-    currentStatusTag: statusTag,
-  });
 });
-app.post("/profileDetailsUpdate", isUser, (req, res) => {
-  let overrideImagePath;
-  let statusTag;
-  let status;
+app.post("/profile", isUser, (req, res) => {
+  if (req.query.type == "image-upload") {
+    profileImageUpdate(req, res);
+  } else if (req.query.type == "apply-changes") {
+    applyProfileUpdates(req, res);
+  } else if (req.query.type == "password") {
+    profilePasswordUpdate(req, res);
+  } else {
+    res.render("pages/Profile.jsx", {
+      uuid: req.session.user_id,
+      status: { type: "Error", tag: "Could not update your information." },
+    });
+  }
+});
+//Functions for updating information from the profile page, called by app.get("/profile")
+const applyProfileUpdates = (req, res) => {
+  let userImage;
   let username = db.getUser(req.session.user_id);
-  let userImagesPath = "/www/files/images/user-images";
+  let clientUsername = req.body["username-entry"];
+  let status = {};
+  const userImagesPath = "/www/files/images/user-images";
   if (
     fs.existsSync(__dirname + `${userImagesPath}/${req.session.user_id}-tmp`)
   ) {
@@ -300,60 +252,95 @@ app.post("/profileDetailsUpdate", isUser, (req, res) => {
       fs.rename(
         __dirname + `${userImagesPath}/${req.session.user_id}-tmp`,
         __dirname + `${userImagesPath}/${req.session.user_id}`,
-        function (err) {
+        (err) => {
           if (err) {
-            statusTag = "Error Saving Image";
-            status = "Error";
+            status.tag = "Error Saving Image";
+            status.type = "Error";
             console.error("ERROR: " + err);
           }
         }
       );
-      overrideImagePath = "/files/images/user-images/" + req.session.user_id;
+      userImage = "/files/images/user-images/" + req.session.user_id;
     } catch (err) {
-      statusTag = "Error Saving Image";
-      status = "Error";
+      status.tag = "Error Saving Image";
+      status.type = "Error";
       console.error(err);
     }
   }
   if (status == "Error") {
     //if status is defined we'll just render it and say there's an issue
-    res.render("Portal.jsx", {
-      userId: req.session.user_id,
-      pageContent: "UserProfilePage",
-      currentStatus: status,
-      currentStatusTag: statusTag,
-      overrideImagePath,
+    res.render("pages/Profile.jsx", {
+      uuid: req.session.user_id,
+      status,
     });
-  } else if (username.toLowerCase() != req.body.usernameField.toLowerCase()) {
-    let newUsername = req.body.usernameField;
+  } else if (username.toLowerCase() != clientUsername.toLowerCase()) {
+    let newUsername = clientUsername;
     newUsername = newUsername.charAt(0).toUpperCase() + newUsername.slice(1);
     let usernameTaken = db.changeUsername(req.session.user_id, newUsername);
     if (!usernameTaken) {
-      statusTag = "Changes Saved!";
-      status = "Success";
+      status.tag = "Changes Saved!";
+      status.type = "Success";
     } else {
-      statusTag == "Username Taken!";
-      status = "Error";
+      status.tag == "Username Taken!";
+      status.type = "Error";
     }
-    res.render("Portal.jsx", {
-      userId: req.session.user_id,
-      pageContent: "UserProfilePage",
-      currentStatus: status,
-      currentStatusTag: statusTag,
-      overrideImagePath,
+    res.render("pages/Profile.jsx", {
+      uuid: req.session.user_id,
+      status,
+      userImage,
     });
   } else {
-    statusTag = "Changes Saved";
-    status = "Success";
-    res.render("Portal.jsx", {
-      userId: req.session.user_id,
-      pageContent: "UserProfilePage",
-      currentStatus: status,
-      currentStatusTag: statusTag,
-      overrideImagePath,
+    status.tag = "Changes Saved";
+    status.type = "Success";
+    res.render("pages/Profile.jsx", {
+      uuid: req.session.user_id,
+      status,
+      userImage,
     });
   }
-});
+};
+const profileImageUpdate = (req, res) => {
+  let userImage,
+    status = {};
+  ath.imageUpload(req, res, (err) => {
+    if (err || req.file == undefined) {
+      status.type = "Error";
+    }
+    if (req.fileValidationError) {
+      status.tag = "Only jpeg and png image types are accepted";
+    }
+    res.render("pages/Profile.jsx", {
+      uuid: req.session.user_id,
+      status,
+      userImage: db.getTemporaryUserImage(req.session.user_id),
+    });
+  });
+};
+const profilePasswordUpdate = (req, res) => {
+  let status = {};
+  if (
+    db.validateCredentialsOnUuid(
+      req.session.user_id,
+      req.body["original-password"]
+    )
+  ) {
+    if (req.body["new-password"] == req.body["confirm-new-password"]) {
+      db.changePassword(req.session.user_id, req.body["new-password"]);
+      status.tag = "Password Changed";
+      status.type = "Success";
+    } else {
+      status.tag = "Passwords Don't Match";
+      status.type = "Error";
+    }
+  } else {
+    status.tag = "Original Password Incorrect";
+    status.type = "Error";
+  }
+  res.render("pages/PasswordChange.jsx", {
+    uuid: req.session.user_id,
+    status,
+  });
+};
 //Authentication
 app.get("/logout", (req, res) => {
   delete req.session.user_id;
@@ -366,8 +353,7 @@ app.post("/logout", (req, res) => {
   res.redirect("/logout");
 });
 app.get("/login", (req, res) => {
-  let status;
-  let statusTag;
+  let status = {};
   //If there is an origin, redirect to origin once they're authenticated.
   //This means reload the page now that they're authorized
   if (req.query.origin) {
@@ -380,19 +366,14 @@ app.get("/login", (req, res) => {
     req.session.returnTo = req.header("Referer");
   }
   if (req.query.loggedout) {
-    statusTag = "Successfully Logged Out!";
-    status = "Success";
+    status.tag = "Successfully Logged Out!";
+    status.type = "Success";
   }
   if (req.query.attempt) {
-    statusTag = "Username or Password Incorrect";
-    status = "Error";
+    status.tag = "Username or Password Incorrect";
+    status.type = "Error";
   }
-  res.render("Portal.jsx", {
-    userId: req.session.user_id,
-    pageContent: "LoginPage",
-    currentStatus: status,
-    currentStatusTag: statusTag,
-  });
+  res.render("pages/Login.jsx", { uuid: req.session.user_id, status });
 });
 app.post("/login", (req, res) => {
   let username = req.body.username ? req.body.username : undefined;

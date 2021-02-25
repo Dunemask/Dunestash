@@ -1,42 +1,23 @@
 @import "../colors";
-
-.topBar{
-    background-color: $backgroundShade;
-    width: 100%;
-    display:inline-block;
+.navbar {
+  background-color: $backgroundShade;
+  width: 100%;
+  display: inline-block;
 }
-
-.barTitle {
-  font-size: 22px;
-  float:left;
-  //padding-left: 20px;
-  max-width:223px;
-  padding-right:10px;
- }
- .barTitle h1{
-   text-align: left;
-   overflow: hidden;
-   white-space: nowrap;
- }
-
-
-.nav{
+.nav {
   line-height: 36px;
   padding: 24px 0px;
-  display:inline-block;
-  float:left;
+  display: inline-block;
+  float: left;
 }
-
 .nav a {
-
   text-decoration: none;
   font-size: 20px;
   color: $fadedWhite;
   padding: 0px 4px;
   overflow: hidden;
   white-space: nowrap;
- }
-
+}
 .nav a:hover {
   text-shadow: none;
   background: white -webkit-gradient(linear, 100% 0, 0 0, from($fadedWhite), color-stop(0.5, $navShimmer), to($fadedWhite));
@@ -48,79 +29,80 @@
   -webkit-animation-duration: 4s;
   -webkit-animation-iteration-count: infinite;
   -webkit-background-size: 4rem 100%;
-    }
-
+}
 @-webkit-keyframes shimmer {
   0% {
     background-position: -4rem top;
-    /*50px*/ }
+    /*50px*/
+  }
   70% {
     background-position: 12.5rem top;
-    /*200px*/ }
+    /*200px*/
+  }
   100% {
     background-position: 12.5rem top;
-    /*200px*/ } }
-
-.userIconContainer{
+    /*200px*/
+  }
+}
+.user-icon-container {
   padding-top: 19px;
 }
-#userIcon{
-float:left;
-height:40px;
-width:40px;
-border:2px solid $background;
-border-radius: 50%;
+#user-icon {
+  float: left;
+  height: 40px;
+  width: 40px;
+  border: 2px solid $background;
+  border-radius: 50%;
 }
-#userIcon:hover{
-  opacity:0.7;
+#user-icon:hover {
+  opacity: 0.7;
 }
-.userHandler{
-  float:left;
-  display:block;
-  padding:0px 10px;
+.user-display {
+  float: left;
+  display: block;
+  padding: 0px 10px;
 }
-
-.userControlContainer{
-  position:absolute;
+.user-control-container {
+  margin-top: 65px;
+  position: absolute;
   padding-left: 20px;
-  max-width:200px;
+  max-width: 200px;
   z-index: 999;
-
 }
-.loginLinks{
-  display:inline-block;
+.login-links {
+  display: inline-block;
   white-space: nowrap;
-  overflow:hidden;
-  float:left;
+  overflow: hidden;
+  float: left;
   margin: 0 0;
   border-collapse: separate;
   padding-right: 10px;
-  padding:10px 0px;
+  padding: 10px 0px;
   background-color: $sectionHighlightDarker;
-  border-radius: 16px;
+  border-radius: 2px;
 }
-.loginLinks ul {
+.login-links ul {
   margin-top: 0;
   padding: 0;
   list-style-type: none;
 }
-.loginLinks li {
-  float:left;
-  width:100%;
-	padding: 5px 5px;
-	border: 0 none;
-  text-align: left;
-	cursor: pointer;
-  padding-left:20px;
+.login-links li {
+  margin: 0px;
+  height:100%;
+  width: 100%;
+  padding: 6px 12px;
+  border: 0 none;
+  text-align: justify;
+  cursor: pointer;
 }
-.loginLinks a{
-    text-decoration: none;
-  	color:$boldWhite;
-    font-size: 24px;
-    line-height: 26px;
+.login-links a {
+  margin: 0px;
+  text-decoration: none;
+  color: $boldWhite;
+  font-size: 24px;
 }
-
-.loginLinks a:hover, .loginLinks a:focus{
+.login-links a:hover,
+.login-links a:focus {
   text-shadow: none;
   background: white -webkit-gradient(linear, 100% 0, 0 0, from($fadedWhite), color-stop(0.5, $navShimmer), to($fadedWhite));
   background-position: -4rem top;

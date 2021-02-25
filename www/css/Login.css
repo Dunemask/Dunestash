@@ -210,176 +210,51 @@ textarea:focus,
 button:focus {
   outline: none; }
 
-.loader {
-  border: 2px solid white;
-  /* Light grey */
-  border-top: 2px solid limegreen;
-  /* Blue */
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  animation: spin 2s linear infinite; }
+.login-container {
+  padding-top: 50px; }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg); }
-  100% {
-    transform: rotate(360deg); } }
-
-/* The switch - the box around the slider */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px; }
-
-/* Hide default HTML checkbox */
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0; }
-
-/* The slider */
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #4D493A;
-  -webkit-transition: .4s;
-  transition: .4s; }
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s; }
-
-input:checked + .slider {
-  background-color: #2196F3; }
-
-input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3; }
-
-input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px); }
-
-/* Rounded sliders */
-.slider.round {
-  border-radius: 34px; }
-
-.slider.round:before {
-  border-radius: 50%; }
-
-.fileSelection {
-  border-radius: 10px;
+.login-box {
   background-color: rgba(20, 20, 20, 0.92);
   display: inline-block;
-  padding: 20px;
-  margin: 0 auto; }
+  padding: 12px;
+  border-radius: 10px; }
 
-.fileSelection input[type=file] {
-  display: none; }
+.login-form {
+  padding-top: 30px;
+  display: inline-block; }
 
-.fileSelection label {
-  color: white;
-  line-height: 26px; }
+.login-form-entry {
+  text-align: left;
+  padding: 1.5px 5px; }
 
-.selectUpload {
-  padding-left: 20px; }
+#password-entry-label {
+  padding-right: 8px; }
 
-.uploadButton {
-  padding-left: 20px; }
+.login-form-submit-button {
+  padding-top: 8px;
+  padding-left: 64%; }
 
-@keyframes uploadFileHover {
-  0% {
-    color: #24a0ed; }
-  50% {
-    color: white; }
-  100% {
-    color: #24a0ed; } }
-
-@keyframes uploadSubHover {
+@keyframes bgcolor {
   0% {
     background-color: #4D493A;
     color: white; }
   50% {
-    color: limegreen;
+    color: #232323;
     background-color: white; }
   100% {
     background-color: #4D493A;
     color: white; } }
 
-.fileSelection input[type=submit] {
+input[type="submit"] {
   padding: 5px 15px;
   background: #4D493A;
-  color: white;
   border: 0 none;
   cursor: pointer;
   -webkit-border-radius: 5px;
   border-radius: 5px;
   font-size: 24px;
-  line-height: 26px; }
-
-.fileSelection input[type=submit]:hover {
-  animation: uploadSubHover 3s infinite; }
-
-.fileSelection:focus label, .fileSelection label:hover {
-  cursor: pointer;
-  animation: uploadFileHover 4s infinite; }
-
-.switchWrapper {
-  padding-top: 24px;
-  padding-left: 10px; }
-
-#publicSwitch {
-  padding-left: 20px;
-  display: inline-flex; }
-
-#filewrapper {
-  display: inline-block;
-  vertical-align: top;
-  padding-top: 50px; }
-
-.selectionContainer {
-  width: 100%; }
-
-.selectedFileContainer {
-  padding-top: 20px;
-  display: inline-block; }
-
-#lower-file-data {
-  background-color: rgba(20, 20, 20, 0.92);
-  padding: 20px;
-  border-radius: 5px; }
-
-.progress-bar {
-  border: 2px solid limegreen; }
-
-.progress-bar-fill {
-  height: 100%;
-  width: 0%;
-  background: limegreen;
-  display: flex;
-  align-items: center;
-  font-weight: bold;
-  transition: width 0.22s; }
-
-.progres-bar-text {
+  line-height: 26px;
   color: white; }
 
-.processing {
-  display: inline-flex; }
-
-.loader-wrapper {
-  padding-left: 10px;
-  padding-top: 25px; }
+input[type="submit"]:hover {
+  animation: bgcolor 4s infinite; }

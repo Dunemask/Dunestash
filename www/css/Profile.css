@@ -210,103 +210,55 @@ textarea:focus,
 button:focus {
   outline: none; }
 
-.loader {
-  border: 2px solid white;
-  /* Light grey */
-  border-top: 2px solid limegreen;
-  /* Blue */
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  animation: spin 2s linear infinite; }
+.user-panel {
+  margin: 50px auto;
+  background-color: rgba(20, 20, 20, 0.92);
+  width: 400px;
+  height: 480px;
+  border-radius: 10px; }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg); }
-  100% {
-    transform: rotate(360deg); } }
+.panel-icon-container {
+  margin: auto;
+  padding-top: 30px;
+  pointer-events: all; }
 
-/* The switch - the box around the slider */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px; }
-
-/* Hide default HTML checkbox */
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0; }
-
-/* The slider */
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #4D493A;
-  -webkit-transition: .4s;
-  transition: .4s; }
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s; }
-
-input:checked + .slider {
-  background-color: #2196F3; }
-
-input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3; }
-
-input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px); }
-
-/* Rounded sliders */
-.slider.round {
-  border-radius: 34px; }
-
-.slider.round:before {
+#panel-icon {
+  margin-left: auto;
+  margin-right: auto;
+  pointer-events: all;
+  width: 150px;
+  height: 150px;
+  border: 5px solid #232323;
   border-radius: 50%; }
 
-.fileSelection {
-  border-radius: 10px;
-  background-color: rgba(20, 20, 20, 0.92);
-  display: inline-block;
-  padding: 20px;
-  margin: 0 auto; }
+#panel-icon:hover {
+  opacity: 0.8;
+  cursor: pointer; }
 
-.fileSelection input[type=file] {
-  display: none; }
+.panel-iconChange {
+  height: 50px;
+  width: 100px; }
 
-.fileSelection label {
+#image-upload {
+  visibility: hidden;
+  height: 0px;
+  width: 0px; }
+
+#username-entry {
+  font-size: 24px;
   color: white;
-  line-height: 26px; }
+  line-height: 30px;
+  border: 1px solid #313131;
+  border-radius: 5px;
+  background-color: rgba(30, 30, 30, 0.92);
+  padding: 10px;
+  max-width: 330px; }
 
-.selectUpload {
-  padding-left: 20px; }
+.username-entry-container {
+  padding: 20px 0; }
 
-.uploadButton {
-  padding-left: 20px; }
-
-@keyframes uploadFileHover {
-  0% {
-    color: #24a0ed; }
-  50% {
-    color: white; }
-  100% {
-    color: #24a0ed; } }
+.username-entry-container h1 {
+  text-align: left; }
 
 @keyframes uploadSubHover {
   0% {
@@ -319,67 +271,47 @@ input:checked + .slider:before {
     background-color: #4D493A;
     color: white; } }
 
-.fileSelection input[type=submit] {
+#user-information-form input[type=submit], .user-information-form-actions a {
   padding: 5px 15px;
-  background: #4D493A;
+  background-color: rgba(30, 30, 30, 0.92);
   color: white;
   border: 0 none;
   cursor: pointer;
   -webkit-border-radius: 5px;
   border-radius: 5px;
   font-size: 24px;
-  line-height: 26px; }
+  text-decoration: none;
+  height: 38px; }
 
-.fileSelection input[type=submit]:hover {
+#user-information-form input[type=submit]:hover, .user-information-form-actions a:hover {
   animation: uploadSubHover 3s infinite; }
 
-.fileSelection:focus label, .fileSelection label:hover {
-  cursor: pointer;
-  animation: uploadFileHover 4s infinite; }
+.password-change-link {
+  padding: 5px; }
 
-.switchWrapper {
-  padding-top: 24px;
-  padding-left: 10px; }
+.password-change-link a {
+  text-decoration: none;
+  font-size: 20px;
+  color: white;
+  padding: 0px 4px;
+  overflow: hidden;
+  white-space: nowrap; }
 
-#publicSwitch {
-  padding-left: 20px;
-  display: inline-flex; }
+.password-change-link a:hover {
+  text-shadow: none;
+  background: white -webkit-gradient(linear, 100% 0, 0 0, from(white), color-stop(0.5, #4c4c4c), to(white));
+  background-position: -4rem top;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-animation-name: shimmer;
+  -webkit-animation-duration: 4s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-background-size: 4rem 100%; }
 
-#filewrapper {
+.user-information-form-actions {
   display: inline-block;
-  vertical-align: top;
-  padding-top: 50px; }
+  padding-top: 10px; }
 
-.selectionContainer {
-  width: 100%; }
-
-.selectedFileContainer {
-  padding-top: 20px;
-  display: inline-block; }
-
-#lower-file-data {
-  background-color: rgba(20, 20, 20, 0.92);
-  padding: 20px;
-  border-radius: 5px; }
-
-.progress-bar {
-  border: 2px solid limegreen; }
-
-.progress-bar-fill {
-  height: 100%;
-  width: 0%;
-  background: limegreen;
-  display: flex;
-  align-items: center;
-  font-weight: bold;
-  transition: width 0.22s; }
-
-.progres-bar-text {
-  color: white; }
-
-.processing {
-  display: inline-flex; }
-
-.loader-wrapper {
-  padding-left: 10px;
-  padding-top: 25px; }
+.user-information-form-action {
+  padding: 10px 0px; }
