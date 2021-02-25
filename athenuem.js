@@ -7,16 +7,6 @@ const FILESIZE_MB = Math.pow(1024, 2);
 const FILESIZE_GB = Math.pow(1024, 3);
 const defaultFileUploadSize = FILESIZE_MB * 600; //600MB
 const imageSizeLimit = FILESIZE_MB * 150; //150MB
-exports.easyDate = (date) => {
-  let d = new Date(parseInt(date));
-  if (isNaN(d.getMonth())) {
-    return "";
-  } else {
-    return `${
-      d.getMonth() + 1
-    }/${d.getDate()}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`;
-  }
-};
 //Multer -----------------------------------------------------------------------
 exports.imageStorage = multer.diskStorage({
   destination: function (req, file, cb) {

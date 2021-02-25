@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const fs = require("fs");
 const db = require("./database.js");
 const ath = require("./athenuem.js");
+const pr = require("./prerender.js");
 //Define Constants
 const app = express();
 const port = 3000;
@@ -37,75 +38,42 @@ app.get("/upload", isUser, (req, res) => {
   res.render("pages/Upload.jsx", { uuid: req.session.user_id });
 });
 app.get("/files", isUser, (req, res) => {
-  let title, displayFiles, filenames, splitFile;
-  displayFiles = [];
-  const linkedMode= req.query.type == "linked";
-  if (linkedMode) {
-    filenames = db.getLinkedFiles(req.session.user_id);
-    Object.keys(filenames).forEach((filename) => {
-      fileString = filename.slice(0, filename.lastIndexOf("-"));
-      dateExtensionString = filename.slice(
-        filename.lastIndexOf(fileString) + 1
-      );
-      date = ath.easyDate(
-        dateExtensionString.slice(
-          filename.lastIndexOf("-"),
-          dateExtensionString.indexOf(".")
-        )
-      );
-      if (date != "") {
-        fileString += dateExtensionString.slice(
-          dateExtensionString.indexOf("."),
-          dateExtensionString.length
-        );
-      } else {
-        fileString = filename;
-      }
-      displayFiles.push({
-        nemo: filenames[filename],
-        target: filename,
-        filename: fileString,
-        date,
-      });
-    });
-  } else {
-    filenames = db.getOwnedFiles(req.session.user_id);
-    Object.keys(filenames).forEach((filename) => {
-      fileString = filename.slice(0, filename.lastIndexOf("-"));
-      dateExtensionString = filename.slice(
-        filename.lastIndexOf(fileString) + 1
-      );
-      date = ath.easyDate(
-        dateExtensionString.slice(
-          filename.lastIndexOf("-"),
-          dateExtensionString.indexOf(".")
-        )
-      );
-      fileString += dateExtensionString.slice(
-        dateExtensionString.indexOf("."),
-        dateExtensionString.length
-      );
-      displayFiles.push({
-        nemo: req.session.user_id,
-        target: filename,
-        filename: fileString,
-        date,
-      });
-    });
-  }
-  res.render("pages/Files.jsx",{uuid: req.session.user_id,displayFiles,linkedMode});
+  let linkedMode = req.query.type == "linked";
+  let filePrerender = pr.filesPageRender(req.session.user_id, linkedMode);
+
+  res.render("pages/Files.jsx", {
+    uuid: req.session.user_id,
+    displayFiles: filePrerender.displayFiles,
+    linkedMode,
+  });
 });
 app.get("/share", isUser, (req, res) => {
   if (
+    req.query.nemo != undefined &&
+    req.query.target != undefined &&
     db.authorizedToEditFile(
       req.query.nemo,
       req.query.target,
       req.session.user_id
     )
   ) {
-    console.log("Load Share Page");
+    let groups = db.getUserGroups(req.session.user_id);
+    let fileDisplay = pr.fileDisplayBuilder(req.query.target);
+    let displayFile = new pr.DisplayFile(
+      req.query.nemo,
+      req.query.target,
+      fileDisplay.fileString,
+      fileDisplay.date,
+      pr.linkedOptions(req.query.nemo, req.query.target, req.session.user_id)
+    );
+    //pr.sharePageRender(req.session.user_id,req.query.nemo,req.query.target)
+    res.render("pages/Share.jsx", {
+      uuid: req.session.user_id,
+      groups,
+      displayFile,
+    });
   } else {
-    res.redirect(req.header("Referer") || "/");
+    res.redirect("/not-authorized");
   }
 });
 //File Actions
@@ -188,6 +156,9 @@ app.post("/groupedit", isUser, (req, res) => {
   res.redirect(req.header("Referer") || "/");
 });
 app.post("/share", isUser, (req, res) => {
+  let unames = req.body.userShareField.replaceAll(" ", "");
+  unames = unames.split(",");
+  let uuid, shareFailed = false;
   if (
     db.authorizedToEditFile(
       req.query.nemo,
@@ -195,15 +166,27 @@ app.post("/share", isUser, (req, res) => {
       req.session.user_id
     )
   ) {
-    let sharedSuccessfully = db.shareFile(
-      req.body.file,
-      req.body.options,
-      req.session.user_id
-    );
-    let redirect = sharedSuccessfully
-      ? req.header("Referer")
-      : req.header("Referer") + "?error=1";
-    res.redirect(redirect);
+    for (const username of unames) {
+      uuid = db.getUuid(username);
+      if (uuid == undefined) {
+        shareFailed = true;
+      }
+      if (shareFailed || !db.shareFile(req.body.file, req.body.options, uuid)) {
+        shareFailed = true;
+        break;
+      }
+    }
+    let filePrerender = pr.filesPageRender(req.session.user_id, false);
+    let status = {};
+    status.type = shareFailed ? "Error" : "Success";
+    status.tag = shareFailed
+      ? "Error Sharing Requested Files (Did you type the usernames right?)"
+      : "File has been successfully shared!";
+    res.render("pages/Files.jsx", {
+      uuid: req.session.user_id,
+      displayFiles: filePrerender.displayFiles,
+      status,
+    });
   } else {
     res.redirect("/not-authorized");
   }
@@ -342,9 +325,9 @@ const profilePasswordUpdate = (req, res) => {
 app.get("/logout", (req, res) => {
   delete req.session.user_id;
   if (req.session.returnTo) {
-      res.redirect(req.session.returnTo);
+    res.redirect(req.session.returnTo);
     delete req.session.returnTo;
-  }else{
+  } else {
     res.redirect(req.header("Referer") || "/");
   }
 });
@@ -390,12 +373,13 @@ app.post("/login", (req, res) => {
 });
 //Routing "Errors"
 app.get("/page-not-found", (req, res) => {
-  res.render("pages/Page404.jsx",{uuid:req.session.user_id})
+  res.render("pages/Page404.jsx", { uuid: req.session.user_id });
 });
 app.get("/not-authorized", (req, res) => {
-  req.session.returnTo = `/login?origin=${req.query.origin}`;
-  res.render("pages/NotAuthorized.jsx",{uuid:req.session.user_id});
-
+  if (!req.session.returnTo) {
+    req.session.returnTo = `/login?origin=${req.query.origin}`;
+  }
+  res.render("pages/NotAuthorized.jsx", { uuid: req.session.user_id });
 });
 app.get("*", (req, res) => {
   res.redirect("/page-not-found");

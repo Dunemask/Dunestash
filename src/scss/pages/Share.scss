@@ -1,0 +1,133 @@
+@import "../index.scss";
+.displayFile {
+  display: block;
+  flex: 1;
+  text-align: center;
+  padding-top:50px;
+}
+.displayFile ul {
+  margin: auto;
+  padding: 0;
+  list-style-type: none;
+  border-radius: 10px;
+  background-color: $backgroundShade;
+  min-width: 300px;
+  max-width: 780px;
+}
+.fileActions{
+  display:block;
+    padding: 5px 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.displayFile li {
+  padding:1px 40px;
+}
+
+.displayFile a {
+  display: inline-block;
+  text-decoration: none;
+  font-size: 20px;
+  color: $cornsilkLink;;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding:0px;
+}
+
+.displayFile i{
+  padding-top:10px;
+}
+
+.displayFile a:hover {
+  color: $boldWhite;
+}
+.filedate{
+  float:right;
+  padding-left: 14px;
+  padding-top: 13px;
+  color: $cornsilkLink;;
+  font-size:14px;
+}
+
+.getLink {
+  text-overflow: clip;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 65%;
+}
+
+.getLink:hover{
+  color: $dunemaskD;
+}
+
+.nemoFileOptions {
+  display: inline-block;
+}
+
+.nemoFileOptions a {
+  padding-left: 5px;
+}
+
+.downloadLink {
+  padding-left: 10px;
+}
+.shareLink {
+  padding-left: 10px;
+}
+.deleteLink {
+  padding-left: 10px;
+}
+
+.direct-share{
+  padding-top:20px;
+    margin:50px auto;
+    background-color: $backgroundShadeDarker;
+    width:400px;
+    height:480px;
+    border-radius: 10px;
+}
+
+#userShareField{
+  font-size: 18px;
+  color:$boldWhite;
+  line-height: 18px;
+  border:1px solid $sectionHighlight;
+  border-radius: 5px;
+  background-color:$sectionHighlightDarker;
+  padding:10px;
+  max-width: 330px;
+}
+
+@keyframes uploadSubHover {
+    0% {
+        background-color: $dyingGrey;
+        color: $boldWhite;
+    }
+
+    50% {
+        color: $uploadLime;
+        background-color: $boldWhite;
+    }
+    100% {
+        background-color: $dyingGrey;
+        color: $boldWhite;
+    }
+}
+
+.userShareContainer input[type=submit] {
+    padding: 5px 15px;
+    background-color: $sectionHighlightDarker;
+    color:white;
+    border: 0 none;
+    cursor: pointer;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    font-size: 24px;
+    text-decoration: none;
+    height:38px;
+}
+
+.userShareContainer input[type=submit]:hover {
+    animation: uploadSubHover 3s infinite;
+}

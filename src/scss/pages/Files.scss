@@ -1,28 +1,16 @@
 @import "../index.scss";
-@keyframes bgcolor {
-  0% {
-    background-color: $dyingGrey;
-    color: $boldWhite;
-  }
-  50% {
-    color: $background;
-    background-color: $boldWhite;
-  }
-  100% {
-    background-color: $dyingGrey;
-    color: $boldWhite;
-  }
-}
 .links-wrapper {
   margin: 0 auto;
   display: block;
   border-collapse: separate;
+  padding-top:50px;
 }
 
 .links {
   display: block;
   flex: 1;
   text-align: center;
+  padding-top:25px;
 }
 .links ul {
   margin: auto;
@@ -31,11 +19,10 @@
   border-radius: 10px;
   background-color: $backgroundShade;
   min-width: 300px;
-  width: 60%;
   max-width: 780px;
   text-align: justify;
 }
-.fileActions{
+.file-actions{
   display:block;
     padding: 5px 0;
     overflow: hidden;
@@ -43,8 +30,7 @@
 }
 
 .links li {
-  margin: auto;
-  text-align: center;
+  padding:1px 40px;
 }
 
 .links a {
@@ -63,41 +49,40 @@
 .links a:hover {
   color: $boldWhite;
 }
-.filedate{
+.file-date{
   float:right;
   padding-left: 14px;
-  padding-top: 15px;
+  padding-top: 13px;
   color: $cornsilkLink;;
   font-size:14px;
 }
 
-.getLink {
+.link-get {
   text-overflow: clip;
   white-space: nowrap;
   overflow: hidden;
   width: 65%;
 }
 
-.getLink:hover{
+.link-get:hover{
   color: $dunemaskD;
 }
 
-.nemoFileOptions {
-  padding-left: 5px;
+.file-options {
   display: inline-block;
 }
 
-.nemoFileOptions a {
+.file-options a {
   padding-left: 5px;
 }
 
-.downloadLink {
+.link-download {
   padding-left: 10px;
 }
-.shareLink {
+.link-share {
   padding-left: 10px;
 }
-.deleteLink {
+.link-delete {
   padding-left: 10px;
 }
 
@@ -117,7 +102,7 @@
     }
 }
 .filetype-toggle{
-  padding-top:20px;
+  padding-top:10px;
 }
 
 .filetype-toggle a{
@@ -125,11 +110,32 @@
   background: $backgroundShadeDarker;
   color:white;
   border: 0 none;
-  cursor: pointer;
   text-decoration: none;
   font-size: 24px;
   line-height: 26px;
 }
 .filetype-toggle a:hover{
   animation: fileTypeHover 3s infinite;
+}
+#no-files-link{
+  color:white;
+  text-decoration: none;
+  font-family: "Dejavu Sans";
+  font-size: 32px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 700;
+}
+#no-files-link:hover  {
+  text-shadow: none;
+  background: white -webkit-gradient(linear, 100% 0, 0 0, from($fadedWhite), color-stop(0.5, $navShimmer), to($fadedWhite));
+  background-position: -4rem top;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-animation-name: shimmer;
+  -webkit-animation-duration: 4s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-background-size: 4rem 100%;
+
 }

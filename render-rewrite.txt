@@ -1,2 +1,0 @@
-Home/Mainpage .jsx/scss -> About.jsx/scss
-Login.jsx/scss -> Login.jsx/scss
