@@ -1,27 +1,58 @@
-@import "../index.scss";
-
+@import "../global";
+@include animation-breathe(
+  $sectionMenuOptions,
+  $foreground,
+  $foreground,
+  $successColor
+);
 .register-wrapper {
   padding-top: $contentTopGap;
   margin: 0 auto;
 }
 .register {
-  background-color: $backgroundShade;
+  background-color: $sectionBackground;
   display: inline-block;
   padding: 12px;
-  border-radius: 10px;
+  border-radius: $defaultBorderRadius;
+  max-width: $pageMaxWidth;
+  min-width: $pageMinWidth;
 }
 
 .register-form-entry-container {
   padding: 10px;
   text-align: right;
-
 }
-.register-form-entry-container label{
-    font-size: 22px;
+.register-form-entry-container label {
+  font-size: 22px;
 }
-
-
 .register-form-entry {
-
   margin: 0px 5px;
+}
+
+.register-form-entry-container input{
+  color: $foreground;
+  border: 1px solid $sectionMenuOptions;
+  border-radius: $defaultBorderRadius;
+  background-color: $sectionMenu;
+  font-size: 20px;
+  width: 170px;
+  margin-left: 10px;
+}
+
+
+.register-form-entry-container input[type="submit"] {
+  padding: 5px 15px;
+  background-color: $sectionMenuOptions;
+  color: white;
+  border: 0 none;
+  cursor: pointer;
+  -webkit-border-radius: $defaultBorderRadius;
+  border-radius: $defaultBorderRadius;
+  font-size: 24px;
+  text-decoration: none;
+  height: 38px;
+}
+
+.register-form-entry-container input[type="submit"]:hover {
+  animation: breathe 3s infinite;
 }

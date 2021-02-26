@@ -371,7 +371,9 @@ app.post("/login", (req, res) => {
 });
 app.get("/register", (req, res) => {
   if (req.session.user_id) {
-    res.render("pages/About.jsx",{status:{type:"Error",tag:"You are already logged in!"}});
+    res.render("pages/About.jsx", {
+      status: { type: "Error", tag: "You are already logged in!" },
+    });
   } else {
     res.render("pages/Register.jsx");
   }

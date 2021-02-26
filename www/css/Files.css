@@ -1,115 +1,29 @@
-.navbar {
-  background-color: rgba(23, 23, 23, 0.8);
-  width: 100%;
-  display: inline-block; }
-
-.nav {
-  line-height: 36px;
-  padding: 24px 0px;
-  display: inline-block;
-  float: left; }
-
-.nav a {
-  text-decoration: none;
-  font-size: 20px;
-  color: white;
-  padding: 0px 4px;
-  overflow: hidden;
-  white-space: nowrap; }
-
-.nav a:hover {
-  text-shadow: none;
-  background: white -webkit-gradient(linear, 100% 0, 0 0, from(white), color-stop(0.5, #4c4c4c), to(white));
-  background-position: -4rem top;
-  background-repeat: no-repeat;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  -webkit-animation-name: shimmer;
-  -webkit-animation-duration: 4s;
-  -webkit-animation-iteration-count: infinite;
-  -webkit-background-size: 4rem 100%; }
-
-@-webkit-keyframes shimmer {
-  0% {
-    background-position: -4rem top;
-    /*50px*/ }
-  70% {
-    background-position: 12.5rem top;
-    /*200px*/ }
-  100% {
-    background-position: 12.5rem top;
-    /*200px*/ } }
-
-.user-icon-container {
-  padding-top: 19px; }
-
-#user-icon {
-  float: left;
-  height: 40px;
-  width: 40px;
-  border: 2px solid #232323;
-  border-radius: 50%; }
-
-#user-icon:hover {
-  opacity: 0.7; }
-
-.user-display {
-  float: left;
-  display: block;
-  padding: 0px 10px; }
-
-.user-control-container {
-  margin-top: 65px;
-  position: absolute;
-  padding-left: 20px;
-  max-width: 200px;
-  z-index: 999; }
-
-.login-links {
-  display: inline-block;
-  white-space: nowrap;
-  overflow: hidden;
-  float: left;
-  margin: 0 0;
-  border-collapse: separate;
-  padding-right: 10px;
-  padding: 10px 0px;
-  background-color: rgba(30, 30, 30, 0.92);
-  border-radius: 2px; }
-
-.login-links ul {
-  margin-top: 0;
-  padding: 0;
-  list-style-type: none; }
-
-.login-links li {
-  margin: 0px;
-  height: 100%;
-  width: 100%;
-  padding: 6px 12px;
-  border: 0 none;
-  text-align: justify;
-  cursor: pointer; }
-
-.login-links a {
-  margin: 0px;
-  text-decoration: none;
-  color: white;
-  font-size: 24px; }
-
-.login-links a:hover,
-.login-links a:focus {
-  text-shadow: none;
-  background: white -webkit-gradient(linear, 100% 0, 0 0, from(white), color-stop(0.5, #4c4c4c), to(white));
-  background-position: -4rem top;
-  background-repeat: no-repeat;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  -webkit-animation-name: shimmer;
-  -webkit-animation-duration: 4s;
-  -webkit-animation-iteration-count: infinite;
-  -webkit-background-size: 4rem 100%; }
-
+/*Status Colors*/
+/*Background & Foreground colors*/
+/*Visual "components" (divs, etc)*/
+/*Unique Components*/
+/*$backgroundShade:rgba(23, 23, 23,0.8);
+$backgroundShadeDarker:rgba(20, 20, 20,0.92);
+$sectionHighlightDarker:rgba(30,30,30,.92);*/
+/*$uploadLime:limegreen;
+$sectionHighlight:#313131;
+$boldWhite: white;
+$fadedWhite:$boldWhite;
+$background:#232323;
+$navShimmer:#4c4c4c;
+$dyingGrey:#4D493A;
+$borderColor:#13120e;
+$cornsilkLink:#e0e0e0;
+$javaDownload:aliceblue;
+$circleLetterHighlight:$fadedWhite;
+$dunemaskD:#e20006;
+$dunemaskDarker:rgba(199, 2, 7, 1);
+$sliderColor:#2196F3;
+$backgroundShade:rgba(23, 23, 23,0.8);
+$backgroundShadeDarker:rgba(20, 20, 20,0.92);
+$sectionHighlightDarker:rgba(30,30,30,.92);
+$defaultBorderRadius:10px;
+$optionBlue:#24a0ed;*/
 h1 {
   font-family: "Dejavu Sans";
   font-size: 33px;
@@ -153,14 +67,29 @@ pre {
   font-variant: normal;
   font-weight: 400; }
 
+/*Spacing*/
+/*Size*/
+/*Misc*/
+/*Shimmer for links*/
+@-webkit-keyframes glowingShimmer {
+  0% {
+    background-position: -4rem top;
+    /*50px*/ }
+  70% {
+    background-position: 12.5rem top;
+    /*200px*/ }
+  100% {
+    background-position: 12.5rem top;
+    /*200px*/ } }
+
 @keyframes status-indicator-success-transition {
   0% {
     height: 100%;
-    background-color: rgba(0, 164, 0, 0.75);
-    color: 255, 255, 255, 1; }
+    background-color: rgba(226, 0, 6, 0.75);
+    color: white; }
   100% {
-    background-color: rgba(0, 164, 0, 0);
-    color: 255, 255, 255, 0;
+    background-color: rgba(50, 205, 50, 0);
+    olor: white;
     height: 0; } }
 
 @keyframes status-indicator-fail-transition {
@@ -172,6 +101,12 @@ pre {
     background-color: rgba(164, 0, 0, 0);
     height: 0;
     color: 255, 255, 255, 0; } }
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(360deg); } }
 
 .status-indicator-fail {
   position: absolute;
@@ -185,13 +120,114 @@ pre {
   width: 100%;
   overflow: hidden; }
 
+.navbar {
+  background-color: rgba(0, 0, 0, 0.8);
+  width: 100%;
+  display: inline-block; }
+
+.nav {
+  line-height: 36px;
+  padding: 24px 0px;
+  display: inline-block;
+  float: left; }
+
+.nav a {
+  text-decoration: none;
+  font-size: 20px;
+  color: white;
+  padding: 0px 4px;
+  overflow: hidden;
+  white-space: nowrap; }
+
+.nav a:hover {
+  text-shadow: none;
+  background: white -webkit-gradient(linear, 100% 0, 0 0, from(white), color-stop(0.5, #141414), to(white));
+  background-position: -4rem top;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-animation-name: glowingShimmer;
+  -webkit-animation-duration: 4s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-background-size: 4rem 100%; }
+
+.user-icon-container {
+  padding-top: 19px; }
+
+#user-icon {
+  float: left;
+  height: 40px;
+  width: 40px;
+  border: 2px solid #141414;
+  border-radius: 50%; }
+
+#user-icon:hover {
+  opacity: 0.7; }
+
+.user-display {
+  float: left;
+  display: block;
+  padding: 0px 10px; }
+
+.user-control-container {
+  margin-top: 65px;
+  position: absolute;
+  padding-left: 20px;
+  max-width: 200px;
+  z-index: 999; }
+
+.login-links {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  float: left;
+  margin: 0 0;
+  border-collapse: separate;
+  padding-right: 10px;
+  padding: 10px 0px;
+  background-color: #292929;
+  border-radius: 2px; }
+
+.login-links ul {
+  margin-top: 0;
+  padding: 0;
+  list-style-type: none; }
+
+.login-links li {
+  margin: 0px;
+  height: 100%;
+  width: 100%;
+  padding: 6px 12px;
+  border: 0 none;
+  text-align: justify;
+  cursor: pointer; }
+
+.login-links a {
+  margin: 0px;
+  text-decoration: none;
+  color: white;
+  font-size: 24px; }
+
+.login-links a:hover,
+.login-links a:focus {
+  text-shadow: none;
+  background: white -webkit-gradient(linear, 100% 0, 0 0, from(white), color-stop(0.5, #141414), to(white));
+  background-position: -4rem top;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-animation-name: glowingShimmer;
+  -webkit-animation-duration: 4s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-background-size: 4rem 100%; }
+
 html {
   margin-left: auto;
   margin-right: auto;
   margin-top: 0;
   height: 100%;
   color: white;
-  background: linear-gradient(70deg, black 0%, #848486 100%) no-repeat center center fixed;
+  background: linear-gradient(70deg, #141414 0%, #848486 100%) no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -210,6 +246,17 @@ textarea:focus,
 button:focus {
   outline: none; }
 
+@keyframes breathe {
+  0% {
+    background-color: #292929;
+    color: white; }
+  50% {
+    background-color: white;
+    color: #00b5f7; }
+  100% {
+    background-color: #292929;
+    color: white; } }
+
 .links-wrapper {
   margin: 0 auto;
   display: block;
@@ -220,16 +267,17 @@ button:focus {
   display: block;
   flex: 1;
   text-align: center;
-  padding-top: 25px; }
+  padding-top: 25px;
+  padding: 15px; }
 
 .links ul {
   margin: auto;
   padding: 0;
   list-style-type: none;
-  border-radius: 10px;
-  background-color: rgba(23, 23, 23, 0.8);
-  min-width: 300px;
+  border-radius: 2px;
+  background-color: rgba(20, 20, 20, 0.95);
   max-width: 780px;
+  min-width: 300px;
   text-align: justify; }
 
 .file-actions {
@@ -245,7 +293,7 @@ button:focus {
   display: inline-block;
   text-decoration: none;
   font-size: 20px;
-  color: #e0e0e0;
+  color: white;
   overflow: hidden;
   text-overflow: ellipsis; }
 
@@ -253,13 +301,13 @@ button:focus {
   padding-top: 10px; }
 
 .links a:hover {
-  color: white; }
+  color: rgba(255, 255, 255, 0.9); }
 
 .file-date {
   float: right;
   padding-left: 14px;
   padding-top: 13px;
-  color: #e0e0e0;
+  color: white;
   font-size: 14px; }
 
 .link-get {
@@ -269,7 +317,7 @@ button:focus {
   width: 65%; }
 
 .link-get:hover {
-  color: #e20006; }
+  color: rgba(255, 255, 255, 0.9); }
 
 .file-options {
   display: inline-block; }
@@ -286,23 +334,12 @@ button:focus {
 .link-delete {
   padding-left: 10px; }
 
-@keyframes fileTypeHover {
-  0% {
-    background-color: rgba(20, 20, 20, 0.92);
-    color: white; }
-  50% {
-    color: #24a0ed;
-    background-color: white; }
-  100% {
-    background-color: rgba(20, 20, 20, 0.92);
-    color: white; } }
-
 .filetype-toggle {
   padding-top: 10px; }
 
 .filetype-toggle a {
   padding: 5px 15px;
-  background: rgba(20, 20, 20, 0.92);
+  background: #292929;
   color: white;
   border: 0 none;
   text-decoration: none;
@@ -310,7 +347,7 @@ button:focus {
   line-height: 26px; }
 
 .filetype-toggle a:hover {
-  animation: fileTypeHover 3s infinite; }
+  animation: breathe 3s infinite; }
 
 #no-files-link {
   color: white;
@@ -323,12 +360,12 @@ button:focus {
 
 #no-files-link:hover {
   text-shadow: none;
-  background: white -webkit-gradient(linear, 100% 0, 0 0, from(white), color-stop(0.5, #4c4c4c), to(white));
+  background: white -webkit-gradient(linear, 100% 0, 0 0, from(white), color-stop(0.5, #141414), to(white));
   background-position: -4rem top;
   background-repeat: no-repeat;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  -webkit-animation-name: shimmer;
+  -webkit-animation-name: glowingShimmer;
   -webkit-animation-duration: 4s;
   -webkit-animation-iteration-count: infinite;
   -webkit-background-size: 4rem 100%; }

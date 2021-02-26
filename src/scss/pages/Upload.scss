@@ -1,9 +1,14 @@
-@import "../index.scss", "../components/UploadCircle.scss",
-  "../components/BlueSlider.scss";
-
+@import "../global", "../components/UploadCircle.scss";
+@include animation-breathe(
+  $sectionMenuOptions,
+  $foreground,
+  $foreground,
+  $successColor
+);
+@include animation-bounce($informationColor, $foreground);
 .file-selection {
-  border-radius: 10px;
-  background-color: $backgroundShadeDarker;
+  border-radius: $defaultBorderRadius;
+  background-color: $sectionBackground;
   display: inline-block;
   padding: 20px;
   margin: 0 auto;
@@ -14,7 +19,7 @@
 }
 
 .file-selection label {
-  color: $boldWhite;
+  color: $foreground;
   line-height: 26px;
 }
 .file-select-button {
@@ -23,55 +28,25 @@
 .file-upload-button {
   padding-left: 20px;
 }
-@keyframes uploadFileHover {
-  0% {
-    color: $optionBlue;
-  }
-
-  50% {
-    color: $boldWhite;
-  }
-  100% {
-    color: $optionBlue;
-  }
-}
-
-@keyframes uploadSubHover {
-  0% {
-    background-color: $dyingGrey;
-    color: $boldWhite;
-  }
-
-  50% {
-    color: $uploadLime;
-    background-color: $boldWhite;
-  }
-  100% {
-    background-color: $dyingGrey;
-    color: $boldWhite;
-  }
-}
 
 .file-selection input[type="submit"] {
   padding: 5px 15px;
-  background: $dyingGrey;
+  background: $sectionMenuOptions;
   color: white;
   border: 0 none;
   cursor: pointer;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
   font-size: 24px;
   line-height: 26px;
 }
 
 .file-selection input[type="submit"]:hover {
-  animation: uploadSubHover 3s infinite;
+  animation: breathe 3s infinite;
 }
 
-.file-selection:focus label,
+
 .file-selection label:hover {
   cursor: pointer;
-  animation: uploadFileHover 4s infinite;
+  animation: bounce 4s infinite;
 }
 
 #file-wrapper {
@@ -88,19 +63,19 @@
   display: inline-block;
 }
 #lower-file-data {
-  background-color: $backgroundShadeDarker;
+  background-color: $sectionBackground;
   padding: 20px;
-  border-radius: 5px;
+  border-radius: $defaultBorderRadius;
 }
 
 .upload-progress-bar {
-  border: 2px solid $uploadLime;
+  border: 2px solid $successColor;
 }
 
 .upload-progress-bar-fill {
   height: 100%;
   width: 0%;
-  background: $uploadLime;
+  background: $successColor;
   display: flex;
   align-items: center;
   font-weight: bold;
@@ -108,7 +83,7 @@
 }
 
 .upload-progres-bar-text {
-  color: $boldWhite;
+  color: $foreground;
 }
 
 .processing {

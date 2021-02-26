@@ -1,0 +1,33 @@
+@import "global/colors", "global/fonts", "global/measurements",
+  "global/animations";
+@import "components/Navbar";
+html {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0;
+  height: 100%;
+  color: $foreground;
+  background: linear-gradient(
+      70deg,
+      $backgroundGradientStart 0%,
+      $backgroundGradientEnd 100%
+    )
+    no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+body {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0;
+  height: 95%;
+  text-align: center;
+}
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: none;
+}

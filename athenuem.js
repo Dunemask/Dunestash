@@ -38,20 +38,14 @@ exports.userUploadStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     let path = __dirname + "/uploads/" + req.session.user_id + "/";
     if (!fs.existsSync(path)) {
+      fs.mkdirSync(__dirname + "/uploads/");
       fs.mkdirSync(path);
     }
     cb(null, path);
   },
   filename: function (req, file, cb) {
     let n = file.originalname.split(" ").join("_");
-    let saveFilename;
-    if (n.includes("."))
-      saveFilename =
-        n.substring(0, n.lastIndexOf(".")) +
-        `-${Date.now()}` +
-        n.substring(n.lastIndexOf("."));
-    else saveFilename = `${n}-${Date.now()}`;
-    cb(null, saveFilename);
+    cb(null, `${Date.now()}-${n}`);
   },
 });
 exports.userUpload = multer({

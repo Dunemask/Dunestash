@@ -1,21 +1,21 @@
-@import "../index.scss";
+@import "../global";
 .about-container {
   clear: both;
   padding-top: $contentTopGap;
   overflow: auto;
 }
-
 .about-wrapper {
   display: inline-block;
   border-radius: $defaultBorderRadius;
-  background-color: $backgroundShade;
+  background-color: $sectionBackground;
   border-collapse: separate;
 }
 .about {
-  max-width: 680px;
   display: block;
+  max-width: $pageMaxWidth;
+  min-width: $pageMinWidth;
+  padding: $defaultBoxPadding;
 }
-
 .about p {
   display: inline-block;
 }
@@ -27,7 +27,7 @@
 .github a {
   text-decoration: none;
   font-size: 24px;
-  color: $boldWhite;
+  color: $foreground;
   padding: 0px 4px;
 }
 
