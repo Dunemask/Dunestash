@@ -219,13 +219,13 @@ exports.authorizedToEditFile = function (targetUser, target, id) {
 };
 exports.getLinkedFiles = function (id) {
   if (!nemo.files[id]) {
-    return;
+    return [];
   }
   return nemo.files[id].linked;
 };
 exports.getOwnedFiles = function (id) {
   if (!nemo.files[id]) {
-    return;
+    return [];
   }
   return nemo.files[id].owned;
 };

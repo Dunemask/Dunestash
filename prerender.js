@@ -51,6 +51,7 @@ exports.filesPageRender = (uuid, linkedMode) => {
   } else {
     title = "Files";
     filenames = db.getOwnedFiles(uuid);
+    
     Object.keys(filenames).forEach((filename) => {
       fileDisplay = exports.fileDisplayBuilder(filename);
       displayFiles.push(
