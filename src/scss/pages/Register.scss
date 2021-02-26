@@ -1,13 +1,14 @@
 @import "../index.scss";
 
 .register-wrapper {
-  margin-top: $contentTopGap;
+  padding-top: $contentTopGap;
   margin: 0 auto;
 }
 .register {
   background-color: $backgroundShade;
   display: inline-block;
   padding: 12px;
+  border-radius: 10px;
 }
 
 .register-form-entry-container {
@@ -21,5 +22,6 @@
 
 
 .register-form-entry {
-  margin: 4px 5px;
+
+  margin: 0px 5px;
 }

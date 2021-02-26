@@ -370,7 +370,11 @@ app.post("/login", (req, res) => {
   res.redirect(returnTo);
 });
 app.get("/register", (req, res) => {
-  res.render("pages/Register.jsx");
+  if (req.session.user_id) {
+    res.render("pages/About.jsx",{status:{type:"Error",tag:"You are already logged in!"}});
+  } else {
+    res.render("pages/Register.jsx");
+  }
 });
 app.post("/register", (req, res) => {
   let status = {};
