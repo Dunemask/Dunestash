@@ -39,19 +39,18 @@ module.exports = class Navbar extends React.Component {
             />
           </div>
         </div>
-          <div className="nav">
-            <a href="/">Home</a>
-            <a href="/files">Files</a>
-            <a href="/upload">Upload</a>
-          </div>
+        <div className="nav">
+          <a href="/">Home</a>
+          <a href="/files">Files</a>
+          <a href="/upload">Upload</a>
+        </div>
         <div id="user-control-toggle" style={{ display: "none" }}>
-
           <div className="user-control-container">
             <div className="login-links">
               <ul>
                 {this.username && (
                   <li>
-                      <a href="/profile">{this.username}</a>
+                    <a href="/profile">{this.username}</a>
                   </li>
                 )}
                 {this.username ? (
@@ -61,11 +60,18 @@ module.exports = class Navbar extends React.Component {
                     </a>
                   </li>
                 ) : (
-                  <li>
-                    <a className="login-link" href="/login">
-                      Login
-                    </a>
-                  </li>
+                  <>
+                    <li>
+                      <a className="login-link" href="/login">
+                        Login
+                      </a>
+                    </li>
+                    <li>
+                      <a className="login-link" href="/register">
+                        Sign Up
+                      </a>
+                    </li>
+                  </>
                 )}
               </ul>
             </div>

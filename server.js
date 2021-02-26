@@ -19,9 +19,9 @@ app.use(express.static("www/", { dotfiles: "deny" }));
 app.set("views", __dirname + "/views");
 app.set("view engine", "jsx");
 app.engine("jsx", require("express-react-views").createEngine(viewOptions));
-app.use(bodyParser.json({ limit: "50mb" })); // parse application/json
-app.use(bodyParser.urlencoded({ limit: "50mb", extended: false })); // parse application/x-www-form-urlencoded
-//Test if there is a userId
+app.use(bodyParser.json({ limit: "5mb" })); // parse application/json
+app.use(bodyParser.urlencoded({ limit: "5mb", extended: false })); // parse application/x-www-form-urlencoded
+//Test if there is a
 const isUser = (req, res, next) => {
   //req.session.user_id=0;
   if (req.session.user_id != undefined || req.path === "/login") {
@@ -151,14 +151,15 @@ app.get("/delete-file", isUser, (req, res) => {
     res.redirect(req.header("Referer") || "/");
   }
 });
-app.post("/groupedit", isUser, (req, res) => {
+app.all("/groupedit", isUser, (req, res) => {
   db.groupEditFriendly(req.body.groupName, req.body.gid, req.session.user_id);
   res.redirect(req.header("Referer") || "/");
 });
 app.post("/share", isUser, (req, res) => {
-  let unames = req.body['user-share-field'].replaceAll(" ", "");
+  let unames = req.body["user-share-field"].replaceAll(" ", "");
   unames = unames.split(",");
-  let uuid, shareFailed = false;
+  let uuid,
+    shareFailed = false;
   if (
     db.authorizedToEditFile(
       req.query.nemo,
@@ -321,8 +322,8 @@ const profilePasswordUpdate = (req, res) => {
     status,
   });
 };
-//Authentication
-app.get("/logout", (req, res) => {
+//Authentication && Registraation
+app.all("/logout", (req, res) => {
   delete req.session.user_id;
   if (req.session.returnTo) {
     res.redirect(req.session.returnTo);
@@ -331,14 +332,11 @@ app.get("/logout", (req, res) => {
     res.redirect(req.header("Referer") || "/");
   }
 });
-app.post("/logout", (req, res) => {
-  res.redirect("/logout");
-});
 app.get("/login", (req, res) => {
   let status = {};
   //If there is an origin, redirect to origin once they're authenticated.
   //This means reload the page now that they're authorized
-  if (req.query.origin) {
+  if (req.query.origin && !req.session.returnTo) {
     req.session.returnTo = req.query.origin;
     if (req.session.user_id) {
       res.redirect(req.session.returnTo);
@@ -371,6 +369,44 @@ app.post("/login", (req, res) => {
   }
   res.redirect(returnTo);
 });
+app.get("/register", (req, res) => {
+  if (req.session.user_id) {
+    res.render("pages/About.jsx",{status:{type:"Error",tag:"You are already logged in!"}});
+  } else {
+    res.render("pages/Register.jsx");
+  }
+});
+app.post("/register", (req, res) => {
+  let status = {};
+  if (
+    req.body.username == undefined ||
+    req.body.password == undefined ||
+    req.body["confirm-password"] == undefined
+  ) {
+    status.type = "Error";
+    status.tag = "Error: 1 or More Fields Empty!";
+  } else if (db.getUuid(req.body.username) != undefined) {
+    status.type = "Error";
+    status.tag = "Username Already Taken!";
+  } else if (req.body["confirm-password"] != req.body.password) {
+    status.type = "Error";
+    status.tag = "Passwords Don't Match!";
+  } else if (req.body["confirm-password"] == req.body.password) {
+    db.createUser(req.body.username, req.body.password);
+    status.type = "Success";
+    status.tag = "Account Successfully Created!";
+  } else {
+    status.type = "Error";
+    status.tag = "Unknown Error Occurred!";
+  }
+  if (status.type == "Error") {
+    res.render("pages/Register.jsx", { status });
+  } else {
+    req.session.returnTo = "/";
+    res.render("pages/Login.jsx", { status });
+  }
+});
+
 //Routing "Errors"
 app.get("/page-not-found", (req, res) => {
   res.render("pages/Page404.jsx", { uuid: req.session.user_id });

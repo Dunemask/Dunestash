@@ -1,0 +1,27 @@
+@import "../index.scss";
+
+.register-wrapper {
+  padding-top: $contentTopGap;
+  margin: 0 auto;
+}
+.register {
+  background-color: $backgroundShade;
+  display: inline-block;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.register-form-entry-container {
+  padding: 10px;
+  text-align: right;
+
+}
+.register-form-entry-container label{
+    font-size: 22px;
+}
+
+
+.register-form-entry {
+
+  margin: 0px 5px;
+}

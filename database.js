@@ -6,6 +6,7 @@ const defaultStorageSize = 2;
 const rimraf = require("rimraf");
 const databaseLocation = __dirname + "/src/database.json";
 const nemoLocation = __dirname + "/src/nemo.json";
+const randUuid = require("uuid-random");
 let usersCont;
 let nemo;
 if (!fs.existsSync(databaseLocation)) {
@@ -78,7 +79,7 @@ exports.removeTemporaryUserImage = function (uuid) {
 exports.getUserGroups = function (uuid) {
   return usersCont[uuid]["groups"];
 };
-exports.getGroupMembers = function (gid){
+exports.getGroupMembers = function (gid) {
   if (!nemo.groups || !nemo.groups[gid]) return;
   return nemo.groups[gid];
 };
@@ -336,6 +337,9 @@ exports.createGroup = function (gid, members) {
   return true;
 };
 exports.createUser = function (username, password, uuid) {
+  if (uuid == undefined) {
+    while ((uuid = randUuid()) && usersCont[uuid] != undefined);
+  }
   usersCont[uuid] = {};
   usersCont[uuid]["username"] = username;
   usersCont[uuid]["password"] = password;
