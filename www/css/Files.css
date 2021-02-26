@@ -301,7 +301,7 @@ button:focus {
   padding-top: 10px; }
 
 .links a:hover {
-  color: white; }
+  color: rgba(255, 255, 255, 0.9); }
 
 .file-date {
   float: right;

@@ -45,14 +45,7 @@ exports.userUploadStorage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     let n = file.originalname.split(" ").join("_");
-    let saveFilename;
-    if (n.includes("."))
-      saveFilename =
-        n.substring(0, n.lastIndexOf(".")) +
-        `-${Date.now()}` +
-        n.substring(n.lastIndexOf("."));
-    else saveFilename = `${n}-${Date.now()}`;
-    cb(null, saveFilename);
+    cb(null, `${Date.now()}-${n}`);
   },
 });
 exports.userUpload = multer({

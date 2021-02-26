@@ -284,7 +284,8 @@ button:focus {
   background-color: rgba(0, 0, 0, 0.8);
   width: 170px;
   margin-left: 10px;
-  font-size: 26px; }
+  line-height: 28px;
+  font-size: 22px; }
 
 .login-form-entry {
   text-align: right; }

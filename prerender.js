@@ -51,7 +51,7 @@ exports.filesPageRender = (uuid, linkedMode) => {
   } else {
     title = "Files";
     filenames = db.getOwnedFiles(uuid);
-    
+
     Object.keys(filenames).forEach((filename) => {
       fileDisplay = exports.fileDisplayBuilder(filename);
       displayFiles.push(
@@ -69,20 +69,10 @@ exports.filesPageRender = (uuid, linkedMode) => {
 };
 //Seperates Date and creates a nice looking filename
 exports.fileDisplayBuilder = (filename) => {
-  let fileString, dateExtensionString, date;
-  fileString = filename.slice(0, filename.lastIndexOf("-"));
-  dateExtensionString = filename.slice(filename.lastIndexOf(fileString) + 1);
-  date = exports.easyDate(
-    dateExtensionString.slice(
-      filename.lastIndexOf("-"),
-      dateExtensionString.indexOf(".")
-    )
-  );
+  let fileString, date;
+  date = exports.easyDate(filename.slice(0, filename.indexOf("-")));
   if (date != "") {
-    fileString += dateExtensionString.slice(
-      dateExtensionString.indexOf("."),
-      dateExtensionString.length
-    );
+    fileString = filename.slice(filename.indexOf("-") + 1, filename.length);
   } else {
     fileString = filename;
   }

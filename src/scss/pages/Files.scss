@@ -53,7 +53,7 @@
 }
 
 .links a:hover {
-  color: $foreground;
+  color: rgba($foreground,.9);
 }
 .file-date {
   float: right;
