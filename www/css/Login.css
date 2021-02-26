@@ -102,6 +102,12 @@ pre {
     height: 0;
     color: 255, 255, 255, 0; } }
 
+@keyframes spin {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(360deg); } }
+
 .status-indicator-fail {
   position: absolute;
   width: 100%;
@@ -272,7 +278,13 @@ button:focus {
 
 .login-form-entry input {
   float: right;
-  margin: 7px; }
+  color: white;
+  border: 1px solid #292929;
+  border-radius: 2px;
+  background-color: rgba(0, 0, 0, 0.8);
+  width: 170px;
+  margin-left: 10px;
+  font-size: 26px; }
 
 .login-form-entry {
   text-align: right; }

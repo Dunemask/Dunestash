@@ -32,7 +32,7 @@ const isUser = (req, res, next) => {
 };
 //Router Requests
 app.get("/", (req, res) => {
-  res.render("pages/About.jsx", { uuid: req.session.user_id,status:{type:"Error",tag:"ERRORRRR!"} });
+  res.render("pages/About.jsx", { uuid: req.session.user_id });
 });
 app.get("/upload", isUser, (req, res) => {
   res.render("pages/Upload.jsx", { uuid: req.session.user_id });
@@ -371,7 +371,9 @@ app.post("/login", (req, res) => {
 });
 app.get("/register", (req, res) => {
   if (req.session.user_id) {
-    res.render("pages/About.jsx",{status:{type:"Error",tag:"You are already logged in!"}});
+    res.render("pages/About.jsx", {
+      status: { type: "Error", tag: "You are already logged in!" },
+    });
   } else {
     res.render("pages/Register.jsx");
   }

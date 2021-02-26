@@ -54,3 +54,26 @@
     }
   }
 }
+@mixin animation-bounce($f1, $f2) {
+  @keyframes bounce {
+    0% {
+      color: $f1;
+    }
+
+    50% {
+      color: $f2;
+    }
+    100% {
+      color: $f1;
+    }
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

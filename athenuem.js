@@ -38,6 +38,7 @@ exports.userUploadStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     let path = __dirname + "/uploads/" + req.session.user_id + "/";
     if (!fs.existsSync(path)) {
+      fs.mkdirSync(__dirname + "/uploads/");
       fs.mkdirSync(path);
     }
     cb(null, path);
