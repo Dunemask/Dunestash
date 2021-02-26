@@ -1,12 +1,18 @@
-//Imports "_colors.scss"
-/*html {
+@import "global/colors", "global/fonts", "global/measurements",
+  "global/animations";
+@import "components/Navbar";
+html {
   margin-left: auto;
   margin-right: auto;
   margin-top: 0;
   height: 100%;
-  color: $fadedWhite;
-  background: linear-gradient(70deg, black 0%, #848486 100%) no-repeat center
-    center fixed;
+  color: $foreground;
+  background: linear-gradient(
+      70deg,
+      $backgroundGradientStart 0%,
+      $backgroundGradientEnd 100%
+    )
+    no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -24,4 +30,4 @@ select:focus,
 textarea:focus,
 button:focus {
   outline: none;
-}*/
+}

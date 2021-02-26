@@ -32,7 +32,7 @@ const isUser = (req, res, next) => {
 };
 //Router Requests
 app.get("/", (req, res) => {
-  res.render("pages/About.jsx", { uuid: req.session.user_id });
+  res.render("pages/About.jsx", { uuid: req.session.user_id,status:{type:"Error",tag:"ERRORRRR!"} });
 });
 app.get("/upload", isUser, (req, res) => {
   res.render("pages/Upload.jsx", { uuid: req.session.user_id });

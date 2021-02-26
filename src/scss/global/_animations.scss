@@ -1,0 +1,56 @@
+/*Shimmer for links*/
+@-webkit-keyframes glowingShimmer {
+  0% {
+    background-position: -4rem top;
+    /*50px*/
+  }
+  70% {
+    background-position: 12.5rem top;
+    /*200px*/
+  }
+  100% {
+    background-position: 12.5rem top;
+    /*200px*/
+  }
+}
+
+@keyframes status-indicator-success-transition {
+  0% {
+    height: 100%;
+    background-color: rgba($errorColor, 0.75);
+    color: ($foreground);
+  }
+  100% {
+    background-color: rgba($successColor, 0);
+    olor: ($foreground);
+    height: 0;
+  }
+}
+@keyframes status-indicator-fail-transition {
+  0% {
+    height: 100%;
+    background-color: rgba(164, 0, 0, 0.75);
+    color: (255, 255, 255, 1);
+  }
+  100% {
+    background-color: rgba(164, 0, 0, 0);
+    height: 0;
+    color: (255, 255, 255, 0);
+  }
+}
+@mixin animation-breathe($b1, $b2, $f1, $f2) {
+  @keyframes breathe {
+    0% {
+      background-color: $b1;
+      color: $f1;
+    }
+    50% {
+      background-color: $b2;
+      color: $f2;
+    }
+    100% {
+      background-color: $b1;
+      color: $f1;
+    }
+  }
+}

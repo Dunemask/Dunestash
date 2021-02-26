@@ -1,11 +1,16 @@
-@import "../index.scss";
-//Imports "_colors.scss","../components/Topbar.scss"
+@import "../global";
+@include animation-breathe(
+  $sectionMenuOptions,
+  $foreground,
+  $foreground,
+  $successColor
+);
 .user-panel{
   margin:$contentTopGap auto;
-  background-color: $backgroundShadeDarker;
+  background-color: $sectionBackground;
   width:400px;
   height:480px;
-  border-radius: 10px;
+  border-radius: $defaultBorderRadius;
 }
 .panel-icon-container{
   margin:auto;
@@ -38,11 +43,11 @@
 
 #username-entry{
   font-size: 24px;
-  color:$boldWhite;
+  color:$foreground;
   line-height: 30px;
-  border:1px solid $sectionHighlight;
+  border:1px solid $sectionMenuOptions;
   border-radius: 5px;
-  background-color:$sectionHighlightDarker;
+  background-color:$sectionMenu;
   padding:10px;
   max-width: 330px;
 }
@@ -52,25 +57,10 @@
 .username-entry-container h1{
   text-align: left;
 }
-@keyframes uploadSubHover {
-    0% {
-        background-color: $dyingGrey;
-        color: $boldWhite;
-    }
-
-    50% {
-        color: $uploadLime;
-        background-color: $boldWhite;
-    }
-    100% {
-        background-color: $dyingGrey;
-        color: $boldWhite;
-    }
-}
 
 #user-information-form input[type=submit], .user-information-form-actions a {
     padding: 5px 15px;
-    background-color: $sectionHighlightDarker;
+    background-color: $sectionMenuOptions;
     color:white;
     border: 0 none;
     cursor: pointer;
@@ -82,7 +72,7 @@
 }
 
 #user-information-form input[type=submit]:hover, .user-information-form-actions a:hover {
-    animation: uploadSubHover 3s infinite;
+    animation: breathe 3s infinite;
 }
 .password-change-link{
   padding:5px;
@@ -91,7 +81,7 @@
 .password-change-link a{
   text-decoration: none;
   font-size: 20px;
-  color: $fadedWhite;
+  color: $foreground;
   padding: 0px 4px;
   overflow: hidden;
   white-space: nowrap;
@@ -99,12 +89,12 @@
 
 .password-change-link a:hover{
   text-shadow: none;
-  background: white -webkit-gradient(linear, 100% 0, 0 0, from($fadedWhite), color-stop(0.5, $navShimmer), to($fadedWhite));
+  background: $foreground -webkit-gradient(linear, 100% 0, 0 0, from($foreground), color-stop(0.5, $backgroundGradientStart), to($foreground));
   background-position: -4rem top;
   background-repeat: no-repeat;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  -webkit-animation-name: shimmer;
+  -webkit-animation-name: glowingShimmer;
   -webkit-animation-duration: 4s;
   -webkit-animation-iteration-count: infinite;
   -webkit-background-size: 4rem 100%;

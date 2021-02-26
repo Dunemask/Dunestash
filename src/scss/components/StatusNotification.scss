@@ -1,29 +1,4 @@
-@import "../colors";
-@keyframes status-indicator-success-transition {
-  0% {
-        height: 100%;
-        background-color:rgba(0,164,0,.75);
-        color:(255,255,255,1);
-    }
-    100% {
-        background-color:rgba(0,164,0,0.0);
-        color:(255,255,255,0);
-        height:0;
-    }
-}
-@keyframes status-indicator-fail-transition {
-  0% {
-        height: 100%;
-        background-color: rgba(164,0,0,.75);
-        color:(255,255,255,1);
-    }
-    100% {
-        background-color:rgba(164,0,0,0.0);
-        height:0;
-        color:(255,255,255,0);
-    }
-}
-
+//Imports everything through Navbar
 .status-indicator-fail{
   position:absolute;
   width: 100%;
