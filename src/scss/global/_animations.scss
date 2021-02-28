@@ -14,30 +14,31 @@
   }
 }
 
-@keyframes status-indicator-success-transition {
-  0% {
-    height: 100%;
-    background-color: rgba($errorColor, 0.75);
-    color: ($foreground);
+@keyframes fade-in {
+  0%{
+    opacity: 0;
   }
   100% {
-    background-color: rgba($successColor, 0);
-    olor: ($foreground);
-    height: 0;
+    opacity: 1;
   }
 }
-@keyframes status-indicator-fail-transition {
-  0% {
-    height: 100%;
-    background-color: rgba(164, 0, 0, 0.75);
-    color: (255, 255, 255, 1);
+
+
+@keyframes toastify-notification {
+  90%{
+    opacity: 1;
+  }
+  99%{
+    opacity:0;
   }
   100% {
-    background-color: rgba(164, 0, 0, 0);
-    height: 0;
-    color: (255, 255, 255, 0);
+    opacity:0;
+    visibility: hidden;
+
   }
+
 }
+
 @mixin animation-breathe($b1, $b2, $f1, $f2) {
   @keyframes breathe {
     0% {

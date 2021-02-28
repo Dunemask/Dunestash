@@ -1,6 +1,7 @@
 const db = require("../database.js");
 import React from "react";
 import Navbar from "./components/Navbar";
+import Toast from "./components/ToastNotification";
 module.exports = class Page extends React.Component {
   constructor(props) {
     super(props);
@@ -11,45 +12,31 @@ module.exports = class Page extends React.Component {
       username = username.charAt(0).toUpperCase() + username.slice(1); //Uppercase first letter of their username
     }
     userImage = props.userImage ?? db.getUserImage(props.uuid);
-    this.NavbarArguments = {
-      userImage,
-      username,
-      status: props.status,
-    };
     this.username = username;
     this.userImage = userImage;
     this.title = props.title;
-    this.Favicon = <link rel="shortcut icon" href="/favicon.png"></link>;
-    this.Navbar = <Navbar {...this.NavbarArguments}> </Navbar>;
-    this.Stylesheet = (
-      <link
-        rel="stylesheet"
-        type="text/css"
-        href={props.stylesheet ?? `/css/${this.title}.css`}
-      ></link>
-    );
-    this.FontAwesome = (
-      <script src="https://use.fontawesome.com/86339af6a5.js"></script>
-    );
-    this.ViewportMeta = (
-      <meta
-        name="viewport"
-        content="width=device-width, initial-scale=.75"
-      ></meta>
-    );
+    this.Navbar = <Navbar userImage={userImage} username={username}></Navbar>;
     this.Scripts = props.scripts;
-    this.NavScript = (
-      <script type="text/javascript" src="/js/navbar.js" defer></script>
-    );
+    const status = { type: "Success", tag: "YEYY" };
     this.BuildPage = (child) => {
       return (
         <html>
           <head>
-            {this.Favicon}
-            {this.ViewportMeta}
-            {this.Stylesheet}
-            {this.NavScript}
-            {this.FontAwesome}
+            <link rel="shortcut icon" href="/favicon.png"></link>
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=.75"
+            ></meta>
+            <link
+              rel="stylesheet"
+              type="text/css"
+              href={props.stylesheet ?? `/css/${this.title}.css`}
+            ></link>
+            <script
+              src="https://use.fontawesome.com/86339af6a5.js"
+              defer
+            ></script>
+            <script src="js/toaster.js" defer></script>
             {this.Scripts &&
               this.Scripts.map((script, index) => (
                 <script key={script} src={`/js/${script}`} defer></script>
@@ -58,6 +45,7 @@ module.exports = class Page extends React.Component {
           </head>
           <body>
             {this.Navbar}
+            <Toast message="Hello World!" backgroundColor="green" />
             {child}
           </body>
         </html>

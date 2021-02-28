@@ -60,9 +60,12 @@ module.exports = class Files extends Page {
                   ))}
                 </ul>
               </div>
-              {this.files.length == 0 && !this.linkedMode &&(
+              {this.files.length == 0 && !this.linkedMode && (
                 <h2>
-                  No files found <a href="/upload" id="no-files-link">click here </a>
+                  No files found{" "}
+                  <a href="/upload" id="no-files-link">
+                    click here{" "}
+                  </a>
                   to upload some!
                 </h2>
               )}
