@@ -5,8 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node server.js --no-warnings",
-    "watch-css": "node-sass -w src/scss/pages/ -o www/css/",
-    "build-css": "node-sass src/scss/pages/ -o www/css/",
+    "watch": "node-sass -w src/scss/pages/ -o www/css/",
     "test-once": "node-sass scss/pages/ -o ../css/ && node index.js",
     "test": "nodemon server.js"
   },
@@ -21,17 +20,24 @@
   },
   "homepage": "https://github.com/Dunemask/npmserver#readme",
   "dependencies": {
+    "axios": "^0.21.1",
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
+    "classnames": "^2.2.6",
     "express": "^4.17.1",
     "express-react-views": "^0.11.0",
     "express-session": "^1.17.1",
     "fs": "0.0.1-security",
-    "js": "^0.1.0",
     "multer": "^1.4.2",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "rimraf": "^3.0.2",
-    "uuid-random": "^1.3.2"
+    "node-sass": "^4.14.1",
+    "plupload": "^2.3.6",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-dropzone": "^11.0.1",
+    "react-dropzone-uploader": "^2.11.0",
+    "react-plupload": "0.0.21",
+    "reactstrap": "^8.4.1",
+    "rimraf": "^3.0.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.3"

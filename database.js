@@ -3,421 +3,418 @@ const defaultImage = "/files/images/blank_user.svg";
 const FILESIZE_MB = Math.pow(1024, 2);
 const FILESIZE_GB = Math.pow(1024, 3);
 const defaultStorageSize = 2;
-const rimraf = require("rimraf");
-const databaseLocation = __dirname + "/src/database.json";
-const nemoLocation = __dirname + "/src/nemo.json";
-const randUuid = require("uuid-random");
-let usersCont;
-let nemo;
-if (!fs.existsSync(databaseLocation)) {
-  let dbcont = {
-    users: {
-      "0": {
-        username: "admin",
-        password: "password",
-        storage: 1000,
-      },
-    },
-  };
-  let data = JSON.stringify(dbcont, null, 1);
-  fs.writeFileSync(databaseLocation, data);
-  usersCont = dbcont["users"];
-} else {
-  usersCont = JSON.parse(fs.readFileSync(databaseLocation))["users"];
+const rimraf = require('rimraf');
+
+const bcrypt = require('bcrypt'); // Hashing
+const SALT_ROUNDS = 10;
+
+const dugdbLocation = __dirname + "/src/dugdatabase.json"
+const dugdbTempPath = __dirname + "/src/dugdatabase-tmp.json"
+const ddb = require('./dugdb.js'); // Main Database Object
+
+const adminConfig = {useAdmin:true, email:"abc@xyz.com", pwd:"password", username:"admin",storage:999};
+
+let dugdb;
+
+let dbChanged = false;
+
+
+exports.init = () => {
+    dugdb = new ddb.Dugdb();
+    if(fs.existsSync(dugdbLocation)) {
+        dugdb.loadData(JSON.parse(fs.readFileSync(dugdbLocation)));
+    } else {
+        if(adminConfig.useAdmin) {
+            const hash = bcrypt.hashSync(adminConfig.pwd, SALT_ROUNDS);
+            let admin = dugdb.newUser(adminConfig.username, hash, adminConfig.email, adminConfig.storage);
+            dugdb.addUser(admin);
+        }
+    }
 }
-if (!fs.existsSync(nemoLocation)) {
-  nemo = { files: {}, groups: {} };
-  let data = JSON.stringify({ nemo }, null, 1);
-  fs.writeFileSync(nemoLocation, data);
-} else {
-  nemo = JSON.parse(fs.readFileSync(nemoLocation))["nemo"];
+
+// User Creation
+exports.createUser = function(username, password, email) { // Setus up new user
+    if (this.userExists(username)) {
+        console.log("Username already exists"); // should be checked in Server.js but this is extra
+        return;
+    }
+    const hash = bcrypt.hashSync(password, SALT_ROUNDS);
+    let u = dugdb.newUser(username, hash, email, defaultStorageSize);
+    let uuid = dugdb.addUser(u);
+    dbChanged = true;
+    fs.mkdirSync(`${__dirname}/uploads/${uuid}`);
+    return uuid;
 }
-let userStorageChanged = false;
-let nemoStorageChanged = false;
-//UserData
-exports.getUuid = function (user) {
+exports.deleteUser = function(uuid) { // Removes user
+    for(i in dugdb.users[uuid].ownedFiles){
+        this.deleteFile(i, uuid);
+    }
+    delete dugdb.users[uuid];
+    rimraf.sync(__dirname+"uploads/"+uuid+"/");
+    return true;
+    dbChanged=true;
+}
+// User Data
+exports.getUuid = function(username) { // Returns user uuid by searching username
   let uid;
-  for (key in usersCont) {
-    let u = usersCont[key]["username"];
-    if (u.toLowerCase() == user) {
-      uid = key;
-      break;
-    }
-  }
-  return uid;
-};
-exports.getUser = function (uuid) {
-  return usersCont[uuid]["username"];
-};
-exports.getUserStorageSize = function (uuid) {
-  return parseInt(usersCont[uuid]["storage"]) * FILESIZE_GB;
-};
-exports.getUserImage = function (uuid) {
-  let userImage = `/files/images/user-images/${uuid}`;
-  if (!fs.existsSync(__dirname + "/www" + userImage) || uuid == undefined) {
-    userImage = defaultImage;
-  }
-  return userImage;
-};
-exports.getTemporaryUserImage = function (uuid) {
-  let userImage = `/files/images/user-images/${uuid}`;
-  if (fs.existsSync(__dirname + "/www" + userImage + "-tmp")) {
-    return `/files/images/user-images/${uuid}-tmp`;
-  } else {
-    return exports.getUserImage(uuid);
-  }
-};
-exports.removeTemporaryUserImage = function (uuid) {
-  let userImage = __dirname + `/www/files/images/user-images/${uuid}`;
-  let userImageTmp = userImage + "-tmp";
-  if (fs.existsSync(userImageTmp)) {
-    fs.unlinkSync(userImageTmp);
-    return true;
-  }
-  return false;
-};
-exports.getUserGroups = function (uuid) {
-  return usersCont[uuid]["groups"];
-};
-exports.getGroupMembers = function (gid) {
-  if (!nemo.groups || !nemo.groups[gid]) return;
-  return nemo.groups[gid];
-};
-exports.validateCredentials = function (user, pass) {
-  let working = false;
-  if (!user) return false;
-  let uuid = this.getUuid(user.toLowerCase());
-  if (uuid != undefined && pass != undefined) {
-    if (usersCont[uuid]["password"] == pass) {
-      working = true;
-    }
-  }
-  return working;
-};
-exports.validateCredentialsOnUuid = function (uuid, pass) {
-  let working = false;
-  if (uuid != undefined && pass != undefined) {
-    if (usersCont[uuid]["password"] == pass) {
-      working = true;
-    }
-  }
-  return working;
-};
-exports.changeUsername = function (uuid, username) {
-  let usernameTaken = false;
-  for (key in usersCont) {
-    if (usersCont[key]["username"] == username) {
-      usernameTaken = true;
-      break;
-    }
-  }
-  if (!usernameTaken) {
-    usersCont[uuid]["username"] = username;
-    userStorageChanged = true;
-  }
-  return usernameTaken;
-};
-exports.changePassword = function (uuid, password) {
-  usersCont[uuid]["password"] = password;
-  userStorageChanged = true;
-  return;
-};
-exports.groupEditFriendly = function (name, gid, uuid) {
-  if (!usersCont[uuid]["groups"]) {
-    usersCont[uuid]["groups"] = {};
-  }
-  usersCont[uuid]["groups"][gid] = name;
-  userStorageChanged = true;
-};
-//Update Databases
-exports.updateUserStorage = function (forceUpdate) {
-  if (userStorageChanged || forceUpdate) {
-    userStorageChanged = false;
-    let data = JSON.stringify({ users: usersCont }, null, 1);
-    let jsonPath = databaseLocation;
-    let jsonTempPath = __dirname + "/src/database-tmp.json";
-    //If The temp Exists, explode, IT SHOULD NOT EXIST
-    if (!fs.existsSync(jsonTempPath)) {
-      fs.copyFileSync(jsonPath, jsonTempPath, fs.constants.COPYFILE_EXCL);
-    } else {
-      console.error("MEGA ISSUE DO NOT RUN NEXT CODE!");
-      return;
-    }
-    let doubleCheckSuccess = false;
-    try {
-      fs.unlinkSync(jsonPath);
-      fs.writeFileSync(jsonPath, data);
-      doubleCheckSuccess = true;
-    } catch (err) {
-      console.error("ISSUE COPYING, REVERTING TO PREVIOUS VERSION");
-      fs.copyFileSync(jsonTempPath, jsonPath, fs.constants.COPYFILE_EXCL);
-    }
-    if (doubleCheckSuccess) {
-      fs.unlinkSync(jsonTempPath);
-    }
-  }
-};
-exports.updateNemoStorage = function (forceUpdate) {
-  if (nemoStorageChanged || forceUpdate) {
-    nemoStorageChanged = false;
-    let data = JSON.stringify({ nemo }, null, 1);
-    let jsonPath = nemoLocation;
-    let jsonTempPath = __dirname + "/src/nemo-tmp.json";
-    //If The temp Exists, explode, IT SHOULD NOT EXIST
-    if (!fs.existsSync(jsonTempPath)) {
-      fs.copyFileSync(jsonPath, jsonTempPath, fs.constants.COPYFILE_EXCL);
-    } else {
-      console.error("MEGA ISSUE DO NOT RUN NEXT CODE!");
-      return;
-    }
-    let doubleCheckSuccess = false;
-    try {
-      fs.unlinkSync(jsonPath);
-      fs.writeFileSync(jsonPath, data);
-      doubleCheckSuccess = true;
-    } catch (err) {
-      console.error("ISSUE COPYING, REVERTING TO PREVIOUS VERSION");
-      fs.copyFileSync(jsonTempPath, jsonPath, fs.constants.COPYFILE_EXCL);
-    }
-    if (doubleCheckSuccess) {
-      fs.unlinkSync(jsonTempPath);
-    }
-  }
-};
-exports.updateAllStorage = function (forceUpdate) {
-  exports.updateUserStorage(forceUpdate);
-  exports.updateNemoStorage(forceUpdate);
-};
-//Groups and File Control
-exports.authorizedToViewFile = function (targetUser, target, id) {
-  if (targetUser == id) {
-    return true;
-  } else if (!nemo.files[targetUser]) {
-    return false;
-  } else if (
-    !nemo.files[targetUser]["owned"][target]["edit"] &&
-    !nemo.files[targetUser]["owned"][target]["view"]
-  ) {
-    return false;
-  } else if (nemo.files[targetUser]["owned"][target]["view"].includes(id)) {
-    console.log("THIS ONE");
-    return true;
-  } else {
-    return nemo.files[targetUser]["owned"][target]["edit"].includes(id);
-  }
-};
-exports.authorizedToEditFile = function (targetUser, target, id) {
-  if (targetUser == id) {
-    return true;
-  } else if (!nemo.files[targetUser]) {
-    return false;
-  } else if (!nemo.files[targetUser]["owned"][target]["edit"]) {
-    return false;
-  } else {
-    return nemo.files[targetUser]["owned"][target]["edit"].includes(id);
-  }
-};
-exports.getLinkedFiles = function (id) {
-  if (!nemo.files[id]) {
-    return [];
-  }
-  return nemo.files[id].linked;
-};
-exports.getOwnedFiles = function (id) {
-  if (!nemo.files[id]) {
-    return [];
-  }
-  return nemo.files[id].owned;
-};
-exports.getGroupFiles = function (gid, id) {
-  if (!nemo.groups || !nemo.groups[gid]) return;
-  if (!nemo.groups[gid].includes(id)) return;
-
-  let groupFiles = [];
-  for (let user in nemo.groups[gid]) {
-    /*For each File in Each users's directory In the group*/
-    for (let file in nemo.files[nemo.groups[gid][user]].groupfiles[gid]) {
-      groupFiles.push({ id: nemo.groups[gid][user], file });
-    }
-  }
-  return groupFiles;
-};
-exports.addFile = function (file, id) {
-  if (!nemo.files[id]) {
-    nemo.files[id] = {
-      owned: {},
-      linked: {},
-      groupfiles: {},
-    };
-  }
-  nemo.files[id].owned[file] = {};
-  nemoStorageChanged = true;
-  return true;
-};
-exports.deleteFile = function (file, targetUser) {
-  if (!nemo.files[targetUser]) {
-    return;
-  }
-  exports.removeShare(file, targetUser);
-  delete nemo.files[targetUser].owned[file];
-  nemoStorageChanged = true;
-  return true;
-};
-exports.shareFile = function (file, options, uuid) {
-  if (!nemo.files[uuid].owned[file]) {
-    return;
-  }
-  nemo.files[uuid].owned[file] = {
-    edit: options.edit,
-    view: options.view,
-  };
-  for (let id in options.edit) {
-    if (!nemo.files[options.edit[id]]) {
-      nemo.files[options.edit[id]] = {
-        owned: {},
-        linked: {},
-        groupfiles: {},
-      };
-    }
-    if (options.edit[id] != `${uuid}`) {
-      nemo.files[options.edit[id]].linked[file] = uuid;
-    }
-  }
-
-  for (let id in options.view) {
-    if (!nemo.files[options.view[id]]) {
-      nemo.files[options.view[id]] = {
-        owned: {},
-        linked: {},
-        groupfiles: {},
-      };
-    }
-    if (options.view[id] != `${uuid}`) {
-      nemo.files[options.view[id]].linked[file] = uuid;
-    }
-  }
-  nemoStorageChanged = true;
-  return true;
-};
-exports.createGroup = function (gid, members) {
-  //Return nothing if the group already exists
-  if (gid in nemo.groups) {
-    return;
-  }
-  //Assign the actual members to the groupID and generate a predefined "Friendly Name"
-  nemo.groups[gid] = members;
-  let selectedValues = [];
-  let val;
-  //If there are less than 3 members, automatically push both of them to the friendly name.
-  if (members.length < 2) {
-    selectedValues.push(0);
-  }
-  //Randomly select members of the group to create the friendly name.
-  do {
-    val = Math.floor(Math.random() * Math.floor(members.length));
-    if (!selectedValues.includes(val)) {
-      selectedValues.push(val);
-    }
-  } while (selectedValues.length < 2 && members.length > 2);
-  let friendlyName;
-  //Give the friendly name to all members of the group
-  for (let m in members) {
-    if (selectedValues.includes(members[m])) {
-      selectedValues.splice(selectedValues.indexOf(members[m]), 1);
-      friendlyName = `You, ${exports.getUser(members[selectedValues[0]])}`;
-    } else {
-      friendlyName = `${exports.getUser(
-        members[selectedValues[0]]
-      )}, ${exports.getUser(members[selectedValues[1]])}...`;
-    }
-    groupEditFriendly(friendlyName, gid, members[m]);
-  }
-  //Return true and alert the database that it needs to update itself
-  nemoStorageChanged = true;
-  return true;
-};
-exports.createUser = function (username, password, uuid) {
-  if (uuid == undefined) {
-    while ((uuid = randUuid()) && usersCont[uuid] != undefined);
-  }
-  usersCont[uuid] = {};
-  usersCont[uuid]["username"] = username;
-  usersCont[uuid]["password"] = password;
-  usersCont[uuid]["storage"] = defaultStorageSize;
-  nemo.files[uuid] = {
-    owned: {},
-    linked: {},
-    groupfiles: {},
-  };
-  userStorageChanged = true;
-  nemoStorageChanged = true;
-  fs.mkdirSync(`${__dirname}/uploads/${uuid}`);
-};
-exports.deleteUser = function (uuid) {
-  delete usersCont[uuid];
-  delete nemo.files[uuid];
-  rimraf.sync(__dirname + "uploads/" + uuid + "/");
-  userStorageChanged = true;
-  nemoStorageChanged = true;
-};
-exports.shareGroupFile = function (file, options, gid, id) {
-  if (!nemo.files[id].owned[file]) {
-    return;
-  }
-  if (!options.edit[id]) {
-    options.edit.push(id);
-  }
-
-  if (!nemo.groups[gid]) return;
-  if (!nemo.files[id].groupfiles[gid]) {
-    nemo.files[id].groupfiles[gid] = [];
-  }
-  exports.shareFile(file, options, id);
-  if (!nemo.files[id].groupfiles[gid].includes(file)) {
-    nemo.files[id].groupfiles[gid].push(file);
-  } else {
-    return;
-  }
-  nemoStorageChanged = true;
-  return true;
-};
-exports.removeShare = function (file, id) {
-  if (!nemo.files[id].owned[file]) {
-    return;
-  }
-  for (let type in nemo.files[id].owned[file]) {
-    for (let user in nemo.files[id].owned[file][type]) {
-      delete nemo.files[nemo.files[id].owned[file][type][user]].linked[file];
-    }
-    delete nemo.files[id].owned[file][type];
-  }
-
-  for (let gid in nemo.files[id].groupfiles) {
-    if (nemo.files[id].groupfiles[gid].includes(file)) {
-      nemo.files[id].groupfiles[gid].splice(
-        nemo.files[id].groupfiles[gid].indexOf(file),
-        1
-      );
-      if (nemo.files[id].groupfiles[gid].length == 0) {
-        delete nemo.files[id].groupfiles[gid];
+  for(key in dugdb.users) {
+    let u = dugdb.users[key].username;
+      if(u.toLowerCase() == username.toLowerCase()) {
+        uid = key;
+        break;
       }
     }
+    return uid;
+}
+exports.userExists = (username) =>{
+  return !(!(this.getUuid(username)));
+}
+exports.userUuidExists = (uuid) =>{
+  return !(!(dugdb.users[uuid]));
+}
+exports.getUser = function(uuid) { // Returns username, misnomer call it getUsername()
+
+    return dugdb.users[uuid].username;
+}
+exports.getUserObject = function(uuid) { // Returns an object holding much information about user
+    return dugdb.users[uuid];
+}
+exports.getUserStorageSize = function(uuid){ // Storage Size
+  return parseInt(dugdb.users[uuid].storage)*FILESIZE_GB;
+}
+exports.getUserEmail = function(uuid) { // Email
+    return dugdb.users[uuid].email;
+}
+exports.getUserImage = function(uuid){ // Returns path to user image
+  let userImage =`/files/images/user-images/${uuid}`;
+  if (!fs.existsSync(__dirname+"/www"+userImage) || uuid== undefined) {
+    userImage=defaultImage;
   }
-  nemoStorageChanged = true;
-  return true;
-};
-exports.removeGroupShare = function (file, gid, id) {
-  let removeSuccess = exports.removeShare(file, id);
-  if (!removeSuccess) {
+  return userImage;
+}
+exports.getUserGroups = function(uuid) { // Returns list of group objects
+    userGroups = [];
+    for(gid in dugdb.users[uuid].groups){
+        userGroups.push(dugdb.getGroup(gid))
+    }
+  return userGroups;
+}
+exports.getUserGroupPermission = function(uuid, gid) { // Returns the permission the user has in the group
+    /*if(dugdb.groups[gid].owner = uuid) {
+        return "manager";
+    }*/
+    return dugdb.groups[gid].users[uuid].perm;
+}
+exports.validateCredentials = function(user, pass) { // username & password validation
+  let working=false;
+  if(!user)
+    return false;
+  let uuid=this.getUuid(user);
+  if(uuid!=undefined && pass!=undefined){
+    working = bcrypt.compareSync(pass,dugdb.users[uuid].hash);
+  }
+  return working;
+}
+exports.validateCredentialsOnUuid = function(uuid, pass) { // uuid & password validation
+  let working=false;
+  if(uuid!=undefined && pass!=undefined){
+    working = bcrypt.compareSync(pass,dugdb.users[uuid].hash);
+  }
+    return working;
+}
+exports.changeUsername = function(uuid, username) { // change username by uuid, accounts for all usernames in db
+    usernameTaken = this.userExists(username);
+    if(!usernameTaken){
+        dugdb.users[uuid].username = username;
+        dbChanged = true;
+    }
+    return !usernameTaken;
+}
+exports.changePassword = function(uuid, password) { // change password by uuid
+    const hash = bcrypt.hashSync(password, SALT_ROUNDS);
+    dugdb.users[uuid].hash = hash;
+    dbChanged=true;
+    return;
+}
+
+
+//Update Databases
+exports.updateUserStorage = function(forceUpdate) { // creates file to store database
+  if(dbChanged||forceUpdate){
+    if(!fs.existsSync(dugdbLocation)){
+        fs.writeFileSync(dugdbLocation,'');
+        console.log("New DB file created at: "+dugdbLocation);
+    }
+    dbChanged = false;
+    let jsonString = JSON.stringify(dugdb.getExportObject());
+    if(!fs.existsSync(dugdbTempPath)){
+        fs.copyFileSync(dugdbLocation,dugdbTempPath,fs.constants.COPYFILE_EXCL);
+    }else{
+        console.error('TMP DATABASE FILE ALREADY EXISTS FOR SOME REASON...');
+        return;
+    }
+    let doubleCheckSuccess = false;
+    try{
+        fs.unlinkSync(dugdbLocation);
+        fs.writeFileSync(dugdbLocation,jsonString);
+        doubleCheckSuccess = true;
+    } catch(err) {
+        console.error("ISSUE COPYING, REVERTING TO PREVIOUS VERSION");
+        fs.copyFileSync(dugdbTempPath,dugdbLocation,fs.constants.COPYFILE_EXCL);
+    }
+    if(doubleCheckSuccess){
+      fs.unlinkSync(dugdbTempPath);
+    }
+  }
+}
+exports.updateNemoStorage = function(forceUpdate) { // what is a nemo anyways
+  console.log("what is a nemo anyways...")
+}
+exports.updateAllStorage = function(forceUpdate) { // Updates all storage
+  exports.updateUserStorage(forceUpdate);
+  exports.updateNemoStorage(forceUpdate);
+}
+
+
+//File Control
+exports.authorizedToViewFile = function(target, id) { // is user authorized to view a file?
+  if(!this.fileExists(target)){
+  return false;
+  }
+
+    if(dugdb.files[target].owner == id){
+    return true;
+  }else if( dugdb.files[target].viewList[id] == true ||
+            dugdb.files[target].editList[id] == true){
+    return true;
+  }else{
+    for (i in dugdb.users[id].groups) {
+        let grp = dugdb.groups[i];
+        if(grp.viewFiles[target] || grp.editFiles[target]){
+            return true;
+        }
+    }
+    return false;
+  }
+}
+exports.authorizedToEditFile = function(target, id){ // is user authorized to edit file?
+    if(!this.fileExists(target)){
+  return false;
+  }
+    if(dugdb.files[target].owner == id){
+    return true;
+  }else if( dugdb.files[target].editList[id] == true){
+    return true;
+  } else {
+    for(i in dugdb.users[id].groups) {
+        let grp = dugdb.groups[i];
+        if(grp.editFiles[target]) {
+            if(grp.users[id].perm != "viewer"){
+                return true;
+            }
+        }
+    }
+      return false;
+
+  }
+}
+exports.getSharedFiles = function(id){ // Returns list of file IDs that is shared to the user
+  if(!dugdb.users[id]){
     return;
   }
-  nemo.files[id].groupfiles[gid].splice(
-    nemo.files[id].groupfiles[gid].indexOf(file),
-    1
-  );
-  if (nemo.files[id].groupfiles[gid].length == 0) {
-    delete nemo.files[id].groupfiles[gid];
+  return dugdb.users[id].sharedFiles;
+}
+exports.getOwnedFiles = function(id){ // Returns list of file IDs that is owned by the user
+  if(!dugdb.users[id]){
+    return;
   }
-  nemoStorageChanged = true;
+  return dugdb.users[id].ownedFiles;
+}
+exports.getGroupFiles = function(gid,id){ // Returns a list of files that user has access via group (both view and edit)
+  if(!dugdb.groups[gid])
+    return;
+  if(!users.groups.includes(id))
+    return;
+
+  let groupFiles = [];
+  for(i in dugdb.groups[gid].editFiles) {
+    groupFiles.push(i);
+  }
+  for(i in dugdb.groups[gid].viewFiles) {
+    groupFiles.push(i);
+  }
+  return groupFiles;
+}
+// File mutation
+exports.addFile = function(file, owner) { // Adds file based on user and file path.
+  let f = dugdb.newFile(owner, file);
+  dugdb.addFile(f);
+  dbChanged = true;
+  return f.uuid;
+}
+exports.deleteFile = function(file,targetUser) { // Deletes file from db, user, and groups...
+  if(!dugdb.files[file]) {
+    return false;
+  }
+  exports.removeShare(file,targetUser);
+  exports.removeGroupShare(file,targetUser);
+  //rimraf.sync(__dirname+"uploads/" + dugdb.files[file].path);
+  delete dugdb.files[file];
+  dbChanged=true;
   return true;
-};
+}
+exports.fileExists = function(file) { // Adds file based on user and file path.
+  return !(!dugdb.files[file]);
+}
+exports.getFile = function(file) { // Returns file object from uuid
+  return dugdb.files[file];
+}
+exports.getFilePath = function(file) { // Returns file object from uuid
+  return dugdb.files[file].path;
+}
+exports.getFileOwnerUsername = function(file) { // Returns username of owner
+  return dugdb.users[dugdb.files[file].owner].username;
+}
+// User to user sharing
+exports.shareFile = function(file, options, uuid) { // Shares a file to a uuid
+    // Current options: {edit:boolean}
+    // Also used to change the share options between user
+  if(options.edit == true) {
+    dugdb.files[file].editList[uuid] = true;
+    delete dugdb.files[file].viewList[uuid];
+
+  }else{
+    dugdb.files[file].viewList[uuid] = true;
+    delete dugdb.files[file].editList[uuid];
+  }
+  dugdb.users[uuid].sharedFiles[file] = options.edit;
+  dbChanged = true;
+  return true;
+}
+exports.removeShare = function(file) { // Unshares a file with everyone except for the owner
+  if(!this.fileExists(file)) {
+    return;
+  }
+  for(i in dugdb.files[file].viewList){
+    delete dugdb.users[i].sharedFiles[file];
+  }
+  for(i in dugdb.files[file].editList){
+    delete dugdb.users[i].sharedFiles[file];
+  }
+  dugdb.files[file].viewList = {};
+  dugdb.files[file].editList = {};
+  dgChanged = true;
+}
+exports.removeSharedUser = function(file, user) { // Unshares a file with a specific user
+  if(!this.fileExists(file) || !this.userUuidExists(user)) {
+    return;
+  }
+  delete dugdb.files[file].viewList[user];
+  delete dugdb.files[file].editList[user];
+  delete dugdb.users[user].sharedFiles[file];
+  dgChanged = true;
+  dbChanged = true;
+}
+exports.getSharedInformation = function(file) { // Returns a list of users who can access the file
+    if(!dugdb.files[file]){
+        return;
+    }
+    let obj = {edit:[],view:[]}
+    for(i in dugdb.files[file].editList){
+        let name = dugdb.getUser(i).username;
+        obj.edit.push({id:i, name:name});
+    }
+    for(i in dugdb.files[file].viewList){
+        let name = dugdb.getUser(i).username;
+        obj.view.push({id:i, name:name});
+    }
+    return obj;
+}
+
+
+
+// Group Creation
+exports.createGroup = function(uuid,name) { // Creates a group
+    let g = dugdb.newGroup(uuid,name);
+    dugdb.addGroup(g);
+    dbChanged = true;
+    return g.uuid;
+}
+exports.groupExists = (gid) => {
+    return (! (!dugdb.groups[gid]));
+}
+exports.groupNameEdit = function(name, gid) { // changes the name of a group by gid
+    dugdb.groups[gid].name = name;
+    dbChanged = true;
+    return true;
+}
+exports.getGroupName = function(gid) { // Returns name of group
+    return dugdb.groups[gid].name;
+}
+exports.getGroupById = function(gid) { // Returns group
+    return dugdb.groups[gid];
+}
+exports.getGroupUsers = function(gid) { // Returns names & Permissions
+    let obj = [];
+    for(i in dugdb.groups[gid].users) {
+        let usrobj = dugdb.groups[gid].users[i];
+        obj.push({id: usrobj.user, perm: usrobj.perm, username: dugdb.getUser(usrobj.user).username})
+    }
+    return obj;
+}
+exports.getGroupOwner = function(gid) { // Returns owner of group
+    return dugdb.groups[gid].owner;
+}
+exports.getGroupFiles = function(gid) { // Returns files in a group
+let obj = {viewFiles:dugdb.groups[gid].viewFiles,editFiles:dugdb.groups[gid].editFiles};
+    return (obj);
+}
+exports.addUserToGroup = (user, group, perm)=>{ // adds a user to a group with permissions
+    // Permissions are "viewer", "member", or "manager"
+    dugdb.addUserToGroup(user, group, perm);
+    dbChanged = true;
+    return true;
+}
+exports.removeUserFromGroup = (user, group)=>{ // adds a user to a group with permissions
+    delete dugdb.groups[gid].users[user];
+    delete dugdb.users[user].groups[gid];
+    dbChanged = true;
+    return true;
+}
+exports.shareGroupFile = function(file, options, gid) { // adds file to group with viewership
+    // Current options: {edit:boolean}
+    if(options.edit) {
+        delete dugdb.groups[gid].viewFiles[file];
+        dugdb.groups[gid].editFiles[file] = true;
+    } else {
+        dugdb.groups[gid].viewFiles[file] = true;
+        delete dugdb.groups[gid].editFiles[file];
+    }
+    dugdb.files[file].groups[gid] = true;
+    dbChanged = true;
+    return true;
+}
+exports.removeGroupFile = function(file,  gid) { // removes file from group
+    delete dugdb.groups[gid].viewFiles[file];
+    delete dugdb.groups[gid].editFiles[file];
+    delete dugdb.files[file].groups[gid];
+    dbChanged = true;
+    return true;
+}
+exports.removeGroupShare = function(file) { // Unshares a file with everyone in every group
+    if(!dugdb.files[file]) {
+        return;
+    }
+    for(i in dugdb.files[file].groups) {
+        this.removeGroupFile(file,i);
+    }
+    dugdb.files[file].groups = {};
+    return true;
+}
+
+exports.getDDB = () =>{ // shouldn't be used, only for testing/seeing what's wrong
+    return dugdb;
+}
+
+
+// NEED TO TEST OUT ALL FUNCTIONS AND THEN ADD SOME MORE WHEN I FEEL LIKE ITz
