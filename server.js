@@ -4,6 +4,7 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const fs = require("fs");
 const db = require("./database.js");
+db.init();
 const ath = require("./athenuem.js");
 const pr = require("./prerender.js");
 //Define Constants
@@ -49,24 +50,11 @@ app.get("/files", isUser, (req, res) => {
 });
 app.get("/share", isUser, (req, res) => {
   if (
-    req.query.nemo != undefined &&
     req.query.target != undefined &&
-    db.authorizedToEditFile(
-      req.query.nemo,
-      req.query.target,
-      req.session.user_id
-    )
+    db.authorizedToEditFile(req.query.target, req.session.user_id)
   ) {
     let groups = db.getUserGroups(req.session.user_id);
-    let fileDisplay = pr.fileDisplayBuilder(req.query.target);
-    let displayFile = new pr.DisplayFile(
-      req.query.nemo,
-      req.query.target,
-      fileDisplay.fileString,
-      fileDisplay.date,
-      pr.linkedOptions(req.query.nemo, req.query.target, req.session.user_id)
-    );
-    //pr.sharePageRender(req.session.user_id,req.query.nemo,req.query.target)
+    let displayFile = pr.sharePageRender(req.query.target);
     res.render("pages/Share.jsx", {
       uuid: req.session.user_id,
       groups,
@@ -93,30 +81,26 @@ app.post("/upload", isUser, (req, res) => {
   });
 });
 app.get("/download", isUser, (req, res) => {
-  if (
-    db.authorizedToViewFile(
-      req.query.nemo,
-      req.query.target,
-      req.session.user_id
-    )
-  ) {
+  if (db.authorizedToViewFile(req.query.target, req.session.user_id)) {
     let path =
-      __dirname + "/uploads/" + req.query.nemo + "/" + req.query.target;
+      __dirname +
+      "/uploads/" +
+      db.getFile(req.query.target).owner +
+      "/" +
+      db.getFile(req.query.target).path;
     res.download(path);
   } else {
     res.redirect(req.header("Referer") || "/");
   }
 });
 app.get("/rawdata", isUser, (req, res) => {
-  if (
-    db.authorizedToViewFile(
-      req.query.nemo,
-      req.query.target,
-      req.session.user_id
-    )
-  ) {
+  if (db.authorizedToViewFile(req.query.target, req.session.user_id)) {
     let path =
-      __dirname + "/uploads/" + req.query.nemo + "/" + req.query.target;
+      __dirname +
+      "/uploads/" +
+      db.getFile(req.query.target).owner +
+      "/" +
+      db.getFile(req.query.target).path;
     if (!req.query.target) {
       res.redirect("/");
     } else if (!fs.existsSync(path)) {
@@ -128,26 +112,14 @@ app.get("/rawdata", isUser, (req, res) => {
     res.redirect(req.header("Referer") || "/");
   }
 });
-app.get("/delete-file", isUser, (req, res) => {
+app.all("/delete-file", isUser, (req, res) => {
   //delete-file?nemo=0&target=File1.txt
-  if (
-    db.authorizedToEditFile(
-      req.query.nemo,
-      req.query.target,
-      req.session.user_id
-    )
-  ) {
-    try {
-      fs.unlinkSync(
-        `${__dirname}/uploads/${req.session.user_id}/${req.query.target}`
-      );
-      let deleted = db.deleteFile(req.query.target, req.session.user_id);
-      console.log(`Deleted File ${req.query.target}: ${deleted}`);
-      res.redirect("/files");
-    } catch (err) {
-      console.error(err);
-    }
+  if (db.authorizedToEditFile(req.query.target, req.session.user_id)) {
+    let deleted = db.deleteFile(req.query.target);
+    console.log(`Deleted File ${req.query.target}: ${deleted}`);
+    res.redirect("/files");
   } else {
+    console.log("No perm");
     res.redirect(req.header("Referer") || "/");
   }
 });
@@ -162,7 +134,6 @@ app.post("/share", isUser, (req, res) => {
     shareFailed = false;
   if (
     db.authorizedToEditFile(
-      req.query.nemo,
       req.query.target,
       req.session.user_id
     )
@@ -408,7 +379,6 @@ app.post("/register", (req, res) => {
     res.render("pages/Login.jsx", { status });
   }
 });
-
 //Routing "Errors"
 app.get("/page-not-found", (req, res) => {
   res.render("pages/Page404.jsx", { uuid: req.session.user_id });

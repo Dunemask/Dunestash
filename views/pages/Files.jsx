@@ -29,26 +29,26 @@ module.exports = class Files extends Page {
                     <li key={index}>
                       <div className="file-actions">
                         <a
-                          href={`/rawdata?nemo=${file.nemo}&target=${file.target}`}
+                          href={`/rawdata?target=${file.target}`}
                           className="link-get"
                         >
                           {file.filename}
                         </a>
                         <div className="file-options">
                           <a
-                            href={`/download?nemo=${file.nemo}&target=${file.target}`}
+                            href={`/download?target=${file.target}`}
                             className="link-download"
                           >
                             <i className="fa fa-download"></i>
                           </a>
                           <a
-                            href={`/share?nemo=${file.nemo}&target=${file.target}`}
+                            href={`/share?&target=${file.target}`}
                             className="link-share"
                           >
                             <i className="fa fa-share-square-o"></i>
                           </a>
                           <a
-                            href={`/delete-file?nemo=${file.nemo}&target=${file.target}`}
+                            href={`/delete-file?target=${file.target}`}
                             className="link-delete"
                           >
                             <i className="fa fa-trash"></i>
