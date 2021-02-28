@@ -41,7 +41,6 @@ app.get("/upload", isUser, (req, res) => {
 app.get("/files", isUser, (req, res) => {
   let linkedMode = req.query.type == "linked";
   let filePrerender = pr.filesPageRender(req.session.user_id, linkedMode);
-
   res.render("pages/Files.jsx", {
     uuid: req.session.user_id,
     displayFiles: filePrerender.displayFiles,

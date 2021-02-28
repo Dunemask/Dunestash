@@ -1,0 +1,47 @@
+/**
+ * Based On toastify.min.css from toastify-js
+ */
+
+.toast-notification {
+  padding: 12px 20px;
+  color: #fff;
+  display: flex;
+  box-shadow: 0 3px 6px -1px rgba(0, 0, 0, 0.12),
+    0 10px 36px -4px rgba(77, 96, 232, 0.3);
+  background: $informationColor;
+  border-radius: 2px;
+  cursor: pointer;
+  text-decoration: none;
+  min-width: $toastMinWidth;
+  max-width: $toastMaxWidth;
+  z-index: 2147483647;
+  opacity: 1;
+  word-wrap: break-word;
+  float: right;
+  position: absolute;
+  top: 0;
+  right: 0px;
+  word-wrap: break-word;
+  min-height: calc(#{$navBarHeight - 24px});
+  overflow: hidden;
+}
+
+.toast-notification-off {
+  animation: toastify-notification .8s forwards;
+}
+
+.toast-message {
+  height: auto;
+  margin: 0 auto;
+  min-width: $toastMinWidth;
+  max-width: $toastMaxWidth;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  word-wrap: break-word;
+}
+
+#toast-notification-close {
+  opacity: 0.4;
+  float: right;
+}
