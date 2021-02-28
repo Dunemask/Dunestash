@@ -1,7 +1,7 @@
 const fs = require("fs");
-const defaultImage='/files/images/blank_user.svg';
-const FILESIZE_MB = Math.pow(1024,2);
-const FILESIZE_GB = Math.pow(1024,3);
+const defaultImage = "/files/images/blank_user.svg";
+const FILESIZE_MB = Math.pow(1024, 2);
+const FILESIZE_GB = Math.pow(1024, 3);
 const defaultStorageSize = 2;
 const rimraf = require('rimraf');
 
@@ -22,14 +22,14 @@ let dbChanged = false;
 exports.init = () => {
     dugdb = new ddb.Dugdb();
     if(fs.existsSync(dugdbLocation)) {
-        dugdb.loadData(JSON.parse(fs.readFileSync(dugdbLocation)));  
+        dugdb.loadData(JSON.parse(fs.readFileSync(dugdbLocation)));
     } else {
         if(adminConfig.useAdmin) {
             const hash = bcrypt.hashSync(adminConfig.pwd, SALT_ROUNDS);
             let admin = dugdb.newUser(adminConfig.username, hash, adminConfig.email, adminConfig.storage);
             dugdb.addUser(admin);
         }
-    }      
+    }
 }
 
 // User Creation
@@ -72,11 +72,11 @@ exports.userExists = (username) =>{
 exports.userUuidExists = (uuid) =>{
   return !(!(dugdb.users[uuid]));
 }
-exports.getUser = function(uuid) { // Returns username, misnomer call it getUsername()  
-    
+exports.getUser = function(uuid) { // Returns username, misnomer call it getUsername()
+
     return dugdb.users[uuid].username;
 }
-exports.getUserObject = function(uuid) { // Returns an object holding much information about user  
+exports.getUserObject = function(uuid) { // Returns an object holding much information about user
     return dugdb.users[uuid];
 }
 exports.getUserStorageSize = function(uuid){ // Storage Size
@@ -123,7 +123,7 @@ exports.validateCredentialsOnUuid = function(uuid, pass) { // uuid & password va
     return working;
 }
 exports.changeUsername = function(uuid, username) { // change username by uuid, accounts for all usernames in db
-    usernameTaken = this.userExists(username);  
+    usernameTaken = this.userExists(username);
     if(!usernameTaken){
         dugdb.users[uuid].username = username;
         dbChanged = true;
@@ -131,7 +131,7 @@ exports.changeUsername = function(uuid, username) { // change username by uuid, 
     return !usernameTaken;
 }
 exports.changePassword = function(uuid, password) { // change password by uuid
-    const hash = bcrypt.hashSync(password, SALT_ROUNDS);  
+    const hash = bcrypt.hashSync(password, SALT_ROUNDS);
     dugdb.users[uuid].hash = hash;
     dbChanged=true;
     return;
@@ -184,7 +184,7 @@ exports.authorizedToViewFile = function(target, id) { // is user authorized to v
 
     if(dugdb.files[target].owner == id){
     return true;
-  }else if( dugdb.files[target].viewList[id] == true || 
+  }else if( dugdb.files[target].viewList[id] == true ||
             dugdb.files[target].editList[id] == true){
     return true;
   }else{
@@ -200,7 +200,7 @@ exports.authorizedToViewFile = function(target, id) { // is user authorized to v
 exports.authorizedToEditFile = function(target, id){ // is user authorized to edit file?
     if(!this.fileExists(target)){
   return false;
-  }  
+  }
     if(dugdb.files[target].owner == id){
     return true;
   }else if( dugdb.files[target].editList[id] == true){
@@ -303,7 +303,7 @@ exports.removeShare = function(file) { // Unshares a file with everyone except f
   }
   dugdb.files[file].viewList = {};
   dugdb.files[file].editList = {};
-  dgChanged = true;  
+  dgChanged = true;
 }
 exports.removeSharedUser = function(file, user) { // Unshares a file with a specific user
   if(!this.fileExists(file) || !this.userUuidExists(user)) {
@@ -312,7 +312,7 @@ exports.removeSharedUser = function(file, user) { // Unshares a file with a spec
   delete dugdb.files[file].viewList[user];
   delete dugdb.files[file].editList[user];
   delete dugdb.users[user].sharedFiles[file];
-  dgChanged = true;  
+  dgChanged = true;
   dbChanged = true;
 }
 exports.getSharedInformation = function(file) { // Returns a list of users who can access the file
@@ -355,7 +355,7 @@ exports.getGroupById = function(gid) { // Returns group
     return dugdb.groups[gid];
 }
 exports.getGroupUsers = function(gid) { // Returns names & Permissions
-    let obj = [];    
+    let obj = [];
     for(i in dugdb.groups[gid].users) {
         let usrobj = dugdb.groups[gid].users[i];
         obj.push({id: usrobj.user, perm: usrobj.perm, username: dugdb.getUser(usrobj.user).username})
@@ -405,7 +405,7 @@ exports.removeGroupShare = function(file) { // Unshares a file with everyone in 
     if(!dugdb.files[file]) {
         return;
     }
-    for(i in dugdb.files[file].groups) { 
+    for(i in dugdb.files[file].groups) {
         this.removeGroupFile(file,i);
     }
     dugdb.files[file].groups = {};

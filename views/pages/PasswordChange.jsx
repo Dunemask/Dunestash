@@ -1,39 +1,71 @@
-var React = require('react');
-module.exports = class PasswordChange extends React.Component {
+import React from "react";
+import Page from "../Page";
+const title = "Password Change";
+module.exports = class PasswordChange extends Page {
   constructor(props) {
-  super(props);
+    super({
+      uuid: props.uuid,
+      status: props.status,
+      title,
+      stylesheet:"/css/Password.css"
+    });
   }
-  render(){
-  return (
-  <div className="profile-content">
-            <div className="userPanel">
-              <div id="login-box">
-                 <div id="login-form">
-                   <h2>Password</h2>
-                    <div className="formy">
-                       <form action="/passwordChange" method="POST" id="passwordChangeRequest">
-                          <div className="formelm">
-                             <label htmlFor="originalPassword">Original Password:</label>
-                             <input id="originalPassword" name="originalPassword" type="password" required/>
-                          </div>
-                          <div className="formelm">
-                             <label htmlFor="newPassword">New Password:</label>
-                             <input id="newPassword" name="newPassword" type="password" required/>
-                          </div>
-                          <div className="formelm">
-                             <label htmlFor="confirmNewPassword">Confirm Password:</label>
-                             <input id="confirmNewPassword" name="confirmNewPassword" type="password" required/>
-                          </div>
-                          <div className="formelm" id="subbmission-options">
-                             <div className="passwordSubmitButtonContainer">
-                                <input type="submit" value="Save" id="passwordSubmitButton"/>
-                             </div>
-                          </div>
-                       </form>
-                    </div>
-                 </div>
-              </div>
-            </div>
-          </div>
-  );}
-}
+  render() {
+    return (
+      <>
+        {this.BuildPage(
+                <div id="user-password-change">
+                  <h2>Password</h2>
+                  <div className="user-password-form">
+                    <form
+                      action="/profile?type=password"
+                      method="POST"
+                    >
+                      <div className="user-password-form-entry">
+                        <label htmlFor="originalPassword">
+                          Original Password:
+                        </label>
+                        <input
+                          id="original-password"
+                          name="original-password"
+                          type="password"
+                          required
+                        />
+                      </div>
+                      <div className="user-password-form-entry">
+                        <label htmlFor="new-password">New Password:</label>
+                        <input
+                          id="new-password"
+                          name="new-password"
+                          type="password"
+                          required
+                        />
+                      </div>
+                      <div className="user-password-form-entry">
+                        <label htmlFor="confirm-new-password">
+                          Confirm Password:
+                        </label>
+                        <input
+                          id="confirm-new-password"
+                          name="confirm-new-password"
+                          type="password"
+                          required
+                        />
+                      </div>
+                      <div className="user-password-form-entry" id="subbmission-options">
+                        <div className="password-change-submit-container">
+                          <input
+                            type="submit"
+                            value="Save"
+                            id="password-change-submit-button"
+                          />
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+        )}
+      </>
+    );
+  }
+};

@@ -1,0 +1,103 @@
+@import "StatusNotification";
+.navbar {
+  background-color: $sectionMenu;
+  width: 100%;
+  display: inline-block;
+}
+.nav {
+  line-height: 36px;
+  padding: 24px 0px;
+  display: inline-block;
+  float: left;
+}
+.nav a {
+  text-decoration: none;
+  font-size: 20px;
+  color: $foreground;
+  padding: 0px 4px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.nav a:hover {
+  text-shadow: none;
+  background: $foreground -webkit-gradient(linear, 100% 0, 0 0, from($foreground), color-stop(0.5, $backgroundGradientStart), to($foreground));
+  background-position: -4rem top;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-animation-name: glowingShimmer;
+  -webkit-animation-duration: 4s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-background-size: 4rem 100%;
+}
+
+.user-icon-container {
+  padding-top: 19px;
+}
+#user-icon {
+  float: left;
+  height: 40px;
+  width: 40px;
+  border: 2px solid $background;
+  border-radius: 50%;
+}
+#user-icon:hover {
+  opacity: 0.7;
+}
+.user-display {
+  float: left;
+  display: block;
+  padding: 0px 10px;
+}
+.user-control-container {
+  margin-top: 65px;
+  position: absolute;
+  padding-left: 20px;
+  max-width: 200px;
+  z-index: 999;
+}
+.login-links {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  float: left;
+  margin: 0 0;
+  border-collapse: separate;
+  padding-right: 10px;
+  padding: 10px 0px;
+  background-color: $sectionMenuOptions;
+  border-radius: 2px;
+}
+.login-links ul {
+  margin-top: 0;
+  padding: 0;
+  list-style-type: none;
+}
+.login-links li {
+  margin: 0px;
+  height: 100%;
+  width: 100%;
+  padding: 6px 12px;
+  border: 0 none;
+  text-align: justify;
+  cursor: pointer;
+}
+.login-links a {
+  margin: 0px;
+  text-decoration: none;
+  color: $foreground;
+  font-size: 24px;
+}
+.login-links a:hover,
+.login-links a:focus {
+  text-shadow: none;
+  background: $foreground -webkit-gradient(linear, 100% 0, 0 0, from($foreground), color-stop(0.5, $backgroundGradientStart), to($foreground));
+  background-position: -4rem top;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-animation-name: glowingShimmer;
+  -webkit-animation-duration: 4s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-background-size: 4rem 100%;
+}

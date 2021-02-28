@@ -9,7 +9,8 @@
           }
         },
         "linked":{
-          "File2.txt":"1"
+          "File2.txt":"1",
+          "File3.txt":"42"
         },
           "groupfiles":{
             "gid1":["File1.txt"]

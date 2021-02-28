@@ -1,14 +1,8 @@
-﻿@import "../colors";
-.loader {
-  border: 2px solid $boldWhite; /* Light grey */
-  border-top: 2px solid $uploadLime; /* Blue */
+﻿.loader {
+  border: 2px solid $foreground; /* Light grey */
+  border-top: 2px solid $successColor; /* Blue */
   border-radius: 50%;
   width: 30px;
   height: 30px;
   animation: spin 2s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }
