@@ -25,11 +25,8 @@
 
 
 @keyframes toastify-notification {
-  90%{
+  0%{
     opacity: 1;
-  }
-  99%{
-    opacity:0;
   }
   100% {
     opacity:0;

@@ -90,10 +90,8 @@ pre {
     opacity: 1; } }
 
 @keyframes toastify-notification {
-  90% {
+  0% {
     opacity: 1; }
-  99% {
-    opacity: 0; }
   100% {
     opacity: 0;
     visibility: hidden; } }
@@ -164,7 +162,6 @@ pre {
   box-shadow: 0 3px 6px -1px rgba(0, 0, 0, 0.12), 0 10px 36px -4px rgba(77, 96, 232, 0.3);
   background: #00b5f7;
   border-radius: 2px;
-  cursor: pointer;
   text-decoration: none;
   min-width: calc(300px - 100px);
   max-width: calc(50% - 20px);
@@ -180,7 +177,7 @@ pre {
   overflow: hidden; }
 
 .toast-notification-off {
-  animation: toastify-notification .8s forwards; }
+  animation: toastify-notification 0.6s forwards; }
 
 .toast-message {
   height: auto;
@@ -190,11 +187,23 @@ pre {
   display: flex;
   justify-content: center;
   align-items: center;
-  word-wrap: break-word; }
+  word-wrap: break-word;
+  cursor: pointer; }
 
 #toast-notification-close {
-  opacity: 0.4;
-  float: right; }
+  font-size: 20px;
+  height: 20px;
+  opacity: 0.4; }
+
+#toast-notification-close:hover {
+  opacity: 0.6;
+  cursor: pointer; }
+
+.toast-success {
+  background-color: limegreen; }
+
+.toast-error {
+  background-color: #e20006; }
 
 html {
   margin-left: auto;

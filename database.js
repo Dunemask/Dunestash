@@ -1,5 +1,5 @@
 const fs = require("fs");
-const defaultImage = "/files/images/blank_user.svg";
+const defaultImage = "/images/blank_user.svg";
 const FILESIZE_MB = Math.pow(1024, 2);
 const FILESIZE_GB = Math.pow(1024, 3);
 const defaultStorageSize = 2;
@@ -104,7 +104,15 @@ exports.getUserEmail = function (uuid) {
 };
 exports.getUserImage = function (uuid) {
   // Returns path to user image
-  let userImage = `/files/images/user-images/${uuid}`;
+  let userImage = `/images/user-images/${uuid}`;
+  if (!fs.existsSync(__dirname + "/www" + userImage) || uuid == undefined) {
+    userImage = defaultImage;
+  }
+  return userImage;
+};
+exports.getTemporaryUserImage = function (uuid) {
+  // Returns path to user image
+  let userImage = `/images/user-images/${uuid}-tmp`;
   if (!fs.existsSync(__dirname + "/www" + userImage) || uuid == undefined) {
     userImage = defaultImage;
   }

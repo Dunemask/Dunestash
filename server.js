@@ -38,7 +38,7 @@ app.get("/", (req, res) => {
 app.get("/upload", isUser, (req, res) => {
   res.render("pages/Upload.jsx", { uuid: req.session.user_id });
 });
-app.get("/files", isUser, (req, res) => {
+app.get("/my-files", isUser, (req, res) => {
   let linkedMode = req.query.type == "linked";
   let filePrerender = pr.filesPageRender(req.session.user_id, linkedMode);
   res.render("pages/Files.jsx", {
@@ -116,7 +116,7 @@ app.all("/delete-file", isUser, (req, res) => {
   if (db.authorizedToEditFile(req.query.target, req.session.user_id)) {
     let deleted = db.deleteFile(req.query.target);
     console.log(`Deleted File ${req.query.target}: ${deleted}`);
-    res.redirect("/files");
+    res.redirect("/my-files");
   } else {
     console.log("No perm");
     res.redirect(req.header("Referer") || "/");
@@ -131,12 +131,7 @@ app.post("/share", isUser, (req, res) => {
   unames = unames.split(",");
   let uuid,
     shareFailed = false;
-  if (
-    db.authorizedToEditFile(
-      req.query.target,
-      req.session.user_id
-    )
-  ) {
+  if (db.authorizedToEditFile(req.query.target, req.session.user_id)) {
     for (const username of unames) {
       uuid = db.getUuid(username);
       if (uuid == undefined) {
@@ -190,7 +185,7 @@ const applyProfileUpdates = (req, res) => {
   let username = db.getUser(req.session.user_id);
   let clientUsername = req.body["username-entry"];
   let status = {};
-  const userImagesPath = "/www/files/images/user-images";
+  const userImagesPath = "/www/images/user-images";
   if (
     fs.existsSync(__dirname + `${userImagesPath}/${req.session.user_id}-tmp`)
   ) {
@@ -211,7 +206,7 @@ const applyProfileUpdates = (req, res) => {
           }
         }
       );
-      userImage = "/files/images/user-images/" + req.session.user_id;
+      userImage = "/images/user-images/" + req.session.user_id;
     } catch (err) {
       status.tag = "Error Saving Image";
       status.type = "Error";
@@ -219,6 +214,7 @@ const applyProfileUpdates = (req, res) => {
     }
   }
   if (status == "Error") {
+    console.log("SAD FACE");
     //if status is defined we'll just render it and say there's an issue
     res.render("pages/Profile.jsx", {
       uuid: req.session.user_id,

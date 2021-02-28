@@ -22,7 +22,7 @@ module.exports = class Page extends React.Component {
       return (
         <html>
           <head>
-            <link rel="shortcut icon" href="/favicon.png"></link>
+            <link rel="shortcut icon" href="favicon.png"></link>
             <meta
               name="viewport"
               content="width=device-width, initial-scale=.75"
@@ -30,16 +30,13 @@ module.exports = class Page extends React.Component {
             <link
               rel="stylesheet"
               type="text/css"
-              href={props.stylesheet ?? `/css/${this.title}.css`}
+              href={props.stylesheet ?? `css/${this.title}.css`}
             ></link>
-            <script
-              src="https://use.fontawesome.com/86339af6a5.js"
-              defer
-            ></script>
+            <script src="js/extras/fontawesome.js" defer></script>
             <script src="js/toaster.js" defer></script>
             {this.Scripts &&
               this.Scripts.map((script, index) => (
-                <script key={script} src={`/js/${script}`} defer></script>
+                <script key={script} src={`js/${script}`} defer></script>
               ))}
             <title>{this.title}</title>
           </head>

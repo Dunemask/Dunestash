@@ -10,7 +10,6 @@
     0 10px 36px -4px rgba(77, 96, 232, 0.3);
   background: $informationColor;
   border-radius: 2px;
-  cursor: pointer;
   text-decoration: none;
   min-width: $toastMinWidth;
   max-width: $toastMaxWidth;
@@ -27,7 +26,7 @@
 }
 
 .toast-notification-off {
-  animation: toastify-notification .8s forwards;
+  animation: toastify-notification 0.6s forwards;
 }
 
 .toast-message {
@@ -39,9 +38,23 @@
   justify-content: center;
   align-items: center;
   word-wrap: break-word;
+  cursor: pointer;
 }
 
 #toast-notification-close {
+  font-size: 20px;
+  height: 20px;
   opacity: 0.4;
-  float: right;
+}
+#toast-notification-close:hover {
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+.toast-success {
+  background-color: $successColor;
+}
+
+.toast-error {
+  background-color: $errorColor;
 }

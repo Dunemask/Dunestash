@@ -1,6 +1,9 @@
 const activeToastNotification = document.getElementById("toast-notification");
+const activeToastNotificationClose = document.getElementById(
+  "toast-notification-close"
+);
 const defaultToastTimeout = 2700;
-const resumeFadeTimeout = 10000;
+const resumeFadeTimeout = 5000;
 function Timer(cb, delay) {
   let timerId,
     start,
@@ -18,7 +21,7 @@ function Timer(cb, delay) {
   };
   this.restart = () => {
     window.clearTimeout(timerId);
-    timerId = window.setTimeout(cb, start);
+    timerId = window.setTimeout(cb, delay);
   };
   this.stop = () => {
     window.clearTimeout(timerId);
@@ -26,25 +29,29 @@ function Timer(cb, delay) {
 
   this.resume();
 }
-
 // Do some stuff...
-const fadeTimer = new Timer(() => {
-  activeToastNotification.classList.add("toast-notification-off");
-}, defaultToastTimeout);
-const resumeTimer = new Timer(() => {
-  fadeTimer.restart();
-}, resumeFadeTimeout);
-resumeTimer.pause();
-
-activeToastNotification.addEventListener("mouseover", (event) => {
-  fadeTimer.stop();
-  resumeTimer.stop();
-});
-activeToastNotification.addEventListener("mouseleave", (event) => {
-  resumeTimer.restart();
-});
-
-activeToastNotification.addEventListener("click", (event) => {
-  fadeTimer.stop();
-  resumeTimer.stop();
-});
+const toastCycle = (hideTimeout, resumeTimeout) => {
+  const fadeTimer = new Timer(() => {
+    activeToastNotification.classList.add("toast-notification-off");
+  }, hideTimeout);
+  const resumeTimer = new Timer(() => {
+    fadeTimer.restart();
+  }, resumeTimeout);
+  resumeTimer.pause();
+  const leaveEvent = (event) => {
+    resumeTimer.restart();
+  };
+  activeToastNotification.addEventListener("mouseover", (event) => {
+    fadeTimer.pause();
+  });
+  activeToastNotification.addEventListener("mouseleave", leaveEvent);
+  activeToastNotification.addEventListener("click", (event) => {
+    fadeTimer.stop();
+    resumeTimer.stop();
+    activeToastNotification.removeEventListener("mouseleave", leaveEvent);
+  });
+  activeToastNotificationClose.addEventListener("click", () => {
+    activeToastNotification.classList.add("toast-notification-off");
+  });
+};
+toastCycle(defaultToastTimeout, resumeFadeTimeout);

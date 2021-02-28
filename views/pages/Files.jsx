@@ -19,8 +19,8 @@ module.exports = class Files extends Page {
           <div className="download-content">
             <div className="links-wrapper">
               <div className="filetype-toggle">
-                <a href="/files?type=owned">Owned</a>
-                <a href="/files?type=linked">Linked</a>
+                <a href="my-files?type=owned">Owned</a>
+                <a href="my-files?type=linked">Linked</a>
               </div>
               <h1>{this.title}</h1>
               <div className="links" id="file-display">
@@ -39,19 +39,20 @@ module.exports = class Files extends Page {
                             href={`/download?target=${file.target}`}
                             className="link-download"
                           >
-                            <i className="fa fa-download"></i>
+                            <i class="fas fa-file-download"></i>
                           </a>
                           <a
                             href={`/share?&target=${file.target}`}
                             className="link-share"
                           >
-                            <i className="fa fa-share-square-o"></i>
+                        <i className="fas fa-share-square"></i>
+
                           </a>
                           <a
                             href={`/delete-file?target=${file.target}`}
                             className="link-delete"
                           >
-                            <i className="fa fa-trash"></i>
+                            <i className="fas fa-trash"></i>
                           </a>
                           <span className="file-date">{file.date} </span>
                         </div>
