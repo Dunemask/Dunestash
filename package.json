@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "node server.js --no-warnings",
-    "watch": "node-sass -w src/scss/pages/ -o www/css/",
+    "watch-css": "node-sass -w src/scss/pages/ -o www/css/",
+    "build-css": "node-sass src/scss/pages/ -o www/css/",
     "test-once": "node-sass scss/pages/ -o ../css/ && node index.js",
     "test": "nodemon server.js"
   },
