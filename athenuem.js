@@ -37,10 +37,10 @@ exports.imageUpload = multer({
 exports.userUploadStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     let path = __dirname + "/uploads/" + req.session.user_id + "/";
-    if (!fs.existsSync(path)) {
+    if (!fs.existsSync(__dirname + "/uploads/"))
       fs.mkdirSync(__dirname + "/uploads/");
-      fs.mkdirSync(path);
-    }
+    if (!fs.existsSync(path)) fs.mkdirSync(path);
+
     cb(null, path);
   },
   filename: function (req, file, cb) {
@@ -53,7 +53,7 @@ exports.userUpload = multer({
   limits: { fileSize: defaultFileUploadSize },
 }).single("user-selected-upload-file");
 exports.approveFile = function (req) {
-  let status = {type:"Success",tag:"Upload Successful!"};
+  let status = { type: "Success", tag: "Upload Successful!" };
   let file = req.file;
   if (!file) {
     status.type = "Error";

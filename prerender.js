@@ -22,54 +22,54 @@ const DisplayFile = class {
 };
 //Filepage Prerender Prep
 //Builds a list of files to display
-exports.linkedOptions = (nemo, target, uuid) => {
+exports.linkedOptions = (target, uuid) => {
   return {
-    share: db.authorizedToEditFile(nemo, target, uuid),
-    delete: db.authorizedToEditFile(nemo, target, uuid),
+    share: db.authorizedToEditFile(target, uuid),
+    delete: db.authorizedToEditFile(target, uuid),
   };
 };
 exports.ownedOptions = { share: true, delete: true };
 exports.filesPageRender = (uuid, linkedMode) => {
-  let title, filenames, displayFiles, fileDisplay, options;
+  let title, files, displayFiles, fileDisplay, options;
   displayFiles = [];
   //if mode is linked do the linked
   if (linkedMode) {
     title = "Linked Files";
-    filenames = db.getLinkedFiles(uuid);
-    Object.keys(filenames).forEach((filename) => {
-      fileDisplay = exports.fileDisplayBuilder(filename);
-      displayFiles.push(
-        new DisplayFile(
-          filenames[filename],
-          filename,
-          fileDisplay.fileString,
-          fileDisplay.date,
-          exports.linkedOptions(filenames[filename], filename, uuid)
-        )
-      );
-    });
   } else {
     title = "Files";
-    filenames = db.getOwnedFiles(uuid);
-
-    Object.keys(filenames).forEach((filename) => {
+    files = db.getOwnedFiles(uuid);
+    files.forEach((file) => {
+      filename = db.getFilePath(file);
       fileDisplay = exports.fileDisplayBuilder(filename);
       displayFiles.push(
         new DisplayFile(
-          uuid,
-          filename,
-          fileDisplay.fileString,
-          fileDisplay.date,
-          exports.ownedOptions
+          uuid, //UUID
+          file, //Target
+          fileDisplay.fileString, //Name
+          fileDisplay.date, //Date
+          this.ownedOptions
         )
       );
     });
   }
   return { title, displayFiles };
 };
+exports.sharePageRender = (target) => {
+  const file = db.getFile(target);
+  const filename = file.path;
+  const fileDisplay = this.fileDisplayBuilder(filename);
+  return new DisplayFile(
+    file.owner, //UUID
+    target, //Target
+    fileDisplay.fileString, //Name
+    fileDisplay.date, //Date
+    this.ownedOptions
+  );
+};
 //Seperates Date and creates a nice looking filename
 exports.fileDisplayBuilder = (filename) => {
   let fileString, date;
+  if (!filename) return { date, fileString };
   date = exports.easyDate(filename.slice(0, filename.indexOf("-")));
   if (date != "") {
     fileString = filename.slice(filename.indexOf("-") + 1, filename.length);
