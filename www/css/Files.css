@@ -181,12 +181,14 @@ pre {
   word-wrap: break-word;
   min-height: calc(56px);
   overflow: hidden;
-  opacity: 0; }
+  opacity: 0;
+  visibility: hidden; }
 
 .toast-notification:hover {
   opacity: 1; }
 
 .toast-notification-on {
+  visibility: visible;
   opacity: 0.9; }
 
 .toast-notification-off {

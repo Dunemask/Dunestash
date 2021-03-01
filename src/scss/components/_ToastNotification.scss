@@ -23,12 +23,14 @@
   min-height: calc(#{$navBarHeight - 24px});
   overflow: hidden;
   opacity: 0;
+  visibility: hidden;
 }
 .toast-notification:hover {
   opacity: 1;
 }
 
 .toast-notification-on {
+  visibility: visible;
   opacity: 0.9;
 }
 
