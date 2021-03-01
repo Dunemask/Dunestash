@@ -194,10 +194,10 @@ const applyProfileUpdates = (req, res) => {
   let username = db.getUser(req.session.user_id);
   const clientUsername = req.body["username-entry"];
   const uuid = req.session.user_id;
-  const tmpImage = path.resolve(Storage.UserImagePathTemporary, uuid);
+  const tmpImage = path.resolve(Storage.UserImagePathTemporary, `${uuid}-tmp`);
   const image = path.resolve(Storage.UserImagePath, uuid);
-  if (fs.existsSync(tmpImage) && fs.existsSync(image)) {
-    fs.unlinkSync(image);
+  if (fs.existsSync(tmpImage)) {
+    if (fs.existsSync(image)) fs.unlinkSync(image);
     fs.renameSync(tmpImage, image);
   }
   if (status == StatusCode.Error) {

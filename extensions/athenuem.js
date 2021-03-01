@@ -8,7 +8,7 @@ const { Storage, StatusCode } = require("../server-config.json");
 //Constants
 const FILESIZE_MB = Math.pow(1024, 2);
 const uploadSizeLimit = Storage.UploadMaxSize * FILESIZE_MB;
-const imageSizeLimit = Storage.ProfileImageSize * FILESIZE_MB; //150MB
+const imageSizeLimit = Storage.ProfileImageSize * FILESIZE_MB;
 const imageFileTypes = /jpeg|jpg|png/;
 //Multer -----------------------------------------------------------------------
 exports.imageStorage = multer.diskStorage({
