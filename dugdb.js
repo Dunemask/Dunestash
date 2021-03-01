@@ -90,7 +90,7 @@ class Dugdb {
   }
   addUserToGroup(userid, groupid, perm) {
     this.users[userid].groups.push(groupid);
-    this.groups[groupid].users[userid] = { user: userid, perm: perm };
+    this.groups[groupid].users.push({user:userid, perm: perm});
   }
   getExportObject() {
     return {
