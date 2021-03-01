@@ -15,7 +15,7 @@
     "UserStorageSize": "2048",
     "ProfileImageSize": "150",
     "DatabasePath": "src/dugdatabase.json",
-    "DatabasePathTemporary": "src/dugdatabase.json"
+    "DatabasePathTemporary": "src/dugdatabase-tmp.json"
   },
   "Server": {
     "Port": 3000,

@@ -1,17 +1,18 @@
 //Imports
-const db = require("./database.js");
 const multer = require("multer");
 const fs = require("fs");
+const path = require("path");
 //Config Import
-const { Storage } = require("../server-config.json");
+const db = require("./database.js");
+const { Storage, StatusCode } = require("../server-config.json");
 //Constants
 const FILESIZE_MB = Math.pow(1024, 2);
 const imageSizeLimit = FILESIZE_MB * Storage.ProfileImageSize; //150MB
 const imageFileTypes = /jpeg|jpg|png/;
 //Multer -----------------------------------------------------------------------
 exports.imageStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    let dir = __dirname + Storage.UserImagePath;
+  destination: (req, file, cb) => {
+    let dir = path.resolve(Storage.UserImagePath);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
     }
@@ -35,13 +36,13 @@ exports.imageUpload = multer({
 }).single("user-image");
 //Files Handle-------------------------------------------------------------------
 exports.userUploadStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    let path = `${__dirname}${Storage.UploadPath}${req.session.user_id}/`;
-    if (!fs.existsSync(__dirname + Storage.UploadPath))
-      fs.mkdirSync(__dirname + Storage.UploadPath);
-    if (!fs.existsSync(path)) fs.mkdirSync(path);
+  destination: (req, file, cb) => {
+    let destination = path.resolve(Storage.UploadPath, req.session.user_id);
+    if (!fs.existsSync(path.resolve(Storage.UploadPath)))
+      fs.mkdirSync(path.resolve(Storage.UploadPath));
+    if (!fs.existsSync(destination)) fs.mkdirSync(destination);
 
-    cb(null, path);
+    cb(null, destination);
   },
   filename: function (req, file, cb) {
     let n = file.originalname.split(" ").join("_");
@@ -52,7 +53,7 @@ exports.userUpload = multer({
   storage: exports.userUploadStorage,
   /*limits: { fileSize: defaultFileUploadSize },*/
 }).single("user-selected-upload-file");
-exports.approveFile = function (req) {
+exports.approveFile = (req) => {
   let status = { type: "Success", tag: "Upload Successful!" };
   let file = req.file;
   if (!file) {
@@ -60,15 +61,15 @@ exports.approveFile = function (req) {
     status.tag = "No File Uploaded!";
     return status;
   } //Return if there is no File
-  let dirLimit = db.getUserStorageSize(req.session.user_id);
+  let dirLimit = db.getUserStorageSize(req.session.user_id) * FILESIZE_MB;
   let size = 0;
-  let files = fs.readdirSync(file.destination);
+  let files = fs.readdirSync(path.resolve(file.destination));
   for (f in files) {
-    size += fs.statSync(file.destination + files[f]).size;
+    size += fs.statSync(path.resolve(file.destination, files[f])).size;
   }
   if (size + req.file.size > dirLimit) {
     try {
-      fs.unlinkSync(req.file.path);
+      fs.unlinkSync(path.resolve(req.file.path));
     } catch (err) {
       console.error(err);
     }

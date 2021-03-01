@@ -1,19 +1,19 @@
 const fs = require("fs");
 const rimraf = require("rimraf");
 const bcrypt = require("bcrypt"); // Hashing
+const path = require("path");
 const { Storage, Web, Server } = require("../server-config.json");
 const SALT_ROUNDS = 10;
-const dugdbLocation = __dirname + Storage.DatabasePath;
-const dugdbTempPath = __dirname + Storage.DatabasePathTemporary;
+const dugdblocation = path.resolve(Storage.DatabasePath);
+const dugdbTempPath = path.resolve(Storage.DatabasePathTemporary);
 const ddb = require("./dugdb.js"); // Main Database Object
 const adminConfig = Server.AdminConfig;
 let dugdb;
 let dbChanged = false;
-
 exports.init = () => {
   dugdb = new ddb.Dugdb();
-  if (fs.existsSync(dugdbLocation)) {
-    dugdb.loadData(require(dugdbLocation));
+  if (fs.existsSync(path.resolve(dugdblocation))) {
+    dugdb.loadData(require(path.resolve(dugdblocation)));
   } else {
     if (adminConfig.useAdmin) {
       const hash = bcrypt.hashSync(adminConfig.pwd, SALT_ROUNDS);
@@ -41,7 +41,7 @@ exports.createUser = function (username, password, email) {
   let u = dugdb.newUser(username, hash, email, Storage.UserStorageSize);
   let uuid = dugdb.addUser(u);
   dbChanged = true;
-  fs.mkdirSync(`${__dirname}${Storage.UploadPath}${uuid}`);
+  fs.mkdirSync(path.resolve(Storage.UploadPath, uuid));
   return uuid;
 };
 exports.deleteUser = function (uuid) {
@@ -51,7 +51,7 @@ exports.deleteUser = function (uuid) {
     this.deleteFile(file, uuid);
   });
   delete dugdb.users[uuid];
-  rimraf.sync(__dirname + Storage.UploadPath + uuid + "/");
+  rimraf.sync(path.join(Storage.UploadPath, uuid));
   return true;
   dbChanged = true;
 };
@@ -79,13 +79,16 @@ exports.getUser = function (uuid) {
   return dugdb.users[uuid] && dugdb.users[uuid].username;
 };
 exports.getUserImage = function (uuid) {
-  if (this.resourceExists(__dirname + Storage.UserImagePath + uuid))
+  if (!!uuid && fs.existsSync(path.join(Storage.UserImagePath, uuid)))
     return `${Web.ProfileImage}${uuid}`;
   else return Web.ProfileImageDefault;
 };
 exports.getTemporaryUserImage = function (uuid) {
-  if (this.resourceExists(__dirname + Storage.UserImagePathTemporary + uuid))
-    return `${ProfileImageTemporary}${uuid}`;
+  if (
+    !!uuid &&
+    fs.existsSync(path.join(Storage.UserImagePathTemporary, `${uuid}-tmp`))
+  )
+    return `${Web.ProfileImageTemporary}${uuid}-tmp`;
   else return this.getUserImage(uuid);
 };
 exports.getUserObject = function (uuid) {
@@ -162,29 +165,37 @@ exports.changePassword = function (uuid, password) {
 exports.updateUserStorage = function (forceUpdate) {
   // creates file to store database
   if (dbChanged || forceUpdate) {
-    if (!fs.existsSync(dugdbLocation)) {
-      fs.writeFileSync(dugdbLocation, "");
-      console.log("New DB file created at: " + dugdbLocation);
+    if (!fs.existsSync(path.resolve(dugdblocation))) {
+      fs.writeFileSync(path.resolve(dugdblocation), "");
+      console.log("New DB file created at: " + path.resolve(dugdblocation));
     }
     dbChanged = false;
     let jsonString = JSON.stringify(dugdb.getExportObject());
-    if (!fs.existsSync(dugdbTempPath)) {
-      fs.copyFileSync(dugdbLocation, dugdbTempPath, fs.constants.COPYFILE_EXCL);
+    if (!fs.existsSync(path.resolve(dugdbTempPath))) {
+      fs.copyFileSync(
+        path.resolve(dugdblocation),
+        path.resolve(dugdbTempPath),
+        fs.constants.COPYFILE_EXCL
+      );
     } else {
       console.error("TMP DATABASE FILE ALREADY EXISTS FOR SOME REASON...");
       return;
     }
     let doubleCheckSuccess = false;
     try {
-      fs.unlinkSync(dugdbLocation);
-      fs.writeFileSync(dugdbLocation, jsonString);
+      fs.unlinkSync(path.resolve(dugdblocation));
+      fs.writeFileSync(path.resolve(dugdblocation), jsonString);
       doubleCheckSuccess = true;
     } catch (err) {
       console.error("ISSUE COPYING, REVERTING TO PREVIOUS VERSION");
-      fs.copyFileSync(dugdbTempPath, dugdbLocation, fs.constants.COPYFILE_EXCL);
+      fs.copyFileSync(
+        path.resolve(dugdbTempPath),
+        path.resolve(dugdblocation),
+        fs.constants.COPYFILE_EXCL
+      );
     }
     if (doubleCheckSuccess) {
-      fs.unlinkSync(dugdbTempPath);
+      fs.unlinkSync(path.resolve(dugdbTempPath));
     }
   }
 };
@@ -280,7 +291,7 @@ exports.deleteFile = function (file) {
   if (!dugdb.files[file]) {
     return false;
   }
-  const fileInfo = exports.getFile(file);
+  const fileInfo = this.getFile(file);
   const id = fileInfo.owner;
   exports.removeShare(file, id);
   exports.removeGroupShare(file, id);
@@ -289,9 +300,7 @@ exports.deleteFile = function (file) {
   );
   let deletedProperly = false;
   try {
-    fs.unlinkSync(
-      `${__dirname}${Storage.UploadPath}${id}/${exports.getFile(file).path}`
-    );
+    fs.unlinkSync(path.join(Storage.UploadPath, id, this.getFile(file).path));
     dugdb.users[id].ownedFiles = dugdb.users[id].ownedFiles.filter(
       (item) => item !== file
     );

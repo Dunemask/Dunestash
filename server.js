@@ -5,11 +5,13 @@ const bodyParser = require("body-parser");
 const { v4: uuidv4 } = require("uuid");
 const fs = require("fs");
 const erv = require("express-react-views");
+const path = require("path");
+//Local Imports
+const { Web, StatusCode, Storage, Server } = require("./server-config.json");
 const db = require("./extensions/database.js");
 db.init();
 const ath = require("./extensions/athenuem.js");
 const pr = require("./extensions/prerender.js");
-const { Web, StatusCode, Storage, Server } = require("./server-config.json");
 //Define Constants
 const app = express();
 const port = Server.Port;
@@ -18,7 +20,7 @@ const viewOptions = { beautify: false };
 //Set Up Express session and View engine
 app.use(session({ secret: uuidv4(), saveUninitialized: false, resave: false }));
 app.use(express.static("www/", { dotfiles: "deny" }));
-app.set("views", __dirname + "/views");
+app.set("views", path.resolve(__dirname, "views"));
 app.set("view engine", "jsx");
 app.engine("jsx", erv.createEngine(viewOptions));
 app.use(bodyParser.json({ limit: Server.BodyLimit })); // parse application/json
@@ -86,7 +88,7 @@ app.post("/upload", isUser, (req, res) => {
 app.get("/download", isUser, (req, res) => {
   if (db.authorizedToViewFile(req.query.target, req.session.user_id)) {
     const file = db.getFile(req.query.target);
-    const path = `${__dirname}${Storage.UploadPath}${file.owner}/${file.path}`;
+    const path = path.resolve(Storage.UploadPath,file.owner,file.path);
     res.download(path);
   } else {
     res.redirect(req.header("Referer") || "/");
@@ -95,7 +97,7 @@ app.get("/download", isUser, (req, res) => {
 app.get("/rawdata", isUser, (req, res) => {
   if (db.authorizedToViewFile(req.query.target, req.session.user_id)) {
     const file = db.getFile(req.query.target);
-    const path = `${__dirname}${Storage.UploadPath}${file.owner}/${file.path}`;
+    const path = path.resolve(Storage.UploadPath,file.owner,file.path);
     if (!fs.existsSync(path)) {
       res.redirect("/page-not-found?origin=" + req.originalUrl);
     } else {
@@ -185,8 +187,8 @@ const applyProfileUpdates = (req, res) => {
   let username = db.getUser(req.session.user_id);
   const clientUsername = req.body["username-entry"];
   const uuid = req.session.user_id;
-  const tmpImage = __dirname + Storage.UserImagePathTemporary + uuid;
-  const image = __dirname + Storage.UserImagePath + uuid;
+  const tmpImage = path.resolve(Storage.UserImagePathTemporary,uuid);
+  const image = path.resolve(Storage.UserImagePath,uuid);
   if (fs.existsSync(tmpImage) && fs.existsSync(image)) {
     fs.unlinkSync(image);
     fs.renameSync(tmpImage, image);
