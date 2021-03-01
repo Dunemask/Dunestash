@@ -10,7 +10,6 @@ exports.easyDate = (date) => {
     }/${d.getDate()}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`;
   }
 };
-
 const DisplayFile = class {
   constructor(nemo, target, filename, date, options) {
     this.nemo = nemo;
