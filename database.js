@@ -132,10 +132,12 @@ exports.getUserGroupPermission = function (uuid, gid) {
   /*if(dugdb.groups[gid].owner = uuid) {
         return "manager";
     }*/
-    let d = dugdb.groups[gid].users.filter((s)=>{return s.user == uuid});
-    if (d.length == 0) {
-          return false;
-    }
+  let d = dugdb.groups[gid].users.filter((s) => {
+    return s.user == uuid;
+  });
+  if (d.length == 0) {
+    return false;
+  }
   return d[0].perm;
 };
 exports.validateCredentials = function (user, pass) {
@@ -244,7 +246,9 @@ exports.authorizedToEditFile = function (target, id) {
     for (i in dugdb.users[id].groups) {
       let grp = dugdb.groups[dugdb.users[id].groups[i]];
       if (grp.editFiles.includes(target)) {
-        let d = grp.users.filter((s)=>{return s.user == id});
+        let d = grp.users.filter((s) => {
+          return s.user == id;
+        });
         if (d[0].perm != "viewer") {
           return true;
         }
@@ -336,8 +340,8 @@ exports.shareFile = function (file, options, uuid) {
   // Shares a file to a uuid
   // Current options: {edit:boolean}
   // Also used to change the share options between user
-  this.removeSharedUser(file, uuid)
-  
+  this.removeSharedUser(file, uuid);
+
   if (options.edit == true) {
     dugdb.files[file].editList.push(uuid);
     dugdb.files[file].viewList = dugdb.files[file].viewList.filter(
@@ -359,7 +363,7 @@ exports.removeShare = function (file) {
     return;
   }
   for (i in dugdb.files[file].viewList) {
-    let uuid = dugdb.files[file].viewList; 
+    let uuid = dugdb.files[file].viewList;
     dugdb.users[uuid].sharedFiles = dugdb.users[uuid].sharedFiles.filter(
       (item) => item !== file
     );
