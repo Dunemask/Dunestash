@@ -1,7 +1,7 @@
 const fs = require("fs");
 const rimraf = require("rimraf");
 const bcrypt = require("bcrypt"); // Hashing
-const { Storage, Web } = require("../server-config.json");
+const { Storage, Web, Server } = require("../server-config.json");
 const SALT_ROUNDS = 10;
 const dugdbLocation = __dirname + Storage.DatabasePath;
 const dugdbTempPath = __dirname + Storage.DatabasePathTemporary;
