@@ -47,10 +47,14 @@ function setUpProgressBar() {
     );
     xhr.onreadystatechange = function () {
       if (xhr.readyState == 4) {
+        document.getElementById("lower-file-data").style.display = "none";
         if (xhr.status == 200) {
-          var data = xhr.responseText;
+          let newToast = new DOMParser()
+            .parseFromString(xhr.responseText, "application/xml")
+            .getElementById("toast-notification");
+          console.log(newToast);
           document.open();
-          document.write(data);
+          document.write(xhr.responseText);
           document.close();
         } else {
           notifyError("Unkown Error Occurred!");
@@ -62,19 +66,8 @@ function setUpProgressBar() {
 }
 
 function notifyError(msg) {
-  const topBar = document.querySelector(".navbar");
-  topBar.innerHTML =
-    '<div class="statusIndicatorFail"><h1>' +
-    msg +
-    "</h1></div>" +
-    topBar.innerHTML;
-  let message = document.querySelector(".statusIndicatorFail");
-  message.classList.remove("statusIndicatorFail");
-  void message.offsetWidth;
-  message.classList.add("statusIndicatorFail");
-  setTimeout(function () {
-    location.reload();
-  }, 1000);
+  console.error("ERROR:", msg);
+  doToastDefault(msg, "error");
 }
 
 function updateQueryStringParameter(uri, key, value) {
@@ -89,16 +82,7 @@ function updateQueryStringParameter(uri, key, value) {
 
 function fileSelected() {
   let file = document.getElementById("user-selected-upload-file").files[0];
-  const defaultFileUploadSize = Math.pow(1024, 2) * 600;
   let fileDisplay = `<h2>Selected File: ${file.name} </h2>`;
-  if (file.size > defaultFileUploadSize) {
-    document.getElementById("file-error-indicator").innerHTML =
-      "<h3>Cannot be over 600MB</h3>";
-    fileDisplay = "<h2>No File Selected!</h2>";
-    document.getElementById("user-selected-upload-file").value = "";
-  } else {
-    document.getElementById("file-error-indicator").innerHTML = "";
-  }
   document.getElementById("selected-file").innerHTML = fileDisplay;
 }
 

@@ -4,13 +4,19 @@ module.exports = class Navbar extends React.Component {
     super(props);
     this.message = props.message;
     this.backgroundColor = props.backgroundColor;
+    this.statusType = props.statusType ?? "";
+    this.classList = "toast-notification ";
+    if (!!this.statusType) {
+      this.classList += `toast-${this.statusType.toLowerCase()} `;
+    }
+    if (!!this.message) {
+      this.classList += "toast-notification-on ";
+    }
   }
   render() {
     return (
-      <div className="toast-notification" id="toast-notification">
-        <div className="toast-message" >
-          {this.message}
-        </div>
+      <div className={this.classList} id="toast-notification">
+        <div id="toast-message">{this.message}</div>
         <span id="toast-notification-close">&#10006;</span>
       </div>
     );

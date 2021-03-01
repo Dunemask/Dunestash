@@ -89,12 +89,19 @@ pre {
   100% {
     opacity: 1; } }
 
-@keyframes toastify-notification {
+@keyframes toastify-notification-fade-out {
   0% {
     opacity: 1; }
   100% {
     opacity: 0;
     visibility: hidden; } }
+
+@keyframes toast-notification-face-in {
+  0% {
+    opacity: 0; }
+  100% {
+    opacity: 0.9;
+    visibility: visible; } }
 
 @keyframes spin {
   0% {
@@ -166,7 +173,6 @@ pre {
   min-width: calc(300px - 100px);
   max-width: calc(50% - 20px);
   z-index: 2147483647;
-  opacity: 1;
   word-wrap: break-word;
   float: right;
   position: absolute;
@@ -174,12 +180,19 @@ pre {
   right: 0px;
   word-wrap: break-word;
   min-height: calc(56px);
-  overflow: hidden; }
+  overflow: hidden;
+  opacity: 0; }
+
+.toast-notification:hover {
+  opacity: 1; }
+
+.toast-notification-on {
+  opacity: 0.9; }
 
 .toast-notification-off {
-  animation: toastify-notification 0.6s forwards; }
+  animation: toastify-notification-fade-out 0.6s forwards; }
 
-.toast-message {
+#toast-message {
   height: auto;
   margin: 0 auto;
   min-width: calc(300px - 100px);

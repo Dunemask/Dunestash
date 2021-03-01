@@ -39,7 +39,7 @@ module.exports = class Files extends Page {
                             href={`/download?target=${file.target}`}
                             className="link-download"
                           >
-                            <i class="fas fa-file-download"></i>
+                            <i className="fas fa-file-download"></i>
                           </a>
                           <a
                             href={`/share?&target=${file.target}`}

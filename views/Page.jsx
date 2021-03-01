@@ -17,7 +17,8 @@ module.exports = class Page extends React.Component {
     this.title = props.title;
     this.Navbar = <Navbar userImage={userImage} username={username}></Navbar>;
     this.Scripts = props.scripts;
-    const status = { type: "Success", tag: "YEYY" };
+    const statusType = (props.status && props.status.type) ?? "";
+    const statusTag = (props.status && props.status.tag) ?? "";
     this.BuildPage = (child) => {
       return (
         <html>
@@ -42,7 +43,7 @@ module.exports = class Page extends React.Component {
           </head>
           <body>
             {this.Navbar}
-            <Toast message="Hello World!" backgroundColor="green" />
+            <Toast message={statusTag} statusType={statusType} />
             {child}
           </body>
         </html>

@@ -33,6 +33,9 @@ const isUser = (req, res, next) => {
 };
 //Router Requests
 app.get("/", (req, res) => {
+  res.redirect("/about");
+});
+app.get("/about", (req, res) => {
   res.render("pages/About.jsx", { uuid: req.session.user_id });
 });
 app.get("/upload", isUser, (req, res) => {
