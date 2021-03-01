@@ -2,30 +2,33 @@
 const express = require("express");
 const session = require("express-session");
 const bodyParser = require("body-parser");
+const { v4: uuidv4 } = require("uuid");
 const fs = require("fs");
-const db = require("./database.js");
+const erv = require("express-react-views");
+const path = require("path");
+//Local Imports
+const { Web, StatusCode, Storage, Server } = require("./server-config.json");
+const db = require("./extensions/database.js");
 db.init();
-const ath = require("./athenuem.js");
-const pr = require("./prerender.js");
+const ath = require("./extensions/athenuem.js");
+const pr = require("./extensions/prerender.js");
 //Define Constants
 const app = express();
-const port = 3000;
-const debuggingMode = false;
+const port = Server.Port;
+const debuggingMode = Server.Debug;
 const viewOptions = { beautify: false };
 //Set Up Express session and View engine
-app.use(
-  session({ secret: "ssshhhhh", saveUninitialized: false, resave: false })
-);
+app.use(session({ secret: uuidv4(), saveUninitialized: false, resave: false }));
 app.use(express.static("www/", { dotfiles: "deny" }));
-app.set("views", __dirname + "/views");
+app.set("views", path.resolve(__dirname, "views"));
 app.set("view engine", "jsx");
-app.engine("jsx", require("express-react-views").createEngine(viewOptions));
-app.use(bodyParser.json({ limit: "5mb" })); // parse application/json
-app.use(bodyParser.urlencoded({ limit: "5mb", extended: false })); // parse application/x-www-form-urlencoded
+app.engine("jsx", erv.createEngine(viewOptions));
+app.use(bodyParser.json({ limit: Server.BodyLimit })); // parse application/json
+app.use(bodyParser.urlencoded({ limit: Server.BodyLimit, extended: false })); // parse application/x-www-form-urlencoded
 //Test if there is a
 const isUser = (req, res, next) => {
   //req.session.user_id=0;
-  if (req.session.user_id != undefined || req.path === "/login") {
+  if (!!req.session.user_id || req.path === "/login") {
     next();
   } else {
     res.redirect(`/login?origin=${req.originalUrl}`);
@@ -52,7 +55,7 @@ app.get("/my-files", isUser, (req, res) => {
 });
 app.get("/share", isUser, (req, res) => {
   if (
-    req.query.target != undefined &&
+    !!req.query.target &&
     db.authorizedToEditFile(req.query.target, req.session.user_id)
   ) {
     let groups = db.getUserGroups(req.session.user_id);
@@ -73,23 +76,18 @@ app.post("/upload", isUser, (req, res) => {
   ath.userUpload(req, res, (err) => {
     let status = ath.approveFile(req); //Ensure the file gets passed
     if (!req.file || err) {
-      console.log(err);
-      status.type = "ERROR";
-      status.tag = "File Upload Error!";
-    } else {
+    }
+    if (status.type == StatusCode.Success) {
       db.addFile(req.file.filename, req.session.user_id);
     }
+
     res.render("pages/Upload.jsx", { uuid: req.session.user_id, status });
   });
 });
 app.get("/download", isUser, (req, res) => {
   if (db.authorizedToViewFile(req.query.target, req.session.user_id)) {
-    let path =
-      __dirname +
-      "/uploads/" +
-      db.getFile(req.query.target).owner +
-      "/" +
-      db.getFile(req.query.target).path;
+    const file = db.getFile(req.query.target);
+    const path = path.resolve(Storage.UploadPath, file.owner, file.path);
     res.download(path);
   } else {
     res.redirect(req.header("Referer") || "/");
@@ -97,15 +95,9 @@ app.get("/download", isUser, (req, res) => {
 });
 app.get("/rawdata", isUser, (req, res) => {
   if (db.authorizedToViewFile(req.query.target, req.session.user_id)) {
-    let path =
-      __dirname +
-      "/uploads/" +
-      db.getFile(req.query.target).owner +
-      "/" +
-      db.getFile(req.query.target).path;
-    if (!req.query.target) {
-      res.redirect("/");
-    } else if (!fs.existsSync(path)) {
+    const file = db.getFile(req.query.target);
+    const path = path.resolve(Storage.UploadPath, file.owner, file.path);
+    if (!fs.existsSync(path)) {
       res.redirect("/page-not-found?origin=" + req.originalUrl);
     } else {
       res.sendFile(path);
@@ -117,11 +109,21 @@ app.get("/rawdata", isUser, (req, res) => {
 app.all("/delete-file", isUser, (req, res) => {
   //delete-file?nemo=0&target=File1.txt
   if (db.authorizedToEditFile(req.query.target, req.session.user_id)) {
-    let deleted = db.deleteFile(req.query.target);
-    console.log(`Deleted File ${req.query.target}: ${deleted}`);
-    res.redirect("/my-files");
+    const deleted = db.deleteFile(req.query.target);
+    const linkedMode = req.query.type == "linked";
+    const filePrerender = pr.filesPageRender(req.session.user_id, linkedMode);
+    const status = {
+      type: deleted ? StatusCode.Success : StatusCode.Error,
+      tag: deleted ? "File Succesfully Deleted!" : "Error Deleting File!",
+    };
+
+    res.render("pages/Files.jsx", {
+      uuid: req.session.user_id,
+      status,
+      displayFiles: filePrerender.displayFiles,
+      linkedMode,
+    });
   } else {
-    console.log("No perm");
     res.redirect(req.header("Referer") || "/");
   }
 });
@@ -130,11 +132,11 @@ app.all("/groupedit", isUser, (req, res) => {
   res.redirect(req.header("Referer") || "/");
 });
 app.post("/share", isUser, (req, res) => {
-  let unames = req.body["user-share-field"].replaceAll(" ", "");
-  unames = unames.split(",");
-  let uuid,
-    shareFailed = false;
   if (db.authorizedToEditFile(req.query.target, req.session.user_id)) {
+    let unames = req.body["user-share-field"].replaceAll(" ", "");
+    unames = unames.split(",");
+    let uuid,
+      shareFailed = false;
     for (const username of unames) {
       uuid = db.getUuid(username);
       if (uuid == undefined) {
@@ -147,7 +149,7 @@ app.post("/share", isUser, (req, res) => {
     }
     let filePrerender = pr.filesPageRender(req.session.user_id, false);
     let status = {};
-    status.type = shareFailed ? "Error" : "Success";
+    status.type = shareFailed ? StatusCode.Error : StatusCode.Success;
     status.tag = shareFailed
       ? "Error Sharing Requested Files (Did you type the usernames right?)"
       : "File has been successfully shared!";
@@ -178,46 +180,27 @@ app.post("/profile", isUser, (req, res) => {
   } else {
     res.render("pages/Profile.jsx", {
       uuid: req.session.user_id,
-      status: { type: "Error", tag: "Could not update your information." },
+      status: {
+        type: StatusCode.Error,
+        tag: "Could not update your information.",
+      },
     });
   }
 });
 //Functions for updating information from the profile page, called by app.get("/profile")
 const applyProfileUpdates = (req, res) => {
   let userImage;
-  let username = db.getUser(req.session.user_id);
-  let clientUsername = req.body["username-entry"];
   let status = {};
-  const userImagesPath = "/www/images/user-images";
-  if (
-    fs.existsSync(__dirname + `${userImagesPath}/${req.session.user_id}-tmp`)
-  ) {
-    try {
-      if (
-        fs.existsSync(__dirname + `${userImagesPath}/${req.session.user_id}`)
-      ) {
-        fs.unlinkSync(__dirname + `${userImagesPath}/${req.session.user_id}`);
-      }
-      fs.rename(
-        __dirname + `${userImagesPath}/${req.session.user_id}-tmp`,
-        __dirname + `${userImagesPath}/${req.session.user_id}`,
-        (err) => {
-          if (err) {
-            status.tag = "Error Saving Image";
-            status.type = "Error";
-            console.error("ERROR: " + err);
-          }
-        }
-      );
-      userImage = "/images/user-images/" + req.session.user_id;
-    } catch (err) {
-      status.tag = "Error Saving Image";
-      status.type = "Error";
-      console.error(err);
-    }
+  let username = db.getUser(req.session.user_id);
+  const clientUsername = req.body["username-entry"];
+  const uuid = req.session.user_id;
+  const tmpImage = path.resolve(Storage.UserImagePathTemporary, `${uuid}-tmp`);
+  const image = path.resolve(Storage.UserImagePath, uuid);
+  if (fs.existsSync(tmpImage)) {
+    if (fs.existsSync(image)) fs.unlinkSync(image);
+    fs.renameSync(tmpImage, image);
   }
-  if (status == "Error") {
-    console.log("SAD FACE");
+  if (status == StatusCode.Error) {
     //if status is defined we'll just render it and say there's an issue
     res.render("pages/Profile.jsx", {
       uuid: req.session.user_id,
@@ -229,10 +212,10 @@ const applyProfileUpdates = (req, res) => {
     let usernameTaken = db.changeUsername(req.session.user_id, newUsername);
     if (!usernameTaken) {
       status.tag = "Changes Saved!";
-      status.type = "Success";
+      status.type = StatusCode.Success;
     } else {
       status.tag == "Username Taken!";
-      status.type = "Error";
+      status.type = StatusCode.Error;
     }
     res.render("pages/Profile.jsx", {
       uuid: req.session.user_id,
@@ -241,7 +224,7 @@ const applyProfileUpdates = (req, res) => {
     });
   } else {
     status.tag = "Changes Saved";
-    status.type = "Success";
+    status.type = StatusCode.Success;
     res.render("pages/Profile.jsx", {
       uuid: req.session.user_id,
       status,
@@ -250,11 +233,11 @@ const applyProfileUpdates = (req, res) => {
   }
 };
 const profileImageUpdate = (req, res) => {
-  let userImage,
-    status = {};
+  let userImage;
+  let status = {};
   ath.imageUpload(req, res, (err) => {
     if (err || req.file == undefined) {
-      status.type = "Error";
+      status.type = StatusCode.Error;
     }
     if (req.fileValidationError) {
       status.tag = "Only jpeg and png image types are accepted";
@@ -277,14 +260,14 @@ const profilePasswordUpdate = (req, res) => {
     if (req.body["new-password"] == req.body["confirm-new-password"]) {
       db.changePassword(req.session.user_id, req.body["new-password"]);
       status.tag = "Password Changed";
-      status.type = "Success";
+      status.type = StatusCode.Success;
     } else {
       status.tag = "Passwords Don't Match";
-      status.type = "Error";
+      status.type = StatusCode.Error;
     }
   } else {
     status.tag = "Original Password Incorrect";
-    status.type = "Error";
+    status.type = StatusCode.Error;
   }
   res.render("pages/PasswordChange.jsx", {
     uuid: req.session.user_id,
@@ -316,16 +299,16 @@ app.get("/login", (req, res) => {
   }
   if (req.query.loggedout) {
     status.tag = "Successfully Logged Out!";
-    status.type = "Success";
+    status.type = StatusCode.Success;
   }
   if (req.query.attempt) {
     status.tag = "Username or Password Incorrect";
-    status.type = "Error";
+    status.type = StatusCode.Error;
   }
   res.render("pages/Login.jsx", { uuid: req.session.user_id, status });
 });
 app.post("/login", (req, res) => {
-  let username = req.body.username ? req.body.username : undefined;
+  let username = req.body.username;
   let password = req.body.password;
   let isValid = db.validateCredentials(username, password);
   let returnTo = req.session.returnTo ? req.session.returnTo : "/";
@@ -339,9 +322,9 @@ app.post("/login", (req, res) => {
   res.redirect(returnTo);
 });
 app.get("/register", (req, res) => {
-  if (req.session.user_id) {
+  if (!!req.session.user_id) {
     res.render("pages/About.jsx", {
-      status: { type: "Error", tag: "You are already logged in!" },
+      status: { type: StatusCode.Error, tag: "You are already logged in!" },
     });
   } else {
     res.render("pages/Register.jsx");
@@ -354,23 +337,23 @@ app.post("/register", (req, res) => {
     req.body.password == undefined ||
     req.body["confirm-password"] == undefined
   ) {
-    status.type = "Error";
+    status.type = StatusCode.Error;
     status.tag = "Error: 1 or More Fields Empty!";
-  } else if (db.getUuid(req.body.username) != undefined) {
-    status.type = "Error";
+  } else if (!!db.getUuid(req.body.username)) {
+    status.type = StatusCode.Error;
     status.tag = "Username Already Taken!";
   } else if (req.body["confirm-password"] != req.body.password) {
-    status.type = "Error";
+    status.type = StatusCode.Error;
     status.tag = "Passwords Don't Match!";
   } else if (req.body["confirm-password"] == req.body.password) {
     db.createUser(req.body.username, req.body.password);
-    status.type = "Success";
+    status.type = StatusCode.Success;
     status.tag = "Account Successfully Created!";
   } else {
-    status.type = "Error";
+    status.type = StatusCode.Error;
     status.tag = "Unknown Error Occurred!";
   }
-  if (status.type == "Error") {
+  if (status.type == StatusCode.Error) {
     res.render("pages/Register.jsx", { status });
   } else {
     req.session.returnTo = "/";
@@ -391,7 +374,7 @@ app.get("*", (req, res) => {
   res.redirect("/page-not-found");
 });
 //Serve App
-startServer = () => {
+const startServer = () => {
   server = app.listen(port, () => {
     console.log("Node version:" + process.versions.node);
     console.log(`Duneserver listening on port ${port}!`);

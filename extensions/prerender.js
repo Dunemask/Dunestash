@@ -1,5 +1,5 @@
+//Imports
 const db = require("./database.js");
-
 exports.easyDate = (date) => {
   let d = new Date(parseInt(date));
   if (isNaN(d.getMonth())) {
@@ -10,7 +10,6 @@ exports.easyDate = (date) => {
     }/${d.getDate()}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`;
   }
 };
-
 const DisplayFile = class {
   constructor(nemo, target, filename, date, options) {
     this.nemo = nemo;

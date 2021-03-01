@@ -1,8 +1,6 @@
 console.log("DATABASE TESTING")
-const db = require('./../database.js');
-
+const db = require('../extensions/database.js');
 let p = (data) => {console.log(data)};
-
 db.init();
 p(db.getUuid("admin"));
 p(db.getUuid("notInDatabase"));
@@ -72,8 +70,8 @@ p(db.authorizedToEditFile(candy,tim)); // false
 p(db.authorizedToViewFile(candy,brad)); // true
 p(db.authorizedToEditFile(cat,brad)); // true
 p("\n--Sharing is caring")
-db.shareFile(candy, {edit:false}, tim); // sharing candy file from brad to tim 
-db.shareFile(cat, {edit:true}, tim); // sharing cat file from brad to tim 
+db.shareFile(candy, {edit:false}, tim); // sharing candy file from brad to tim
+db.shareFile(cat, {edit:true}, tim); // sharing cat file from brad to tim
 p("after")
 p(db.authorizedToViewFile(cat,tim)); // true
 p(db.authorizedToEditFile(cat,tim)); // true
@@ -161,7 +159,7 @@ p("removeUserFromGroup: " + db.removeUserFromGroup(tim,rg)); // removes tim from
 p(db.getGroupUsers(rg));// Tim is not in the group
 p(db.authorizedToViewFile(gef,tim)); // false
 p(db.authorizedToViewFile(gef,mag)); // true
-p(db.getUserGroups(tim)); // no groups 
+p(db.getUserGroups(tim)); // no groups
 
 p(db.addUserToGroup(tim, rg, "manager")); // true
 p(db.shareGroupFile(timfile,{edit:true},rg)); // true

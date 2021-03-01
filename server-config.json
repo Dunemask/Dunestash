@@ -1,0 +1,33 @@
+{
+  "StatusCode": {
+    "Error": "Error",
+    "Success": "Success"
+  },
+  "Web": {
+    "ProfileImage": "images/user-images/",
+    "ProfileImageTemporary": "images/user-images/",
+    "ProfileImageDefault": "images/blank_user.svg"
+  },
+  "Storage": {
+    "UploadPath": "uploads/",
+    "UserImagePath": "www/images/user-images/",
+    "UserImagePathTemporary": "www/images/user-images/",
+    "UserStorageSize": "2048",
+    "ProfileImageSize": "150",
+    "UploadMaxSize":"",
+    "DatabasePath": "src/dugdatabase.json",
+    "DatabasePathTemporary": "src/dugdatabase-tmp.json"
+  },
+  "Server": {
+    "Port": 3000,
+    "Debug": false,
+    "BodyLimit": "5mb",
+    "AdminConfig": {
+      "useAdmin": false,
+      "email": "abc@xyz.com",
+      "pwd": "password",
+      "username": "admin",
+      "storage": 999
+    }
+  }
+}

@@ -1,21 +1,19 @@
-const db = require("../database.js");
+import db from "../extensions/database.js";
 import React from "react";
 import Navbar from "./components/Navbar";
 import Toast from "./components/ToastNotification";
+import { Web, StatusCode, Storage } from "../server-config.json";
 module.exports = class Page extends React.Component {
   constructor(props) {
     super(props);
     let username, userImage;
-    //Cannot simply use ? because a uuid could be 0 or 1
-    if (props.uuid != undefined) {
+    if (!!props.uuid) {
       username = db.getUser(props.uuid);
       username = username.charAt(0).toUpperCase() + username.slice(1); //Uppercase first letter of their username
     }
-    userImage = props.userImage ?? db.getUserImage(props.uuid);
     this.username = username;
-    this.userImage = userImage;
+    this.userImage = props.userImage ?? db.getUserImage(props.uuid);
     this.title = props.title;
-    this.Navbar = <Navbar userImage={userImage} username={username}></Navbar>;
     this.Scripts = props.scripts;
     const statusType = (props.status && props.status.type) ?? "";
     const statusTag = (props.status && props.status.tag) ?? "";
@@ -42,7 +40,10 @@ module.exports = class Page extends React.Component {
             <title>{this.title}</title>
           </head>
           <body>
-            {this.Navbar}
+            <Navbar
+              userImage={this.userImage}
+              username={this.username}
+            ></Navbar>
             <Toast message={statusTag} statusType={statusType} />
             {child}
           </body>
