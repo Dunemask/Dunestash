@@ -25,7 +25,7 @@ p(brad); // some UUID
 
 p(db.getUuid("sad")) // undefined
 // Brad Again
-if(false){
+if(true){
 p(db.createUser("brad","jojo","abc@lol.com")); // undefined, UsernameAlreadyExists
 p(db.userUuidExists(brad)); // true
 p(db.userUuidExists("this is not a valid UUID")); // false
@@ -86,6 +86,7 @@ p(db.getFile(cat))
 p(db.getUserObject(tim))
 p(db.getUserObject(brad))
 }
+p("mag")
 let mag = db.createUser("mag","maggy","mag@abc.com");
 db.shareFile(cat,{edit:true}, mag);
 db.shareFile(candy,{edit:true},mag);
@@ -160,7 +161,7 @@ p("removeUserFromGroup: " + db.removeUserFromGroup(tim,rg)); // removes tim from
 p(db.getGroupUsers(rg));// Tim is not in the group
 p(db.authorizedToViewFile(gef,tim)); // false
 p(db.authorizedToViewFile(gef,mag)); // true
-p(db.getUserGroups(tim)); // no groups
+p(db.getUserGroups(tim)); // no groups 
 
 p(db.addUserToGroup(tim, rg, "manager")); // true
 p(db.shareGroupFile(timfile,{edit:true},rg)); // true
@@ -173,4 +174,4 @@ p(db.deleteUser(tim)); // deletes tim
 p(db.getSharedFiles(brad)); // shouldn't contain file
 p(db.getGroupFiles(rg)); // shouldn't contain file
 
-db.updateUserStorage(true);
+//db.updateUserStorage(true);

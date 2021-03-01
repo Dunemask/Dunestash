@@ -115,7 +115,7 @@ exports.getUserGroups = function (uuid) {
   let userGroups = [];
   if (!dugdb.users[uuid]) return userGroups;
   for (gid in dugdb.users[uuid].groups) {
-    userGroups.push(dugdb.getGroup(gid));
+    userGroups.push(dugdb.getGroup(dugdb.users[uuid].groups[gid]));
   }
   return userGroups;
 };
@@ -124,7 +124,11 @@ exports.getUserGroupPermission = function (uuid, gid) {
   /*if(dugdb.groups[gid].owner = uuid) {
         return "manager";
     }*/
-  return dugdb.groups[gid] && dugdb.groups[gid].users[uuid].perm;
+    let d = dugdb.groups[gid].users.filter((s)=>{return s.user == uuid});
+    if (d.length == 0) {
+          return false;
+    }
+  return d[0].perm;
 };
 exports.validateCredentials = function (user, pass) {
   // username & password validation
@@ -205,14 +209,14 @@ exports.authorizedToViewFile = function (target, id) {
   if (dugdb.files[target].owner == id) {
     return true;
   } else if (
-    dugdb.files[target].viewList[id] == true ||
-    dugdb.files[target].editList[id] == true
+    dugdb.files[target].viewList.includes(id) ||
+    dugdb.files[target].editList.includes(id)
   ) {
     return true;
   } else {
     for (i in dugdb.users[id].groups) {
-      let grp = dugdb.groups[i];
-      if (grp.viewFiles[target] || grp.editFiles[target]) {
+      let grp = dugdb.groups[dugdb.users[id].groups[i]];
+      if (grp.viewFiles.includes(target) || grp.editFiles.includes(target)) {
         return true;
       }
     }
@@ -226,13 +230,14 @@ exports.authorizedToEditFile = function (target, id) {
   }
   if (dugdb.files[target].owner == id) {
     return true;
-  } else if (dugdb.files[target].editList[id] == true) {
+  } else if (dugdb.files[target].editList.includes(id)) {
     return true;
   } else {
     for (i in dugdb.users[id].groups) {
-      let grp = dugdb.groups[i];
-      if (grp.editFiles[target]) {
-        if (grp.users[id].perm != "viewer") {
+      let grp = dugdb.groups[dugdb.users[id].groups[i]];
+      if (grp.editFiles.includes(target)) {
+        let d = grp.users.filter((s)=>{return s.user == id});
+        if (d[0].perm != "viewer") {
           return true;
         }
       }
@@ -284,6 +289,9 @@ exports.deleteFile = function (file) {
   const id = fileInfo.owner;
   exports.removeShare(file, id);
   exports.removeGroupShare(file, id);
+  dugdb.users[id].ownedFiles = dugdb.users[id].ownedFiles.filter(
+    (item) => item !== file
+  );
   let deletedProperly = false;
   try {
     fs.unlinkSync(`${__dirname}/uploads/${id}/${exports.getFile(file).path}`);
@@ -320,6 +328,8 @@ exports.shareFile = function (file, options, uuid) {
   // Shares a file to a uuid
   // Current options: {edit:boolean}
   // Also used to change the share options between user
+  this.removeSharedUser(file, uuid)
+  
   if (options.edit == true) {
     dugdb.files[file].editList.push(uuid);
     dugdb.files[file].viewList = dugdb.files[file].viewList.filter(
@@ -331,7 +341,7 @@ exports.shareFile = function (file, options, uuid) {
       (item) => item !== uuid
     );
   }
-  dugdb.users[uuid].sharedFiles[file] = options.edit;
+  dugdb.users[uuid].sharedFiles.push(file);
   dbChanged = true;
   return true;
 };
@@ -341,12 +351,14 @@ exports.removeShare = function (file) {
     return;
   }
   for (i in dugdb.files[file].viewList) {
-    dugdb.users[i].sharedFiles = dugdb.users[i].sharedFiles.filter(
+    let uuid = dugdb.files[file].viewList; 
+    dugdb.users[uuid].sharedFiles = dugdb.users[uuid].sharedFiles.filter(
       (item) => item !== file
     );
   }
   for (i in dugdb.files[file].editList) {
-    dugdb.users[i].sharedFiles = dugdb.users[i].sharedFiles.filter(
+    let uuid = dugdb.files[file].editList;
+    dugdb.users[uuid].sharedFiles = dugdb.users[uuid].sharedFiles.filter(
       (item) => item !== file
     );
   }
@@ -377,12 +389,14 @@ exports.getSharedInformation = function (file) {
   }
   let obj = { edit: [], view: [] };
   for (i in dugdb.files[file].editList) {
-    let name = dugdb.getUser(i).username;
-    obj.edit.push({ id: i, name: name });
+    let uuid = dugdb.files[file].editList[i];
+    let name = dugdb.getUser(uuid).username;
+    obj.edit.push({ id: uuid, name: name });
   }
   for (i in dugdb.files[file].viewList) {
-    let name = dugdb.getUser(i).username;
-    obj.view.push({ id: i, name: name });
+    let uuid = dugdb.files[file].viewList[i];
+    let name = dugdb.getUser(uuid).username;
+    obj.view.push({ id: uuid, name: name });
   }
   return obj;
 };
@@ -443,10 +457,10 @@ exports.addUserToGroup = (user, group, perm) => {
   dbChanged = true;
   return true;
 };
-exports.removeUserFromGroup = (user, group) => {
+exports.removeUserFromGroup = (user, gid) => {
   // adds a user to a group with permissions
   dugdb.groups[gid].users = dugdb.groups[gid].users.filter(
-    (item) => item !== user
+    (item) => item.user !== user
   );
   dugdb.users[user].groups = dugdb.users[user].groups.filter(
     (item) => item !== gid
