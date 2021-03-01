@@ -2,15 +2,16 @@
 const db = require("./database.js");
 const multer = require("multer");
 const fs = require("fs");
+//Config Import
+const { Storage } = require("../server-config.json");
 //Constants
 const FILESIZE_MB = Math.pow(1024, 2);
-const FILESIZE_GB = Math.pow(1024, 3);
-const defaultFileUploadSize = FILESIZE_MB * 600; //600MB
-const imageSizeLimit = FILESIZE_MB * 150; //150MB
+const imageSizeLimit = FILESIZE_MB * Storage.ProfileImageSize; //150MB
+const imageFileTypes = /jpeg|jpg|png/;
 //Multer -----------------------------------------------------------------------
 exports.imageStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    let dir = __dirname + "/www/images/user-images/";
+    let dir = __dirname + Storage.UserImagePath;
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
     }
@@ -24,8 +25,7 @@ exports.imageUpload = multer({
   storage: exports.imageStorage,
   limits: { fileSize: imageSizeLimit },
   fileFilter: function (req, file, cb) {
-    var filetypes = /jpeg|jpg|png/;
-    var correctMimetype = filetypes.test(file.mimetype);
+    const correctMimetype = imageFileTypes.test(file.mimetype);
     if (!correctMimetype) {
       req.fileValidationError = true;
       return cb(null, false, new Error("INVALID MIMETYPE"));
@@ -36,9 +36,9 @@ exports.imageUpload = multer({
 //Files Handle-------------------------------------------------------------------
 exports.userUploadStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    let path = __dirname + "/uploads/" + req.session.user_id + "/";
-    if (!fs.existsSync(__dirname + "/uploads/"))
-      fs.mkdirSync(__dirname + "/uploads/");
+    let path = `${__dirname}${Storage.UploadPath}${req.session.user_id}/`;
+    if (!fs.existsSync(__dirname + Storage.UploadPath))
+      fs.mkdirSync(__dirname + Storage.UploadPath);
     if (!fs.existsSync(path)) fs.mkdirSync(path);
 
     cb(null, path);
@@ -50,13 +50,13 @@ exports.userUploadStorage = multer.diskStorage({
 });
 exports.userUpload = multer({
   storage: exports.userUploadStorage,
-  limits: { fileSize: defaultFileUploadSize },
+  /*limits: { fileSize: defaultFileUploadSize },*/
 }).single("user-selected-upload-file");
 exports.approveFile = function (req) {
   let status = { type: "Success", tag: "Upload Successful!" };
   let file = req.file;
   if (!file) {
-    status.type = "Error";
+    status.type = StatusCode.Error;
     status.tag = "No File Uploaded!";
     return status;
   } //Return if there is no File
@@ -72,7 +72,7 @@ exports.approveFile = function (req) {
     } catch (err) {
       console.error(err);
     }
-    status.type = "Error";
+    status.type = StatusCode.Error;
     status.tag = "User Storage Full!";
     return status;
   }

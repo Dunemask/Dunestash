@@ -1,33 +1,19 @@
 const fs = require("fs");
-const defaultImage = "/images/blank_user.svg";
-const FILESIZE_MB = Math.pow(1024, 2);
-const FILESIZE_GB = Math.pow(1024, 3);
-const defaultStorageSize = 2;
 const rimraf = require("rimraf");
-
 const bcrypt = require("bcrypt"); // Hashing
+const { Storage, Web } = require("../server-config.json");
 const SALT_ROUNDS = 10;
-
-const dugdbLocation = __dirname + "/src/dugdatabase.json";
-const dugdbTempPath = __dirname + "/src/dugdatabase-tmp.json";
+const dugdbLocation = __dirname + Storage.DatabasePath;
+const dugdbTempPath = __dirname + Storage.DatabasePathTemporary;
 const ddb = require("./dugdb.js"); // Main Database Object
-
-const adminConfig = {
-  useAdmin: true,
-  email: "abc@xyz.com",
-  pwd: "password",
-  username: "admin",
-  storage: 999,
-};
-
+const adminConfig = Server.AdminConfig;
 let dugdb;
-
 let dbChanged = false;
 
 exports.init = () => {
   dugdb = new ddb.Dugdb();
   if (fs.existsSync(dugdbLocation)) {
-    dugdb.loadData(JSON.parse(fs.readFileSync(dugdbLocation)));
+    dugdb.loadData(require(dugdbLocation));
   } else {
     if (adminConfig.useAdmin) {
       const hash = bcrypt.hashSync(adminConfig.pwd, SALT_ROUNDS);
@@ -41,6 +27,9 @@ exports.init = () => {
     }
   }
 };
+exports.resourceExists = (path) => {
+  return fs.existsSync(path);
+};
 // User Creation
 exports.createUser = function (username, password, email) {
   // Setus up new user
@@ -49,10 +38,10 @@ exports.createUser = function (username, password, email) {
     return;
   }
   const hash = bcrypt.hashSync(password, SALT_ROUNDS);
-  let u = dugdb.newUser(username, hash, email, defaultStorageSize);
+  let u = dugdb.newUser(username, hash, email, Storage.UserStorageSize);
   let uuid = dugdb.addUser(u);
   dbChanged = true;
-  fs.mkdirSync(`${__dirname}/uploads/${uuid}`);
+  fs.mkdirSync(`${__dirname}${Storage.UploadPath}${uuid}`);
   return uuid;
 };
 exports.deleteUser = function (uuid) {
@@ -62,7 +51,7 @@ exports.deleteUser = function (uuid) {
     this.deleteFile(file, uuid);
   });
   delete dugdb.users[uuid];
-  rimraf.sync(__dirname + "uploads/" + uuid + "/");
+  rimraf.sync(__dirname + Storage.UploadPath + uuid + "/");
   return true;
   dbChanged = true;
 };
@@ -89,6 +78,16 @@ exports.getUser = function (uuid) {
   // Returns username, misnomer call it getUsername()
   return dugdb.users[uuid] && dugdb.users[uuid].username;
 };
+exports.getUserImage = function (uuid) {
+  if (this.resourceExists(__dirname + Storage.UserImagePath + uuid))
+    return `${Web.ProfileImage}${uuid}`;
+  else return Web.ProfileImageDefault;
+};
+exports.getTemporaryUserImage = function (uuid) {
+  if (this.resourceExists(__dirname + Storage.UserImagePathTemporary + uuid))
+    return `${ProfileImageTemporary}${uuid}`;
+  else return this.getUserImage(uuid);
+};
 exports.getUserObject = function (uuid) {
   // Returns an object holding much information about user
   return dugdb.users[uuid];
@@ -96,27 +95,11 @@ exports.getUserObject = function (uuid) {
 exports.getUserStorageSize = function (uuid) {
   // Storage Size
   if (!dugdb.users[uuid]) return;
-  return parseInt(dugdb.users[uuid].storage) * FILESIZE_GB;
+  return parseInt(dugdb.users[uuid].storage);
 };
 exports.getUserEmail = function (uuid) {
   // Email
   return dugdb.users[uuid] && dugdb.users[uuid].email;
-};
-exports.getUserImage = function (uuid) {
-  // Returns path to user image
-  let userImage = `/images/user-images/${uuid}`;
-  if (!fs.existsSync(__dirname + "/www" + userImage) || uuid == undefined) {
-    userImage = defaultImage;
-  }
-  return userImage;
-};
-exports.getTemporaryUserImage = function (uuid) {
-  // Returns path to user image
-  let userImage = `/images/user-images/${uuid}-tmp`;
-  if (!fs.existsSync(__dirname + "/www" + userImage) || uuid == undefined) {
-    userImage = defaultImage;
-  }
-  return userImage;
 };
 exports.getUserGroups = function (uuid) {
   // Returns list of group objects
@@ -306,7 +289,9 @@ exports.deleteFile = function (file) {
   );
   let deletedProperly = false;
   try {
-    fs.unlinkSync(`${__dirname}/uploads/${id}/${exports.getFile(file).path}`);
+    fs.unlinkSync(
+      `${__dirname}${Storage.UploadPath}${id}/${exports.getFile(file).path}`
+    );
     dugdb.users[id].ownedFiles = dugdb.users[id].ownedFiles.filter(
       (item) => item !== file
     );

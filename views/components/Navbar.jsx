@@ -16,7 +16,7 @@ module.exports = class Navbar extends React.Component {
                 type="image"
                 src={this.userImage}
                 id="user-icon"
-                alt="Image not found"
+                alt="ERR"
               />
             </a>
           </div>
