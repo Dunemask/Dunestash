@@ -1,6 +1,6 @@
 @import "global/colors", "global/fonts", "global/measurements",
   "global/animations";
-@import "components/Navbar";
+@import "components/Navbar", "components/ToastNotification";
 html {
   margin-left: auto;
   margin-right: auto;
@@ -17,6 +17,7 @@ html {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+  width: 100%;
 }
 body {
   margin-left: auto;

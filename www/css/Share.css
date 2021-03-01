@@ -69,6 +69,7 @@ pre {
 
 /*Spacing*/
 /*Size*/
+/*Components*/
 /*Misc*/
 /*Shimmer for links*/
 @-webkit-keyframes glowingShimmer {
@@ -82,25 +83,25 @@ pre {
     background-position: 12.5rem top;
     /*200px*/ } }
 
-@keyframes status-indicator-success-transition {
+@keyframes fade-in {
   0% {
-    height: 100%;
-    background-color: rgba(226, 0, 6, 0.75);
-    color: white; }
+    opacity: 0; }
   100% {
-    background-color: rgba(50, 205, 50, 0);
-    olor: white;
-    height: 0; } }
+    opacity: 1; } }
 
-@keyframes status-indicator-fail-transition {
+@keyframes toastify-notification-fade-out {
   0% {
-    height: 100%;
-    background-color: rgba(164, 0, 0, 0.75);
-    color: 255, 255, 255, 1; }
+    opacity: 1; }
   100% {
-    background-color: rgba(164, 0, 0, 0);
-    height: 0;
-    color: 255, 255, 255, 0; } }
+    opacity: 0;
+    visibility: hidden; } }
+
+@keyframes toast-notification-face-in {
+  0% {
+    opacity: 0; }
+  100% {
+    opacity: 0.9;
+    visibility: visible; } }
 
 @keyframes spin {
   0% {
@@ -108,22 +109,11 @@ pre {
   100% {
     transform: rotate(360deg); } }
 
-.status-indicator-fail {
-  position: absolute;
-  width: 100%;
-  animation: status-indicator-fail-transition 1.9s forwards;
-  overflow: hidden; }
-
-.status-indicator-success {
-  animation: status-indicator-success-transition 1.7s forwards;
-  position: absolute;
-  width: 100%;
-  overflow: hidden; }
-
 .navbar {
   background-color: rgba(0, 0, 0, 0.8);
   width: 100%;
-  display: inline-block; }
+  display: inline-block;
+  height: 80px; }
 
 .nav {
   line-height: 36px;
@@ -169,57 +159,66 @@ pre {
   display: block;
   padding: 0px 10px; }
 
-.user-control-container {
-  margin-top: 65px;
+/**
+ * Based On toastify.min.css from toastify-js
+ */
+.toast-notification {
+  padding: 12px 20px;
+  color: #fff;
+  display: flex;
+  box-shadow: 0 3px 6px -1px rgba(0, 0, 0, 0.12), 0 10px 36px -4px rgba(77, 96, 232, 0.3);
+  background: #00b5f7;
+  border-radius: 2px;
+  text-decoration: none;
+  min-width: calc(300px - 100px);
+  max-width: calc(50% - 20px);
+  z-index: 2147483647;
+  word-wrap: break-word;
+  float: right;
   position: absolute;
-  padding-left: 20px;
-  max-width: 200px;
-  z-index: 999; }
-
-.login-links {
-  display: inline-block;
-  white-space: nowrap;
+  top: 0;
+  right: 0px;
+  word-wrap: break-word;
+  min-height: calc(56px);
   overflow: hidden;
-  float: left;
-  margin: 0 0;
-  border-collapse: separate;
-  padding-right: 10px;
-  padding: 10px 0px;
-  background-color: #292929;
-  border-radius: 2px; }
+  opacity: 0;
+  visibility: hidden; }
 
-.login-links ul {
-  margin-top: 0;
-  padding: 0;
-  list-style-type: none; }
+.toast-notification:hover {
+  opacity: 1; }
 
-.login-links li {
-  margin: 0px;
-  height: 100%;
-  width: 100%;
-  padding: 6px 12px;
-  border: 0 none;
-  text-align: justify;
+.toast-notification-on {
+  visibility: visible;
+  opacity: 0.9; }
+
+.toast-notification-off {
+  animation: toastify-notification-fade-out 0.6s forwards; }
+
+#toast-message {
+  height: auto;
+  margin: 0 auto;
+  min-width: calc(300px - 100px);
+  max-width: calc(50% - 20px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  word-wrap: break-word;
   cursor: pointer; }
 
-.login-links a {
-  margin: 0px;
-  text-decoration: none;
-  color: white;
-  font-size: 24px; }
+#toast-notification-close {
+  font-size: 20px;
+  height: 20px;
+  opacity: 0.4; }
 
-.login-links a:hover,
-.login-links a:focus {
-  text-shadow: none;
-  background: white -webkit-gradient(linear, 100% 0, 0 0, from(white), color-stop(0.5, #141414), to(white));
-  background-position: -4rem top;
-  background-repeat: no-repeat;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  -webkit-animation-name: glowingShimmer;
-  -webkit-animation-duration: 4s;
-  -webkit-animation-iteration-count: infinite;
-  -webkit-background-size: 4rem 100%; }
+#toast-notification-close:hover {
+  opacity: 0.6;
+  cursor: pointer; }
+
+.toast-success {
+  background-color: limegreen; }
+
+.toast-error {
+  background-color: #e20006; }
 
 html {
   margin-left: auto;
@@ -231,7 +230,8 @@ html {
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
-  background-size: cover; }
+  background-size: cover;
+  width: 100%; }
 
 body {
   margin-left: auto;

@@ -55,19 +55,18 @@ module.exports = class Profile extends Page {
                         required
                       ></input>
                     </div>
-                    <div className="password-change-link">
-                      <a href="/profile?type=password">Change Password</a>
-                    </div>
                     <div className="user-information-form-actions">
                       <div className="user-information-form-action">
                         <a href="profile">Revert</a>
-                      </div>
-                      <div className="user-information-form-action">
                         <input type="submit" value="Apply"></input>
                       </div>
                     </div>
                   </form>
                 </div>
+              </div>
+              <div className="other-actions">
+                <a href="/profile?type=password">Change Password</a>
+                <a href="logout">Logout</a>
               </div>
             </div>
           </div>

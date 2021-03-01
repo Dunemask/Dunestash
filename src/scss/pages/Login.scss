@@ -47,7 +47,18 @@
   padding-left: 64%;
 }
 
-input[type="submit"] {
+.login-form-actions {
+  margin-top: 20px;
+}
+
+.register-link {
+  float: left;
+  text-align: center;
+  width: 170px;
+}
+
+input[type="submit"],
+.login-form-actions a {
   padding: 5px 15px;
   background: $sectionMenuOptions;
   border: 0 none;
@@ -57,7 +68,10 @@ input[type="submit"] {
   font-size: 24px;
   line-height: 26px;
   color: white;
+  text-decoration: none;
 }
-input[type="submit"]:hover {
+input[type="submit"]:hover,
+,
+.login-form-actions a:hover {
   animation: breathe 4s infinite;
 }

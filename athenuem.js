@@ -10,7 +10,7 @@ const imageSizeLimit = FILESIZE_MB * 150; //150MB
 //Multer -----------------------------------------------------------------------
 exports.imageStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    let dir = __dirname + "/www/files/images/user-images/";
+    let dir = __dirname + "/www/images/user-images/";
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
     }

@@ -18,7 +18,7 @@ module.exports = class Home extends Page {
               <div className="github">
                 <a href="https://github.com/dunemask">
                   <i
-                    className="fa fa-github"
+                    className="fab fa-github"
                     aria-hidden="true"
                     style={{ fontSize: "43px" }}
                   />
