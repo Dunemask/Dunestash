@@ -14,6 +14,7 @@
     "UserImagePathTemporary": "www/images/user-images/",
     "UserStorageSize": "2048",
     "ProfileImageSize": "150",
+    "UploadMaxSize":"",
     "DatabasePath": "src/dugdatabase.json",
     "DatabasePathTemporary": "src/dugdatabase-tmp.json"
   },

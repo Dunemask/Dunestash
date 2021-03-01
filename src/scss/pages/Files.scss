@@ -16,7 +16,7 @@
   flex: 1;
   text-align: center;
   padding-top: 25px;
-  padding:$defaultBoxPadding;
+  padding: $defaultBoxPadding;
 }
 .links ul {
   margin: auto;
@@ -53,14 +53,14 @@
 }
 
 .links a:hover {
-  color: rgba($foreground,.9);
+  color: rgba($foreground, 0.9);
 }
 .file-date {
   float: right;
   padding-left: 14px;
-  padding-top: 13px;
   color: $foreground;
   font-size: 14px;
+  margin-top: 7px;
 }
 
 .link-get {
@@ -71,7 +71,16 @@
 }
 
 .link-get:hover {
-  color: rgba($foreground, 0.9);
+  text-shadow: none;
+  background: $foreground -webkit-gradient(linear, 100% 0, 0 0, from($foreground), color-stop(0.5, $backgroundGradientStart), to($foreground));
+  background-position: -4rem top;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-animation-name: glowingShimmer;
+  -webkit-animation-duration: 4s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-background-size: 4rem 100%;
 }
 
 .file-options {

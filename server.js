@@ -76,19 +76,18 @@ app.post("/upload", isUser, (req, res) => {
   ath.userUpload(req, res, (err) => {
     let status = ath.approveFile(req); //Ensure the file gets passed
     if (!req.file || err) {
-      console.log(err);
-      status.type = StatusCode.Error;
-      status.tag = "File Upload Error!";
-    } else {
+    }
+    if (status.type == StatusCode.Success) {
       db.addFile(req.file.filename, req.session.user_id);
     }
+
     res.render("pages/Upload.jsx", { uuid: req.session.user_id, status });
   });
 });
 app.get("/download", isUser, (req, res) => {
   if (db.authorizedToViewFile(req.query.target, req.session.user_id)) {
     const file = db.getFile(req.query.target);
-    const path = path.resolve(Storage.UploadPath,file.owner,file.path);
+    const path = path.resolve(Storage.UploadPath, file.owner, file.path);
     res.download(path);
   } else {
     res.redirect(req.header("Referer") || "/");
@@ -97,7 +96,7 @@ app.get("/download", isUser, (req, res) => {
 app.get("/rawdata", isUser, (req, res) => {
   if (db.authorizedToViewFile(req.query.target, req.session.user_id)) {
     const file = db.getFile(req.query.target);
-    const path = path.resolve(Storage.UploadPath,file.owner,file.path);
+    const path = path.resolve(Storage.UploadPath, file.owner, file.path);
     if (!fs.existsSync(path)) {
       res.redirect("/page-not-found?origin=" + req.originalUrl);
     } else {
@@ -111,11 +110,19 @@ app.all("/delete-file", isUser, (req, res) => {
   //delete-file?nemo=0&target=File1.txt
   if (db.authorizedToEditFile(req.query.target, req.session.user_id)) {
     const deleted = db.deleteFile(req.query.target);
+    const linkedMode = req.query.type == "linked";
+    const filePrerender = pr.filesPageRender(req.session.user_id, linkedMode);
     const status = {
       type: deleted ? StatusCode.Success : StatusCode.Error,
       tag: deleted ? "File Succesfully Deleted!" : "Error Deleting File!",
     };
-    res.render("pages/Files.jsx", { uuid: req.session.user_id, status });
+
+    res.render("pages/Files.jsx", {
+      uuid: req.session.user_id,
+      status,
+      displayFiles: filePrerender.displayFiles,
+      linkedMode,
+    });
   } else {
     res.redirect(req.header("Referer") || "/");
   }
@@ -187,8 +194,8 @@ const applyProfileUpdates = (req, res) => {
   let username = db.getUser(req.session.user_id);
   const clientUsername = req.body["username-entry"];
   const uuid = req.session.user_id;
-  const tmpImage = path.resolve(Storage.UserImagePathTemporary,uuid);
-  const image = path.resolve(Storage.UserImagePath,uuid);
+  const tmpImage = path.resolve(Storage.UserImagePathTemporary, uuid);
+  const image = path.resolve(Storage.UserImagePath, uuid);
   if (fs.existsSync(tmpImage) && fs.existsSync(image)) {
     fs.unlinkSync(image);
     fs.renameSync(tmpImage, image);

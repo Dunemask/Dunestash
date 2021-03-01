@@ -25,43 +25,43 @@ module.exports = class Files extends Page {
               <h1>{this.title}</h1>
               <div className="links" id="file-display">
                 <ul>
-                  {this.files.map((file, index) => (
-                    <li key={index}>
-                      <div className="file-actions">
-                        <a
-                          href={`/rawdata?target=${file.target}`}
-                          className="link-get"
-                        >
-                          {file.filename}
-                        </a>
-                        <div className="file-options">
+                  {!!this.files &&
+                    this.files.map((file, index) => (
+                      <li key={index}>
+                        <div className="file-actions">
                           <a
-                            href={`/download?target=${file.target}`}
-                            className="link-download"
+                            href={`/rawdata?target=${file.target}`}
+                            className="link-get"
                           >
-                            <i className="fas fa-file-download"></i>
+                            {file.filename}
                           </a>
-                          <a
-                            href={`/share?&target=${file.target}`}
-                            className="link-share"
-                          >
-                        <i className="fas fa-share-square"></i>
-
-                          </a>
-                          <a
-                            href={`/delete-file?target=${file.target}`}
-                            className="link-delete"
-                          >
-                            <i className="fas fa-trash"></i>
-                          </a>
-                          <span className="file-date">{file.date} </span>
+                          <div className="file-options">
+                            <a
+                              href={`/download?target=${file.target}`}
+                              className="link-download"
+                            >
+                              <i className="fas fa-file-download"></i>
+                            </a>
+                            <a
+                              href={`/share?&target=${file.target}`}
+                              className="link-share"
+                            >
+                              <i className="fas fa-share-square"></i>
+                            </a>
+                            <a
+                              href={`/delete-file?target=${file.target}`}
+                              className="link-delete"
+                            >
+                              <i className="fas fa-trash"></i>
+                            </a>
+                            <span className="file-date">{file.date} </span>
+                          </div>
                         </div>
-                      </div>
-                    </li>
-                  ))}
+                      </li>
+                    ))}
                 </ul>
               </div>
-              {this.files.length == 0 && !this.linkedMode && (
+              {!!this.files && this.files.length == 0 && !this.linkedMode && (
                 <h2>
                   No files found{" "}
                   <a href="/upload" id="no-files-link">

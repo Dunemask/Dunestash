@@ -7,7 +7,8 @@ const db = require("./database.js");
 const { Storage, StatusCode } = require("../server-config.json");
 //Constants
 const FILESIZE_MB = Math.pow(1024, 2);
-const imageSizeLimit = FILESIZE_MB * Storage.ProfileImageSize; //150MB
+const uploadSizeLimit = Storage.UploadMaxSize * FILESIZE_MB;
+const imageSizeLimit = Storage.ProfileImageSize * FILESIZE_MB; //150MB
 const imageFileTypes = /jpeg|jpg|png/;
 //Multer -----------------------------------------------------------------------
 exports.imageStorage = multer.diskStorage({
@@ -18,14 +19,14 @@ exports.imageStorage = multer.diskStorage({
     }
     cb(null, dir);
   },
-  filename: function (req, file, cb) {
+  filename: (req, file, cb) => {
     cb(null, req.session.user_id + "-tmp");
   },
 });
 exports.imageUpload = multer({
   storage: exports.imageStorage,
   limits: { fileSize: imageSizeLimit },
-  fileFilter: function (req, file, cb) {
+  fileFilter: (req, file, cb) => {
     const correctMimetype = imageFileTypes.test(file.mimetype);
     if (!correctMimetype) {
       req.fileValidationError = true;
@@ -44,17 +45,16 @@ exports.userUploadStorage = multer.diskStorage({
 
     cb(null, destination);
   },
-  filename: function (req, file, cb) {
+  filename: (req, file, cb) => {
     let n = file.originalname.split(" ").join("_");
     cb(null, `${Date.now()}-${n}`);
   },
 });
 exports.userUpload = multer({
   storage: exports.userUploadStorage,
-  /*limits: { fileSize: defaultFileUploadSize },*/
 }).single("user-selected-upload-file");
 exports.approveFile = (req) => {
-  let status = { type: "Success", tag: "Upload Successful!" };
+  let status = { type: StatusCode.Success, tag: "Upload Successful!" };
   let file = req.file;
   if (!file) {
     status.type = StatusCode.Error;
@@ -62,20 +62,19 @@ exports.approveFile = (req) => {
     return status;
   } //Return if there is no File
   let dirLimit = db.getUserStorageSize(req.session.user_id) * FILESIZE_MB;
-  let size = 0;
+  let size = req.file.size;
   let files = fs.readdirSync(path.resolve(file.destination));
   for (f in files) {
     size += fs.statSync(path.resolve(file.destination, files[f])).size;
   }
-  if (size + req.file.size > dirLimit) {
-    try {
-      fs.unlinkSync(path.resolve(req.file.path));
-    } catch (err) {
-      console.error(err);
-    }
+  if (!!uploadSizeLimit && req.file.size > uploadSizeLimit) {
     status.type = StatusCode.Error;
-    status.tag = "User Storage Full!";
-    return status;
+    status.tag = "File Surpasses Upload Size Limit!";
+    fs.unlinkSync(path.resolve(req.file.path));
+  } else if (size > dirLimit) {
+    status.type = StatusCode.Error;
+    status.tag = "File Exceeds User Storage Capacity!";
+    fs.unlinkSync(path.resolve(req.file.path));
   }
   return status;
 };
