@@ -38,7 +38,7 @@ module.exports = class Share extends Page {
                       </a>
                       {this.file.options.delete && (
                         <a
-                          href={`/delete-file?nemo=${this.file.nemo}&target=${this.file.target}`}
+                          href={`/delete-file?nemo=${this.file.nemo}&target=${this.file.target}&next=my-files`}
                           className="link-delete"
                         >
                           <i className="fa fa-trash"></i>
