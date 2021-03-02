@@ -12,7 +12,7 @@ let dugdb;
 let dbChanged = false;
 exports.init = () => {
   dugdb = new ddb.Dugdb();
-  if (fs.existsSync(path.resolve(Storage.UploadPath)))
+  if (!fs.existsSync(path.resolve(Storage.UploadPath)))
     fs.mkdirSync(path.resolve(Storage.UploadPath));
   if (fs.existsSync(path.resolve(dugdblocation))) {
     dugdb.loadData(require(path.resolve(dugdblocation)));
