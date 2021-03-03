@@ -102,6 +102,14 @@ exports.getUserStorageSize = function (uuid) {
   if (!dugdb.users[uuid]) return;
   return parseInt(dugdb.users[uuid].storage);
 };
+exports.getUserUsedStorageSpace = function(uuid){
+  let size = 0;
+  const files = fs.readdirSync(path.resolve(Storage.UploadPath,uuid));
+  for (f in files) {
+    size += fs.statSync(path.resolve(Storage.UploadPath,uuid, files[f])).size;
+  }
+  return size;
+};
 exports.getUserEmail = function (uuid) {
   // Email
   return dugdb.users[uuid] && dugdb.users[uuid].email;

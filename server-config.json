@@ -20,7 +20,7 @@
   },
   "Server": {
     "Port": 3000,
-    "Debug": false,
+    "Debug": true,
     "BodyLimit": "5mb",
     "UpdateInterval": "3600000",
     "AdminConfig": {

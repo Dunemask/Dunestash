@@ -6,6 +6,7 @@ const ath = require("./athenuem.js");
 const db = require("./database.js");
 const pr = require("./prerender.js");
 const { StatusCode, Storage } = require("../server-config.json");
+const FILESIZE_MB = Math.pow(1024, 2);
 //Load Page Renders the file with the status and props.
 exports.setStatus = (req, type, tag) => {
   if (!req.session.status) req.session.status = {};
@@ -50,8 +51,13 @@ exports.fileUpload = (req, res) => {
     if (status.type == StatusCode.Success) {
       db.addFile(req.file.filename, req.session.user_id);
     }
-    this.setStatus(req, status.type, status.tag);
-    this.redirectTo(req, res, "upload");
+    const storage = {
+      used: db.getUserUsedStorageSpace(req.session.user_id),
+      total: db.getUserStorageSize(req.session.user_id)* FILESIZE_MB,
+    };
+    res.json({ status, storage });
+
+    //this.redirectTo(req, res, "upload");
   });
 };
 exports.getRawData = (req, res) => {

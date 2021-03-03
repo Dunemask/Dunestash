@@ -52,7 +52,7 @@ exports.userUploadStorage = multer.diskStorage({
 });
 exports.userUpload = multer({
   storage: exports.userUploadStorage,
-}).single("user-selected-upload-file");
+}).single("user-selected-file");
 exports.approveFile = (req) => {
   let status = { type: StatusCode.Success, tag: "Upload Successful!" };
   let file = req.file;

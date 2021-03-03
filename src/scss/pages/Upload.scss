@@ -1,4 +1,9 @@
 @import "../global", "../components/UploadCircle.scss";
+
+$watcherIndicatorSize: 18px;
+$watcherActionSize:14px;
+$uploadBoxesSize: 50px;
+
 @include animation-breathe(
   $sectionMenuOptions,
   $foreground,
@@ -13,83 +18,107 @@
   padding: 20px;
   margin: 0 auto;
 }
-
-.file-selection input[type="file"] {
+#file-drop-area {
+  border: 2px dashed #ccc;
+  border-radius: 20px;
+  width: 480px;
+  font-family: sans-serif;
+  margin: 100px auto;
+  padding: 20px;
+}
+#file-drop-area.highlight {
+  border-color: purple;
+}
+p {
+  margin-top: 0;
+}
+.my-form {
+  margin-bottom: 10px;
+}
+.button {
+  display: inline-block;
+  padding: 10px;
+  background: #ccc;
+  cursor: pointer;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+.button:hover {
+  background: #ddd;
+}
+#file-dropzone {
   display: none;
 }
 
-.file-selection label {
-  color: $foreground;
-  line-height: 26px;
-}
-.file-select-button {
-  padding-left: 20px;
-}
-.file-upload-button {
-  padding-left: 20px;
-}
-
-.file-selection input[type="submit"] {
-  padding: 5px 15px;
-  background: $sectionMenuOptions;
-  color: white;
-  border: 0 none;
-  cursor: pointer;
-  font-size: 24px;
-  line-height: 26px;
-}
-
-.file-selection input[type="submit"]:hover {
-  animation: breathe 3s infinite;
-}
-
-
-.file-selection label:hover {
-  cursor: pointer;
-  animation: bounce 4s infinite;
-}
-
-#file-wrapper {
-  display: inline-block;
-  vertical-align: top;
-  padding-top: 50px;
-}
-.file-selection-container {
+.file-watcher {
   width: 100%;
+  display: inline-flex;
+  background-color: $sectionMenuOptions;
+  height: 50px;
 }
 
-.selected-file-container {
-  padding-top: 20px;
-  display: inline-block;
-}
-#lower-file-data {
-  background-color: $sectionBackground;
-  padding: 20px;
-  border-radius: $defaultBorderRadius;
+.file-watcher-progressbar {
+  min-width: $uploadBoxesSize;
+  min-height: $uploadBoxesSize;
+  max-width: $uploadBoxesSize;
+  max-height: $uploadBoxesSize;
+  background-color: lighten($sectionMenuOptions, 20%);
 }
 
-.upload-progress-bar {
-  border: 2px solid $successColor;
+.file-watcher-active {
+  background-color: lighten($sectionMenuOptions, 10%);
 }
 
-.upload-progress-bar-fill {
+.file-watcher-progressbar-fill {
   height: 100%;
   width: 0%;
   background: $successColor;
   display: flex;
-  align-items: center;
   font-weight: bold;
   transition: width 0.22s;
+  align-items: center;
+}
+.file-watcher-progressbar-fill-error {
+  background: $errorColor;
 }
 
-.upload-progres-bar-text {
+.file-watcher-progressbar-text {
   color: $foreground;
+  margin: 10px;
+  font-size: $watcherIndicatorSize;
 }
 
-.processing {
-  display: inline-flex;
+.file-watcher-name-wrapper {
+  width:100%;
+  display: flex;
+  align-items: center;
+  max-height: $watcherIndicatorSize;
+  word-wrap: break-word;
+  overflow: hidden;
 }
-.loader-wrapper {
+
+.file-watcher-name {
+  margin: auto;
+  overflow: hidden;
   padding-left: 10px;
-  padding-top: 25px;
+
+}
+
+.file-watcher-action {
+  width: $uploadBoxesSize;
+  height: $uploadBoxesSize;
+  display: flex;
+  font-weight: bold;
+  align-items: center;
+  padding:0px 5px;
+}
+
+.file-watcher-action-icon {
+  margin: auto;
+  font-size: $watcherActionSize;
+}
+
+.file-watcher-action:hover {
+  opacity: 0.9;
+  cursor: pointer;
 }

@@ -11,6 +11,7 @@ const { Web, StatusCode, Server } = require("./server-config.json");
 const db = require("./extensions/database.js");
 db.init();
 const r = require("./extensions/renderer.js");
+const ath = require("./extensions/athenuem.js");
 //Define Constants
 const app = express();
 const port = Server.Port;
@@ -26,7 +27,8 @@ app.use(bodyParser.json({ limit: Server.BodyLimit })); // parse application/json
 app.use(bodyParser.urlencoded({ limit: Server.BodyLimit, extended: false })); // parse application/x-www-form-urlencoded
 //Test if there is a
 const isUser = (req, res, next) => {
-  //req.session.user_id=0;
+  if (debuggingMode && !req.session.user_id)
+    req.session.user_id = db.getUuid("admin");
   if (!!req.session.user_id || req.path === "/login") {
     next();
   } else {
