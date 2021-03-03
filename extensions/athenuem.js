@@ -50,9 +50,22 @@ exports.userUploadStorage = multer.diskStorage({
     cb(null, `${Date.now()}-${n}`);
   },
 });
+exports.allowedUploadSize = (uuid) => {
+  return (
+    db.getUserStorageSize(uuid) * FILESIZE_MB - db.getUserUsedStorageSpace(uuid)
+  );
+};
+
+exports.userUpload = ({ req }) =>
+  multer({
+    storage: exports.userUploadStorage,
+    limits: { fileSize: this.allowedUploadSize(req.session.user_id) },
+  }).single("user-selected-file");
+
 exports.userUpload = multer({
   storage: exports.userUploadStorage,
 }).single("user-selected-file");
+
 exports.approveFile = (req) => {
   let status = { type: StatusCode.Success, tag: "Upload Successful!" };
   let file = req.file;

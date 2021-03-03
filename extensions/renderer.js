@@ -1,6 +1,7 @@
 //Imports
 const path = require("path");
 const fs = require("fs");
+const multer = require("multer");
 //Local Imports
 const ath = require("./athenuem.js");
 const db = require("./database.js");
@@ -44,6 +45,7 @@ exports.sharePage = (req, res) => {
 };
 //File Actions
 exports.fileUpload = (req, res) => {
+  const fileSize = ath.allowedUploadSize(req.session.user_id);
   ath.userUpload(req, res, (err) => {
     const status = ath.approveFile(req); //Ensure the file meets criteria
     if (!req.file || err) {
@@ -53,7 +55,7 @@ exports.fileUpload = (req, res) => {
     }
     const storage = {
       used: db.getUserUsedStorageSpace(req.session.user_id),
-      total: db.getUserStorageSize(req.session.user_id)* FILESIZE_MB,
+      total: db.getUserStorageSize(req.session.user_id) * FILESIZE_MB,
     };
     res.json({ status, storage });
 
