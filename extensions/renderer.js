@@ -7,7 +7,6 @@ const ath = require("./athenuem.js");
 const db = require("./database.js");
 const pr = require("./prerender.js");
 const { StatusCode, Storage } = require("../server-config.json");
-const FILESIZE_MB = Math.pow(1024, 2);
 //Load Page Renders the file with the status and props.
 exports.setStatus = (req, type, tag) => {
   if (!req.session.status) req.session.status = {};
@@ -45,22 +44,53 @@ exports.sharePage = (req, res) => {
 };
 //File Actions
 exports.fileUpload = (req, res) => {
-  const fileSize = ath.allowedUploadSize(req.session.user_id);
-  ath.userUpload(req, res, (err) => {
-    const status = ath.approveFile(req); //Ensure the file meets criteria
-    if (!req.file || err) {
-    }
-    if (status.type == StatusCode.Success) {
-      db.addFile(req.file.filename, req.session.user_id);
-    }
-    const storage = {
-      used: db.getUserUsedStorageSpace(req.session.user_id),
-      total: db.getUserStorageSize(req.session.user_id) * FILESIZE_MB,
-    };
-    res.json({ status, storage });
-
-    //this.redirectTo(req, res, "upload");
-  });
+  const serverStorage = db.getUserStorageObject(req.session.user_id);
+  //If no headers then they didn't send the filesize, so we can't let them upload
+  if (!req.headers || req.headers.filesize == undefined) {
+    res.json({
+      status: {
+        type: "Error",
+        tag: "Upload has been tampered with!",
+      },
+      serverStorage,
+    });
+    return;
+  }
+  //Test for if the file is going to be bigger than the server can hold.
+  const fileBiggerThanServerStorage =
+    parseInt(req.headers.filesize) >
+    serverStorage.total * Storage.UserStorageUnit - serverStorage.used;
+  if (fileBiggerThanServerStorage) {
+    res.json({
+      status: {
+        type: "Error",
+        tag: "Not Enough Available Space!",
+      },
+      serverStorage,
+    });
+  } else {
+    //Add the pending total to the session storage
+    db.updateUserStorageObject(req.session.user_id, {
+      used: serverStorage.used + parseInt(req.headers.filesize),
+    });
+    ath.userUpload(req, res, (err) => {
+      let status = {};
+      if (!req.file || err || req.file.size != req.headers.filesize) {
+        status = { type: StatusCode.Error, tag: "Internal Error Occurred!" };
+        db.updateUserStorageObject(req.session.user_id, {
+          used: serverStorage.used - parseInt(req.headers.filesize),
+        });
+      } else {
+        db.addFile(
+          req.session.user_id,
+          req.file.filename,
+          parseInt(req.headers.filesize)
+        );
+        status = { type: StatusCode.Success, tag: "Upload Successful!" };
+      }
+      res.json({ status, serverStorage });
+    });
+  }
 };
 exports.getRawData = (req, res) => {
   const file = db.getFile(req.query.target);

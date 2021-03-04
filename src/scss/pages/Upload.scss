@@ -1,8 +1,4 @@
-@import "../global", "../components/UploadCircle.scss";
-
-$watcherIndicatorSize: 18px;
-$watcherActionSize:14px;
-$uploadBoxesSize: 50px;
+@import "../global", "../components/FileWatcher";
 
 @include animation-breathe(
   $sectionMenuOptions,
@@ -32,7 +28,7 @@ $uploadBoxesSize: 50px;
 p {
   margin-top: 0;
 }
-.my-form {
+.file-dropzone-form {
   margin-bottom: 10px;
 }
 .button {
@@ -48,77 +44,4 @@ p {
 }
 #file-dropzone {
   display: none;
-}
-
-.file-watcher {
-  width: 100%;
-  display: inline-flex;
-  background-color: $sectionMenuOptions;
-  height: 50px;
-}
-
-.file-watcher-progressbar {
-  min-width: $uploadBoxesSize;
-  min-height: $uploadBoxesSize;
-  max-width: $uploadBoxesSize;
-  max-height: $uploadBoxesSize;
-  background-color: lighten($sectionMenuOptions, 20%);
-}
-
-.file-watcher-active {
-  background-color: lighten($sectionMenuOptions, 10%);
-}
-
-.file-watcher-progressbar-fill {
-  height: 100%;
-  width: 0%;
-  background: $successColor;
-  display: flex;
-  font-weight: bold;
-  transition: width 0.22s;
-  align-items: center;
-}
-.file-watcher-progressbar-fill-error {
-  background: $errorColor;
-}
-
-.file-watcher-progressbar-text {
-  color: $foreground;
-  margin: 10px;
-  font-size: $watcherIndicatorSize;
-}
-
-.file-watcher-name-wrapper {
-  width:100%;
-  display: flex;
-  align-items: center;
-  max-height: $watcherIndicatorSize;
-  word-wrap: break-word;
-  overflow: hidden;
-}
-
-.file-watcher-name {
-  margin: auto;
-  overflow: hidden;
-  padding-left: 10px;
-
-}
-
-.file-watcher-action {
-  width: $uploadBoxesSize;
-  height: $uploadBoxesSize;
-  display: flex;
-  font-weight: bold;
-  align-items: center;
-  padding:0px 5px;
-}
-
-.file-watcher-action-icon {
-  margin: auto;
-  font-size: $watcherActionSize;
-}
-
-.file-watcher-action:hover {
-  opacity: 0.9;
-  cursor: pointer;
 }

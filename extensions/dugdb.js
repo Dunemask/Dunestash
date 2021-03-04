@@ -1,5 +1,6 @@
 // Data User Group database
 const { v4: uuidv4 } = require("uuid"); // Depends on uuid module
+const { Storage } = require("../server-config.json");
 class Dugdb {
   constructor() {
     this.users = {};
@@ -36,7 +37,6 @@ class Dugdb {
     }
     return ret;
   }
-
   addUser(user) {
     this.users[user.uuid] = user;
     return user.uuid;
@@ -52,23 +52,28 @@ class Dugdb {
     this.addUserToGroup(group.owner, group.uuid, "owner");
     return group.uuid;
   }
-  newUser(name, hash, email, storage = 999) {
+  newUser(name, hash, email, storageSize = Storage.UserStorageSize) {
     return {
       uuid: Dugdb.getNewUUID(),
       username: name,
       hash: hash,
-      storage: storage,
+      storage: {
+        total: storageSize,
+        used: 0,
+      },
+      pendingUploadSize: 0,
       ownedFiles: [],
       sharedFiles: [],
       groups: [],
       email: email,
     };
   }
-  newFile(owner, path) {
+  newFile(owner, path, size) {
     return {
       uuid: Dugdb.getNewUUID(),
-      owner: owner,
-      path: path,
+      owner,
+      path,
+      size,
       viewList: [],
       editList: [],
       isPublic: false,
@@ -105,7 +110,6 @@ class Dugdb {
     this.groups = obj.groups;
   }
 }
-
 module.exports = {
   Dugdb: Dugdb,
 };

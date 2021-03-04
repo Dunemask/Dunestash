@@ -66,7 +66,7 @@ function Toaster() {
     }
     activeToastMessage.innerHTML = message;
     activeToastNotification.classList.add("toast-notification-on");
-    toastCycle(hideTimeout, resumeTimeout);
+    this.toastCycle(hideTimeout, resumeTimeout);
   };
   this.defaultToast = (message, type) => {
     this.doToast(message, type, defaultFadeTimeout, defaultResumeTimeout);

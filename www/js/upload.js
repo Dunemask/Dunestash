@@ -29,13 +29,26 @@ function handleDrop(e) {
 }
 function handleFiles(files) {
   const loadedFiles = [...files];
-  loadedFiles.forEach(uploadFile);
+  loadedFiles.forEach(fileWatcherUpload);
 }
 //End Dropzone
 //Progressbars
-function watcherActionRetry(e, file) {
+const WatcherAction = {
+  Cancel: "Cancel",
+  Clear: "Clear",
+  Retry: "Retry",
+};
+//Watcher Actions
+function watcherActionCancel(e) {
+  const target = e.target || e.srcElement;
+  const fileWatcher = target.closest(".file-watcher");
+  fileWatcher.selectedXhr.abort();
+}
+function watcherActionRetry(e) {
+  const target = e.target || e.srcElement;
+  const fileWatcher = target.closest(".file-watcher");
   watcherActionClear(e);
-  uploadFile(file);
+  fileWatcherUpload(fileWatcher.selectedFile);
 }
 function watcherActionClear(e) {
   const selectedFiles = document.getElementById("selected-files");
@@ -43,12 +56,7 @@ function watcherActionClear(e) {
   const parent = target.closest(".file-watcher");
   selectedFiles.removeChild(parent);
 }
-const WatcherAction = {
-  Cancel: "Cancel",
-  Clear: "Clear",
-  Retry: "Retry",
-};
-function createWatcherAction(type, file, xhr) {
+function createWatcherAction(type) {
   const watcherAction = document.createElement("span");
   watcherAction.classList.add("file-watcher-action");
   const watcherActionIcon = document.createElement("i");
@@ -56,9 +64,7 @@ function createWatcherAction(type, file, xhr) {
   switch (type) {
     case WatcherAction.Cancel:
       watcherActionIcon.classList.add("fa-times");
-      watcherAction.addEventListener("click", (e) => {
-        xhr.abort();
-      });
+      watcherAction.addEventListener("click", watcherActionCancel);
       break;
     case WatcherAction.Clear:
       watcherActionIcon.classList.add("fa-times");
@@ -66,15 +72,14 @@ function createWatcherAction(type, file, xhr) {
       break;
     case WatcherAction.Retry:
       watcherActionIcon.classList.add("fa-redo-alt");
-      watcherAction.addEventListener("click", (e) => {
-        watcherActionRetry(e, file);
-      });
+      watcherAction.addEventListener("click", watcherActionRetry);
       break;
   }
   watcherActionIcon.classList.add("file-watcher-action-icon");
   watcherAction.append(watcherActionIcon);
   return watcherAction;
 }
+//End Watcher Actions
 function createFileWatcher(xhr, file) {
   //Create Elements
   const watcher = document.createElement("div");
@@ -83,7 +88,7 @@ function createFileWatcher(xhr, file) {
   const progressBarText = document.createElement("span");
   const fileNameWrapper = document.createElement("div");
   const fileName = document.createElement("span");
-  const action = createWatcherAction(WatcherAction.Cancel, file, xhr);
+  const action = createWatcherAction(WatcherAction.Cancel);
   watcher.classList.add("file-watcher", "file-watcher-active");
   progressBar.classList.add("file-watcher-progressbar");
   progressBarFill.classList.add("file-watcher-progressbar-fill");
@@ -97,49 +102,51 @@ function createFileWatcher(xhr, file) {
   watcher.append(fileName);
   watcher.append(action);
   watcher.selectedFile = file;
+  watcher.selectedXhr = xhr;
   return watcher;
 }
 function initiliazeFileWatcher(xhr, file) {
   const selectedFiles = document.getElementById("selected-files");
   const fileWatcher = createFileWatcher(xhr, file);
-  const progressBar = fileWatcher.querySelector(".file-watcher-progressbar");
-  const progressBarFill = progressBar.querySelector(
+  xhr.upload.addEventListener("progress", (e) => {
+    xhrProgress(e, fileWatcher);
+  });
+  xhr.upload.addEventListener("load", () => {
+    xhrLoad(fileWatcher);
+  });
+  xhr.upload.addEventListener("error", () => {
+    xhrError(fileWatcher);
+  });
+  xhr.upload.addEventListener("timeout", () => {
+    xhrTimeout(fileWatcher);
+  });
+  xhr.upload.addEventListener("abort", () => {
+    xhrTimeout(fileWatcher);
+  });
+  selectedFiles.append(fileWatcher);
+  return fileWatcher;
+}
+//End Progressbars
+//Upload Listeners
+function xhrProgress(e, fileWatcher) {
+  const progressBarFill = fileWatcher.querySelector(
     ".file-watcher-progressbar-fill"
   );
   const progressBarText = progressBarFill.querySelector(
     ".file-watcher-progressbar-text"
   );
-  console.log("WATCHER TOP");
-  console.log(fileWatcher);
-  xhr.upload.addEventListener("progress", (e) => {
-    xhrProgress(e, progressBarFill, progressBarText);
-  });
-  xhr.upload.addEventListener("load", () => {
-    xhrLoad(progressBarText,fileWatcher);
-  });
-  xhr.upload.addEventListener("error", () => {
-    xhrError(progressBarFill, file);
-  });
-  xhr.upload.addEventListener("timeout", () => {
-    xhrTimeout(progressBarFill, file);
-  });
-  xhr.upload.addEventListener("abort", () => {
-    xhrTimeout(progressBarFill, file);
-  });
-  selectedFiles.append(fileWatcher);
-}
-//End Progressbars
-//Upload Listeners
-function xhrProgress(e, progressBarFill, progressBarText) {
   const percent = e.lengthComputable ? (e.loaded / e.total) * 100 : 0.0;
   progressBarFill.style.width = percent.toFixed(0) + "%";
   progressBarText.innerHTML = percent.toFixed(0) + "%";
 }
-function xhrLoadstart(progressBar) {
+function xhrLoadstart(fileWatcher) {
+  const progressBar = fileWatcher.querySelector(".file-watcher-progressbar");
   progressBar.style.display = "block";
 }
-function xhrLoad(progressBarText, fileWatcher) {
-
+function xhrLoad(fileWatcher) {
+  const progressBarText = fileWatcher.querySelector(
+    ".file-watcher-progressbar-text"
+  );
   const checkmark = document.createElement("i");
   checkmark.classList.add("fas", "fa-check");
   progressBarText.innerHTML = "";
@@ -152,14 +159,17 @@ function xhrLoad(progressBarText, fileWatcher) {
   fileWatcher.classList.remove("file-watcher-active");
   fileWatcher.append(createWatcherAction(WatcherAction.Clear));
 }
-function xhrError(progressBarFill, file) {
-  console.log("CALLED ERROR FIRST");
-  progressBarFill.classList.add("file-watcher-progressbar-fill-error");
-  progressBarFill.style.width = "100%";
-  const progressBarText = progressBarFill.querySelector(
+function xhrError(fileWatcher) {
+  const progressBarFill = fileWatcher.querySelector(
+    ".file-watcher-progressbar-fill"
+  );
+  const progressBarText = fileWatcher.querySelector(
     ".file-watcher-progressbar-text"
   );
-  const fileWatcher = progressBarFill.closest(".file-watcher");
+  //Set Error
+  progressBarFill.classList.add("file-watcher-progressbar-fill-error");
+  progressBarFill.style.width = "100%";
+  //Create Icon
   const icon = document.createElement("i");
   icon.classList.add("fas", "fa-exclamation-triangle");
   progressBarText.innerHTML = "";
@@ -170,65 +180,51 @@ function xhrError(progressBarFill, file) {
     .querySelectorAll(".file-watcher-action")
     .forEach((n) => n.remove());
   fileWatcher.classList.remove("file-watcher-active");
-  const retryAction = createWatcherAction(WatcherAction.Retry, file);
-  const clearAction = createWatcherAction(WatcherAction.Clear, file);
+  const retryAction = createWatcherAction(WatcherAction.Retry);
+  const clearAction = createWatcherAction(WatcherAction.Clear);
   fileWatcher.append(retryAction);
   fileWatcher.append(clearAction);
   retryAction.style.width = "25px";
   clearAction.style.width = "25px";
 }
-function xhrTimeout(progressBarFill, file) {
-  xhrError(progressBarFill, file);
+function xhrTimeout(fileWatcher) {
+  xhrError(fileWatcher);
 }
-function xhrAbort(progressBarFill, file) {
-  xhrError(progressBarFill, file);
+function xhrAbort(fileWatcher) {
+  xhrError(fileWatcher);
 }
 //End Upload Listeners
 //Handle Upload
-function uploadFile(file) {
+function fileWatcherUpload(file) {
   let formData = new FormData();
   formData.append("user-selected-file", file);
   const xhr = new XMLHttpRequest();
   xhr.open("POST", uploadUrl, true);
-  initiliazeFileWatcher(xhr, file);
-
+  xhr.setRequestHeader("filesize", file.size);
+  const fileWatcher = initiliazeFileWatcher(xhr, file);
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4) {
-      handleResponse(xhr.response, file);
+      handleResponse(xhr.response, fileWatcher);
     }
   };
   xhr.send(formData);
 }
 //Server Responses
-function handleResponse(response, file) {
+function handleResponse(response, fileWatcher) {
   //Response is in json mode
   let localStatus = {};
   if (response == "") {
-    const watchers = document.querySelectorAll(".file-watcher");
-    for (var watcher of watchers) {
-      if (watcher.selectedFile == file) {
-        const progressBarFill = watcher.querySelector(
-          ".file-watcher-progressbar-fill"
-        );
-        if (
-          ![...progressBarFill.classList].includes(
-            ".file-watcher-progressbar-fill-error"
-          )
-        ) {
-          xhrError(
-            watcher.querySelector(".file-watcher-progressbar-fill"),
-            file
-          );
-        } else {
-          console.log("Already has");
-        }
-
-        break;
-      }
-    }
+    xhrError(fileWatcher);
   } else {
     const res = JSON.parse(response);
-    console.log("UNKOWN RESPONSE");
     console.log(res);
+    if (!!res.status && !!res.status.type && res.status.type == "Error") {
+      xhrError(fileWatcher);
+    } else if(!!res.status && !!res.status.type && res.status.type == "Success"){
+      console.log("Upload Successful");
+    }else{
+      console.log("Unkown Response");
+    }
   }
+
 }

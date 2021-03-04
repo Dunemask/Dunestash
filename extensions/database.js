@@ -3,7 +3,6 @@ const rimraf = require("rimraf");
 const bcrypt = require("bcrypt"); // Hashing
 const path = require("path");
 const { Storage, Web, Server } = require("../server-config.json");
-const SALT_ROUNDS = 10;
 const dugdblocation = path.resolve(Storage.DatabasePath);
 const dugdbTempPath = path.resolve(Storage.DatabasePathTemporary);
 const ddb = require("./dugdb.js"); // Main Database Object
@@ -18,7 +17,7 @@ exports.init = () => {
     dugdb.loadData(require(path.resolve(dugdblocation)));
   } else {
     if (adminConfig.useAdmin) {
-      const hash = bcrypt.hashSync(adminConfig.pwd, SALT_ROUNDS);
+      const hash = bcrypt.hashSync(adminConfig.pwd, Server.SaltRounds);
       let admin = dugdb.newUser(
         adminConfig.username,
         hash,
@@ -39,7 +38,7 @@ exports.createUser = function (username, password, email) {
     console.log("Username already exists"); // should be checked in Server.js but this is extra
     return;
   }
-  const hash = bcrypt.hashSync(password, SALT_ROUNDS);
+  const hash = bcrypt.hashSync(password, Server.SaltRounds);
   let u = dugdb.newUser(username, hash, email, Storage.UserStorageSize);
   let uuid = dugdb.addUser(u);
   dbChanged = true;
@@ -97,19 +96,6 @@ exports.getUserObject = function (uuid) {
   // Returns an object holding much information about user
   return dugdb.users[uuid];
 };
-exports.getUserStorageSize = function (uuid) {
-  // Storage Size
-  if (!dugdb.users[uuid]) return;
-  return parseInt(dugdb.users[uuid].storage);
-};
-exports.getUserUsedStorageSpace = function (uuid) {
-  let size = 0;
-  const files = fs.readdirSync(path.resolve(Storage.UploadPath, uuid));
-  for (f in files) {
-    size += fs.statSync(path.resolve(Storage.UploadPath, uuid, files[f])).size;
-  }
-  return size;
-};
 exports.getUserEmail = function (uuid) {
   // Email
   return dugdb.users[uuid] && dugdb.users[uuid].email;
@@ -166,10 +152,23 @@ exports.changeUsername = function (uuid, username) {
 exports.changePassword = function (uuid, password) {
   // change password by uuid
   if (!this.userUuidExists(uuid)) return;
-  const hash = bcrypt.hashSync(password, SALT_ROUNDS);
+  const hash = bcrypt.hashSync(password, Server.SaltRounds);
   dugdb.users[uuid].hash = hash;
   dbChanged = true;
   return true;
+};
+//File Storage
+exports.getUserStorageObject = function (uuid) {
+  if (!uuid) return;
+  return dugdb.users[uuid].storage;
+};
+exports.updateUserStorageObject = function (uuid, { total, used }) {
+  if (!uuid) return;
+  dugdb.users[uuid].storage = {
+    total: total ?? dugdb.users[uuid].storage.total,
+    used: used ?? dugdb.users[uuid].storage.used,
+  };
+  dbChanged = true;
 };
 //Update Databases
 exports.updateUserStorage = function (forceUpdate) {
@@ -289,9 +288,10 @@ exports.getGroupFiles = function (gid, id) {
   return groupFiles;
 };
 // File mutation
-exports.addFile = function (file, owner) {
+exports.addFile = function (owner, fileName, fileSize) {
   // Adds file based on user and file path.
-  let f = dugdb.newFile(owner, file);
+  // Adding File Size is taken care of by athenuem.js
+  const f = dugdb.newFile(owner, fileName, fileSize);
   dugdb.addFile(f);
   dbChanged = true;
   return f.uuid;
@@ -305,22 +305,22 @@ exports.deleteFile = function (file) {
   const id = fileInfo.owner;
   exports.removeShare(file, id);
   exports.removeGroupShare(file, id);
-  dugdb.users[id].ownedFiles = dugdb.users[id].ownedFiles.filter(
-    (item) => item !== file
-  );
+  dbChanged = true;
   let deletedProperly = false;
   try {
     fs.unlinkSync(path.join(Storage.UploadPath, id, this.getFile(file).path));
-    dugdb.users[id].ownedFiles = dugdb.users[id].ownedFiles.filter(
-      (item) => item !== file
-    );
-    delete dugdb.files[file];
-    dbChanged = true;
     deletedProperly = true;
   } catch (err) {
     console.error(err);
   }
-
+  dugdb.users[id].ownedFiles = dugdb.users[id].ownedFiles.filter(
+    (item) => item !== file
+  );
+  const serverStorage = this.getUserStorageObject(id);
+  this.updateUserStorageObject(id, {
+    used: serverStorage.used - this.getFileSize(file),
+  });
+  delete dugdb.files[file];
   return deletedProperly;
 };
 exports.fileExists = function (file) {
@@ -334,6 +334,9 @@ exports.getFile = function (file) {
 exports.getFilePath = function (file) {
   // Returns file object from uuid
   return dugdb.files[file] && dugdb.files[file].path;
+};
+exports.getFileSize = function (file) {
+  return dugdb.files[file] && dugdb.files[file].size;
 };
 exports.getFileOwnerUsername = function (file) {
   // Returns username of owner
@@ -531,5 +534,3 @@ exports.getDDB = () => {
   // shouldn't be used, only for testing/seeing what's wrong
   return dugdb;
 };
-
-// NEED TO TEST OUT ALL FUNCTIONS AND THEN ADD SOME MORE WHEN I FEEL LIKE ITz
