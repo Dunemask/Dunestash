@@ -13,15 +13,29 @@ module.exports = class UploadDialog extends React.Component {
             </span>
             <span id="file-upload-dialog-error-count"></span>
           </div>
-          <span id="file-upload-dialog-header-title">Uploads</span>
-          <span id="file-upload-dialog-minimize">
-            <i className="fas fa-angle-down"></i>
+
+          <span id="file-upload-dialog-header-title">
+            Uploads
+            <span id="file-upload-dialog-minimize">
+              <i className="fas fa-angle-down"></i>
+            </span>
           </span>
+          <div className="file-upload-dialog-actions">
+            <span
+              id="file-upload-dialog-retry"
+              className="file-upload-dialog-action"
+            >
+              <i className="fas fa-redo-alt"></i>
+            </span>
+            <span
+              id="file-upload-dialog-clear"
+              className="file-upload-dialog-action"
+            >
+              <i className="fas fa-times"></i>
+            </span>
+          </div>
         </div>
-        <div id="selected-files">
-          <div id="pending-files"></div>
-          <div id="failed-files"></div>
-        </div>
+        <div id="selected-files"></div>
       </div>
     );
   }

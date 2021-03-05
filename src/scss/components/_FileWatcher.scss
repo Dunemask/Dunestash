@@ -1,6 +1,7 @@
 $watcherIndicatorSize: 18px;
 $watcherActionSize: 14px;
 $uploadBoxesSize: 50px;
+$actionButtonSize: 25px;
 
 /*File Upload Dialog Styling*/
 #file-upload-dialog {
@@ -9,7 +10,7 @@ $uploadBoxesSize: 50px;
   left: 0;
   background-color: $sectionMenuOptions;
   width: 100%;
-  max-width: 520px;
+  max-width: 540px;
   max-height: 250px;
   display: none;
 }
@@ -25,26 +26,39 @@ $uploadBoxesSize: 50px;
   padding: 10px;
   width: 100%;
   overflow: hidden;
+  text-align: center;
   padding-left: 10px;
 }
-#file-upload-dialog-minimize {
-  width: calc(#{$uploadBoxesSize} / 2);
-  height: $uploadBoxesSize;
-  display: flex;
-  font-weight: bold;
-  align-items: center;
-  text-align: center;
-  padding-right: 8px;
-}
-#file-upload-dialog-minimize i,
-svg {
-  margin: auto;
-}
-#file-upload-dialog-minimize i:hover,
-svg :hover {
+#file-upload-dialog-header-title:hover{
   opacity: 0.8;
   cursor: pointer;
 }
+
+#file-upload-dialog-minimize{
+  padding:10px;
+}
+
+.file-upload-dialog-actions {
+  //width: calc(#{$actionButtonSize} * 3);
+  display: inline-flex;
+  margin: auto;
+  align-items: center;
+  text-align: center;
+  height: $uploadBoxesSize;
+}
+
+.file-upload-dialog-action {
+  min-width: $actionButtonSize;
+  padding: 0 5px;
+
+  font-size: $watcherActionSize;
+}
+
+.file-upload-dialog-action svg,
+i {
+  margin: auto;
+}
+
 
 #file-upload-dialog-header-status {
   font-size: calc(#{$watcherIndicatorSize - 2px});
@@ -52,30 +66,44 @@ svg :hover {
   min-height: $uploadBoxesSize;
   max-width: $uploadBoxesSize;
   max-height: $uploadBoxesSize;
-  display:flex;
+  display: flex;
 }
 
-#file-upload-dialog-status-icon{
-    margin:auto;
-
+#file-upload-dialog-status-icon {
+  margin: auto;
 }
 
-.file-upload-dialog-header-error{
-  margin-top: 5px;
+.file-upload-dialog-status-error {
+  margin-top: 10px;
 }
-#file-upload-dialog-error-count {
 
-}
 
 #selected-files {
   max-height: 200px;
-  overflow-y: auto;
+  overflow-y: scroll;
+}
+#selected-files::-webkit-scrollbar {
+  width: 5px;
+}
+#selected-files::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: $defaultBorderRadius;
+}
+#selected-files::-webkit-scrollbar-thumb {
+  border-radius: $defaultBorderRadius;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+  background-color: lighten($sectionMenuOptions, 40%);
+}
+#selected-files::-webkit-scrollbar-thumb:hover {
+  background-color: lighten($sectionMenuOptions, 50%);
 }
 /*File Watcher Styling*/
 .file-watcher {
   width: 100%;
   display: inline-flex;
   height: 50px;
+  overflow: hidden;
+  word-wrap: break-word;
 }
 .file-watcher-progressbar {
   min-width: $uploadBoxesSize;
@@ -107,17 +135,14 @@ svg :hover {
   margin: 10px;
   font-size: $watcherIndicatorSize;
 }
-.file-watcher-name-wrapper {
-  display: inline-flex;
-  align-items: center;
-  max-height: $watcherIndicatorSize;
-  word-wrap: break-word;
-  overflow: hidden;
-}
+
 .file-watcher-name {
   margin: auto;
   overflow: hidden;
+  word-wrap: break-word;
   padding-left: 10px;
+  align-self: center;
+  width:100%;
 }
 .file-watcher-action {
   width: calc(#{$uploadBoxesSize} / 2);

@@ -29,6 +29,7 @@ function handleDrop(e) {
 }
 function handleFiles(files) {
   const loadedFiles = [...files];
+  updateFileDialog();
   loadedFiles.forEach(fileWatcherUpload);
 }
 //End Dropzone
@@ -45,11 +46,6 @@ const selectedFiles = document.getElementById("selected-files");
 const uploadErrorDialogCount = document.getElementById(
   "file-upload-dialog-error-count"
 );
-selectedFiles.addEventListener("DOMNodeInserted", (e) => {
-  if (e.target.parentNode == selectedFiles) {
-    updateFileDialog();
-  }
-});
 
 const StatusIcon = {
   Normal: "Normal",
@@ -68,36 +64,44 @@ function buildStatusIcon(type) {
   }
   return statusIcon;
 }
-
-function updateFileDialog(errorChange) {
+function changeErrorValue(errorChange) {
   let errorValue = parseInt(uploadErrorDialogCount.innerHTML);
-  if (!isNaN(errorChange)) {
-    errorValue = isNaN(errorValue) ? 1 : errorValue + errorChange;
+  errorValue = isNaN(errorValue) ? 0 : errorValue;
+  errorValue += errorChange;
+  uploadErrorDialogCount.innerHTML = errorValue;
+  return errorValue;
+}
+function attemptFileDialogClear() {
+  if (selectedFiles.childElementCount == 0) {
+    fileUploadDialog.classList.add("file-watcher-success");
+    setTimeout(() => {
+      fileUploadDialog.style.height = 0;
+    }, 700);
+  } else {
+    console.log(selectedFiles.childNodes);
   }
-  if (errorValue == 0) {
+}
+function updateFileDialog() {
+  let errorValue = parseInt(uploadErrorDialogCount.innerHTML);
+  if (errorValue == 0 || isNaN(errorValue)) {
     uploadErrorDialogCount.innerHTML = "";
     fileUploadDialogStatusIcon.innerHTML = "";
     fileUploadDialogStatusIcon.append(buildStatusIcon(StatusIcon.Normal));
     fileUploadDialogStatus.style.display = "flex";
-    if (selectedFiles.childElementCount == 3) {
-      fileUploadDialog.classList.add("file-watcher-success");
-      setTimeout(() => {
-        fileUploadDialog.style.height = 0;
-      }, 700);
-    }
-  } else if (errorChange != undefined) {
+    fileUploadDialogStatus.style.background = "";
+  } else if (errorValue > 0) {
     uploadErrorDialogCount.innerHTML = isNaN(errorValue) ? "" : errorValue;
     fileUploadDialogStatusIcon.innerHTML = "";
     fileUploadDialogStatusIcon.append(buildStatusIcon(StatusIcon.Error));
-    fileUploadDialogStatus.classList.add("file-upload-dialog-header-error");
+    fileUploadDialogStatusIcon.classList.add("file-upload-dialog-status-error");
     fileUploadDialogStatus.style.display = "grid";
-  } else {
-    fileUploadDialog.classList.remove("file-watcher-success");
-    fileUploadDialog.style.height = "100%";
-    fileUploadDialog.style.display = "block";
   }
 }
-
+function showFileDialog() {
+  fileUploadDialog.classList.remove("file-watcher-success");
+  fileUploadDialog.style.height = "100%";
+  fileUploadDialog.style.display = "block";
+}
 //Progressbars
 const WatcherAction = {
   Cancel: "Cancel",
@@ -113,15 +117,19 @@ function watcherActionCancel(e) {
 function watcherActionRetry(e) {
   const target = e.target || e.srcElement;
   const fileWatcher = target.closest(".file-watcher");
-  watcherActionClear(e);
+  const parent = target.closest(".file-watcher");
+  changeErrorValue(-1);
+  selectedFiles.removeChild(parent);
   fileWatcherUpload(fileWatcher.selectedFile);
+  updateFileDialog();
 }
 function watcherActionClear(e) {
-  const selectedFiles = document.getElementById("selected-files");
-  updateFileDialog(-1);
+  changeErrorValue(-1);
+  updateFileDialog();
   const target = e.target || e.srcElement;
   const parent = target.closest(".file-watcher");
   selectedFiles.removeChild(parent);
+  attemptFileDialogClear();
 }
 function createWatcherAction(type) {
   const watcherAction = document.createElement("span");
@@ -173,7 +181,6 @@ function createFileWatcher(xhr, file) {
   return watcher;
 }
 function initiliazeFileWatcher(xhr, file) {
-  const selectedFiles = document.getElementById("selected-files");
   const fileWatcher = createFileWatcher(xhr, file);
   xhr.upload.addEventListener("progress", (e) => {
     xhrProgress(e, fileWatcher);
@@ -197,9 +204,10 @@ function initiliazeFileWatcher(xhr, file) {
 function fileWatcherFade(fileWatcher) {
   //Change File Action
   fileWatcher.classList.add("file-watcher-success");
-  const selectedFiles = document.getElementById("selected-files");
   setTimeout(function () {
     selectedFiles.removeChild(fileWatcher);
+    updateFileDialog();
+    attemptFileDialogClear();
   }, 700);
 }
 //End Progressbars
@@ -265,7 +273,8 @@ function xhrError(fileWatcher) {
   retryAction.style.width = "25px";
   clearAction.style.width = "25px";
   //File Upload Dialog Update
-  updateFileDialog(1);
+  changeErrorValue(1);
+  updateFileDialog();
 }
 function xhrTimeout(fileWatcher) {
   xhrError(fileWatcher);
@@ -282,6 +291,8 @@ function fileWatcherUpload(file) {
   xhr.open("POST", uploadUrl, true);
   xhr.setRequestHeader("filesize", file.size);
   const fileWatcher = initiliazeFileWatcher(xhr, file);
+  showFileDialog();
+  //
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4) {
       handleResponse(xhr.response, fileWatcher);
