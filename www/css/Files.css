@@ -96,7 +96,7 @@ pre {
     opacity: 0;
     visibility: hidden; } }
 
-@keyframes toast-notification-face-in {
+@keyframes toast-notification-fade-in {
   0% {
     opacity: 0; }
   100% {
@@ -108,6 +108,18 @@ pre {
     transform: rotate(0deg); }
   100% {
     transform: rotate(360deg); } }
+
+@keyframes file-watcher-fade {
+  0% {
+    opacity: 1; }
+  40% {
+    opacity: 0;
+    visibility: hidden; }
+  80% {
+    background: limegreen; }
+  100% {
+    opacity: 0;
+    visibility: hidden; } }
 
 .navbar {
   background-color: rgba(0, 0, 0, 0.8);
@@ -226,10 +238,7 @@ html {
   margin-top: 0;
   height: 100%;
   color: white;
-  background: linear-gradient(70deg, #141414 0%, #848486 100%) no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
+  background: #e0e0e0;
   background-size: cover;
   width: 100%; }
 

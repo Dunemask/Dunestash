@@ -45,6 +45,7 @@ exports.sharePage = (req, res) => {
 //File Actions
 exports.fileUpload = (req, res) => {
   const serverStorage = db.getUserStorageObject(req.session.user_id);
+  const convertedTotal = serverStorage.total * Storage.UserStorageUnit;
   //If no headers then they didn't send the filesize, so we can't let them upload
   if (!req.headers || req.headers.filesize == undefined) {
     res.json({
@@ -52,34 +53,32 @@ exports.fileUpload = (req, res) => {
         type: "Error",
         tag: "Upload has been tampered with!",
       },
-      serverStorage,
+      storageUsed: serverStorage.used,
     });
     return;
   }
   //Test for if the file is going to be bigger than the server can hold.
   const fileBiggerThanServerStorage =
-    parseInt(req.headers.filesize) >
-    serverStorage.total * Storage.UserStorageUnit - serverStorage.used;
+    parseInt(req.headers.filesize) > convertedTotal - serverStorage.used;
   if (fileBiggerThanServerStorage) {
     res.json({
       status: {
         type: "Error",
         tag: "Not Enough Available Space!",
       },
-      serverStorage,
+      storageUsed: serverStorage.used,
     });
+    //Attempt to upload the file
   } else {
+    let usedStorage = 0;
     //Add the pending total to the session storage
-    db.updateUserStorageObject(req.session.user_id, {
-      used: serverStorage.used + parseInt(req.headers.filesize),
-    });
+    usedStorage = serverStorage.used + parseInt(req.headers.filesize);
+    db.updateUserStorageObject(req.session.user_id, { used: usedStorage });
     ath.userUpload(req, res, (err) => {
       let status = {};
       if (!req.file || err || req.file.size != req.headers.filesize) {
         status = { type: StatusCode.Error, tag: "Internal Error Occurred!" };
-        db.updateUserStorageObject(req.session.user_id, {
-          used: serverStorage.used - parseInt(req.headers.filesize),
-        });
+        db.updateUserStorageObject(req.session.user_id, { used: serverStorage.used});
       } else {
         db.addFile(
           req.session.user_id,
@@ -88,7 +87,10 @@ exports.fileUpload = (req, res) => {
         );
         status = { type: StatusCode.Success, tag: "Upload Successful!" };
       }
-      res.json({ status, serverStorage });
+      res.json({
+        status,
+        storageUsed: usedStorage,
+      });
     });
   }
 };

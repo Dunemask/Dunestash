@@ -33,7 +33,7 @@
   }
 }
 
-@keyframes toast-notification-face-in {
+@keyframes toast-notification-fade-in {
   0% {
     opacity: 0;
   }
@@ -80,5 +80,22 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes file-watcher-fade {
+  0% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 0;
+    visibility: hidden;
+  }
+  80% {
+    background: $successColor;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
   }
 }

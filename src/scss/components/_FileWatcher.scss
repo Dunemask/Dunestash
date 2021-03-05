@@ -1,13 +1,82 @@
 $watcherIndicatorSize: 18px;
 $watcherActionSize: 14px;
 $uploadBoxesSize: 50px;
+
+/*File Upload Dialog Styling*/
+#file-upload-dialog {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-color: $sectionMenuOptions;
+  width: 100%;
+  max-width: 520px;
+  max-height: 250px;
+  display: none;
+}
+#file-upload-dialog-header {
+  display: inline-flex;
+  height: $uploadBoxesSize;
+  font-size: $watcherIndicatorSize;
+  background-color: darken($sectionMenuOptions, 10%);
+  width: 100%;
+}
+#file-upload-dialog-header-title {
+  margin: auto;
+  padding: 10px;
+  width: 100%;
+  overflow: hidden;
+  padding-left: 10px;
+}
+#file-upload-dialog-minimize {
+  width: calc(#{$uploadBoxesSize} / 2);
+  height: $uploadBoxesSize;
+  display: flex;
+  font-weight: bold;
+  align-items: center;
+  text-align: center;
+  padding-right: 8px;
+}
+#file-upload-dialog-minimize i,
+svg {
+  margin: auto;
+}
+#file-upload-dialog-minimize i:hover,
+svg :hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+#file-upload-dialog-header-status {
+  font-size: calc(#{$watcherIndicatorSize - 2px});
+  min-width: $uploadBoxesSize;
+  min-height: $uploadBoxesSize;
+  max-width: $uploadBoxesSize;
+  max-height: $uploadBoxesSize;
+  display:flex;
+}
+
+#file-upload-dialog-status-icon{
+    margin:auto;
+
+}
+
+.file-upload-dialog-header-error{
+  margin-top: 5px;
+}
+#file-upload-dialog-error-count {
+
+}
+
+#selected-files {
+  max-height: 200px;
+  overflow-y: auto;
+}
+/*File Watcher Styling*/
 .file-watcher {
   width: 100%;
   display: inline-flex;
-  background-color: $sectionMenuOptions;
   height: 50px;
 }
-
 .file-watcher-progressbar {
   min-width: $uploadBoxesSize;
   min-height: $uploadBoxesSize;
@@ -15,11 +84,9 @@ $uploadBoxesSize: 50px;
   max-height: $uploadBoxesSize;
   background-color: lighten($sectionMenuOptions, 20%);
 }
-
 .file-watcher-active {
   background-color: lighten($sectionMenuOptions, 10%);
 }
-
 .file-watcher-progressbar-fill {
   height: 100%;
   width: 0%;
@@ -32,30 +99,26 @@ $uploadBoxesSize: 50px;
 .file-watcher-progressbar-fill-error {
   background: $errorColor;
 }
-
+.file-watcher-success {
+  animation: file-watcher-fade 2s forwards;
+}
 .file-watcher-progressbar-text {
   color: $foreground;
   margin: 10px;
   font-size: $watcherIndicatorSize;
 }
-
 .file-watcher-name-wrapper {
-  width: 100%;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   max-height: $watcherIndicatorSize;
   word-wrap: break-word;
   overflow: hidden;
 }
-
 .file-watcher-name {
   margin: auto;
   overflow: hidden;
   padding-left: 10px;
-  word-wrap: break-word;
-  padding-right: 10px;
 }
-
 .file-watcher-action {
   width: calc(#{$uploadBoxesSize} / 2);
   height: $uploadBoxesSize;
@@ -63,15 +126,13 @@ $uploadBoxesSize: 50px;
   font-weight: bold;
   align-items: center;
   padding: 0px 5px;
-  float:right;
+  float: right;
 }
-
 .file-watcher-action-icon {
   margin: auto;
   font-size: $watcherActionSize;
 }
-
 .file-watcher-action:hover {
-  opacity: 0.9;
+  opacity: 0.8;
   cursor: pointer;
 }

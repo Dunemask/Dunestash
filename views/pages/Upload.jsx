@@ -1,5 +1,6 @@
 import React from "react";
 import Page from "../Page";
+import UploadDialog from "../components/UploadDialog";
 const title = "Upload";
 module.exports = class Upload extends Page {
   constructor(props) {
@@ -24,11 +25,12 @@ module.exports = class Upload extends Page {
                   multiple
                 ></input>
                 <label className="button" htmlFor="file-dropzone">
-                  <span id="file-select">Select Files</span> or Drag {"n'"} Drop them here
+                  <span id="file-select">Select Files</span> or Drag {"n'"} Drop
+                  them here
                 </label>
               </form>
-              <div id="selected-files"></div>
             </div>
+            <UploadDialog></UploadDialog>
           </div>
         )}
       </>

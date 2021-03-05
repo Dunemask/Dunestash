@@ -96,7 +96,7 @@ pre {
     opacity: 0;
     visibility: hidden; } }
 
-@keyframes toast-notification-face-in {
+@keyframes toast-notification-fade-in {
   0% {
     opacity: 0; }
   100% {
@@ -108,6 +108,18 @@ pre {
     transform: rotate(0deg); }
   100% {
     transform: rotate(360deg); } }
+
+@keyframes file-watcher-fade {
+  0% {
+    opacity: 1; }
+  40% {
+    opacity: 0;
+    visibility: hidden; }
+  80% {
+    background: limegreen; }
+  100% {
+    opacity: 0;
+    visibility: hidden; } }
 
 .navbar {
   background-color: rgba(0, 0, 0, 0.8);
@@ -226,10 +238,7 @@ html {
   margin-top: 0;
   height: 100%;
   color: white;
-  background: linear-gradient(70deg, #141414 0%, #848486 100%) no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
+  background: #e0e0e0;
   background-size: cover;
   width: 100%; }
 
@@ -246,10 +255,71 @@ textarea:focus,
 button:focus {
   outline: none; }
 
+/*File Upload Dialog Styling*/
+#file-upload-dialog {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-color: #292929;
+  width: 100%;
+  max-width: 520px;
+  max-height: 250px;
+  display: none; }
+
+#file-upload-dialog-header {
+  display: inline-flex;
+  height: 50px;
+  font-size: 18px;
+  background-color: #0f0f0f;
+  width: 100%; }
+
+#file-upload-dialog-header-title {
+  margin: auto;
+  padding: 10px;
+  width: 100%;
+  overflow: hidden;
+  padding-left: 10px; }
+
+#file-upload-dialog-minimize {
+  width: calc(50px / 2);
+  height: 50px;
+  display: flex;
+  font-weight: bold;
+  align-items: center;
+  text-align: center;
+  padding-right: 8px; }
+
+#file-upload-dialog-minimize i,
+svg {
+  margin: auto; }
+
+#file-upload-dialog-minimize i:hover,
+svg :hover {
+  opacity: 0.8;
+  cursor: pointer; }
+
+#file-upload-dialog-header-status {
+  font-size: calc(16px);
+  min-width: 50px;
+  min-height: 50px;
+  max-width: 50px;
+  max-height: 50px;
+  display: flex; }
+
+#file-upload-dialog-status-icon {
+  margin: auto; }
+
+.file-upload-dialog-header-error {
+  margin-top: 5px; }
+
+#selected-files {
+  max-height: 200px;
+  overflow-y: auto; }
+
+/*File Watcher Styling*/
 .file-watcher {
   width: 100%;
   display: inline-flex;
-  background-color: #292929;
   height: 50px; }
 
 .file-watcher-progressbar {
@@ -274,14 +344,16 @@ button:focus {
 .file-watcher-progressbar-fill-error {
   background: #e20006; }
 
+.file-watcher-success {
+  animation: file-watcher-fade 2s forwards; }
+
 .file-watcher-progressbar-text {
   color: white;
   margin: 10px;
   font-size: 18px; }
 
 .file-watcher-name-wrapper {
-  width: 100%;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   max-height: 18px;
   word-wrap: break-word;
@@ -290,9 +362,7 @@ button:focus {
 .file-watcher-name {
   margin: auto;
   overflow: hidden;
-  padding-left: 10px;
-  word-wrap: break-word;
-  padding-right: 10px; }
+  padding-left: 10px; }
 
 .file-watcher-action {
   width: calc(50px / 2);
@@ -308,7 +378,7 @@ button:focus {
   font-size: 14px; }
 
 .file-watcher-action:hover {
-  opacity: 0.9;
+  opacity: 0.8;
   cursor: pointer; }
 
 @keyframes breathe {
