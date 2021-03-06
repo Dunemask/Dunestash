@@ -9,16 +9,9 @@
 @include animation-bounce($informationColor, $foreground);
 
 .upload-files-content {
-  width: calc(100% - 40px);
+  width: calc(100%);
   height: calc(100% - 40px);
   display: block;
-}
-
-.upload-form {
-  display: flex;
-  height: calc(100% - 20px);
-  width: 100%;
-  visibility: hidden;
 }
 
 .file-selection {
@@ -36,14 +29,18 @@
 #file-drop-area.highlight {
   border-color: purple;
   background-color: rgba($informationColor, 0.6);
+  z-index: 1000;
 }
-.button {
+.upload-button {
   display: inline-block;
-  background: lighten($sectionMenuOptions, 10%);
+  background: rgba(lighten($sectionMenuOptions, 10%), 0.8);
   cursor: pointer;
   margin: auto;
+  height: 100%;
+  border-radius: $defaultBorderRadius;
+  padding: 20px;
 }
-.button:hover {
+.upload-button:hover {
   background: lighten($sectionMenuOptions, 20%);
 }
 #file-dropzone {
