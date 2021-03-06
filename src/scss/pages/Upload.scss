@@ -7,6 +7,20 @@
   $successColor
 );
 @include animation-bounce($informationColor, $foreground);
+
+.upload-files-content {
+  width: calc(100% - 40px);
+  height: calc(100% - 40px);
+  display: block;
+}
+
+.upload-form {
+  display: flex;
+  height: calc(100% - 20px);
+  width: 100%;
+  visibility: hidden;
+}
+
 .file-selection {
   border-radius: $defaultBorderRadius;
   background-color: $sectionBackground;
@@ -15,32 +29,22 @@
   margin: 0 auto;
 }
 #file-drop-area {
-  border: 2px dashed #ccc;
-  border-radius: 20px;
-  width: 480px;
+  min-width: 100%;
+  min-height: 100%;
   font-family: sans-serif;
-  margin: 100px auto;
-  padding: 20px;
 }
 #file-drop-area.highlight {
   border-color: purple;
-}
-p {
-  margin-top: 0;
-}
-.file-dropzone-form {
-  margin-bottom: 10px;
+  background-color: rgba($informationColor, 0.6);
 }
 .button {
   display: inline-block;
-  padding: 10px;
-  background: #ccc;
+  background: lighten($sectionMenuOptions, 10%);
   cursor: pointer;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  margin: auto;
 }
 .button:hover {
-  background: #ddd;
+  background: lighten($sectionMenuOptions, 20%);
 }
 #file-dropzone {
   display: none;

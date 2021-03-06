@@ -17,7 +17,7 @@ module.exports = class Upload extends Page {
         {this.BuildPage(
           <div className="upload-files-content">
             <div id="file-drop-area">
-              <form className="my-form">
+              <form className="upload-form">
                 <input
                   type="file"
                   id="file-dropzone"

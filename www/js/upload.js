@@ -56,7 +56,6 @@ class FileQueue {
     this.updateDialog();
   }
   removeWatcher(fileWatcher) {
-    this.updateError(-1);
     this.watchers.splice(this.watchers.indexOf(fileWatcher), 1);
     queuedFiles.removeChild(fileWatcher);
     this.updateDialog();
@@ -73,6 +72,7 @@ class FileQueue {
     fileWatcher.xhr.abort();
   }
   clear(fileWatcher) {
+    this.updateError(-1);
     this.removeWatcher(fileWatcher);
   }
   watcherError(fileWatcher) {
