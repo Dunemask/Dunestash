@@ -4,7 +4,7 @@ $uploadBoxesSize: 50px;
 $actionButtonSize: 25px;
 
 /*File Upload Dialog Styling*/
-#file-upload-dialog {
+#fud {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -13,15 +13,28 @@ $actionButtonSize: 25px;
   max-width: 540px;
   max-height: 250px;
   display: none;
+  overflow: hidden;
 }
-#file-upload-dialog-header {
+
+.fud-maximized {
+  animation: upload-dialog-expand 1.2s forwards;
+  animation-timing-function: ease-out;
+}
+
+.fud-minimized {
+  animation: upload-dialog-minimize 0.4s forwards;
+  animation-timing-function: ease-out;
+}
+
+#fud-header {
   display: inline-flex;
   height: $uploadBoxesSize;
   font-size: $watcherIndicatorSize;
   background-color: darken($sectionMenuOptions, 10%);
   width: 100%;
 }
-#file-upload-dialog-header-title {
+
+.fud-header-title-wrapper {
   margin: auto;
   padding: 10px;
   width: 100%;
@@ -29,16 +42,20 @@ $actionButtonSize: 25px;
   text-align: center;
   padding-left: 10px;
 }
-#file-upload-dialog-header-title:hover{
+
+#fud-header-title {
+  margin-left: 40px;
+}
+#fud-header-title:hover {
   opacity: 0.8;
   cursor: pointer;
 }
 
-#file-upload-dialog-minimize{
-  padding:10px;
+#fud-minimize {
+  padding: 10px;
 }
 
-.file-upload-dialog-actions {
+.fud-actions {
   //width: calc(#{$actionButtonSize} * 3);
   display: inline-flex;
   margin: auto;
@@ -47,20 +64,24 @@ $actionButtonSize: 25px;
   height: $uploadBoxesSize;
 }
 
-.file-upload-dialog-action {
+.fud-action {
   min-width: $actionButtonSize;
   padding: 0 5px;
 
   font-size: $watcherActionSize;
 }
 
-.file-upload-dialog-action svg,
+.fud-action svg,
 i {
   margin: auto;
 }
 
+.fud-actions span:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
 
-#file-upload-dialog-header-status {
+#fud-header-status {
   font-size: calc(#{$watcherIndicatorSize - 2px});
   min-width: $uploadBoxesSize;
   min-height: $uploadBoxesSize;
@@ -69,32 +90,55 @@ i {
   display: flex;
 }
 
-#file-upload-dialog-status-icon {
+/*Error and status icon Start with errors displaying as none*/
+#fud-status-icon {
   margin: auto;
+  font-size: 18px;
 }
 
-.file-upload-dialog-status-error {
+.fud-error-wrapper {
+  display: none;
+  position: absolute;
+  top: 9px;
+  left: 32px;
+  font-size: 18px;
+}
+.fud-error-wrapper {
+  color: $errorColor;
+  max-width: 18px;
+  max-height: 18px;
+}
+
+#fud-error-count {
+  font-size: 14px;
+  color: $foreground;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.fud-status-error {
   margin-top: 10px;
 }
 
-
-#selected-files {
+#fud-queued-files {
   max-height: 200px;
+  height: 100%;
   overflow-y: scroll;
 }
-#selected-files::-webkit-scrollbar {
+#fud-queued-files::-webkit-scrollbar {
   width: 5px;
 }
-#selected-files::-webkit-scrollbar-track {
+#fud-queued-files::-webkit-scrollbar-track {
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   border-radius: $defaultBorderRadius;
 }
-#selected-files::-webkit-scrollbar-thumb {
+#fud-queued-files::-webkit-scrollbar-thumb {
   border-radius: $defaultBorderRadius;
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
   background-color: lighten($sectionMenuOptions, 40%);
 }
-#selected-files::-webkit-scrollbar-thumb:hover {
+#fud-queued-files::-webkit-scrollbar-thumb:hover {
   background-color: lighten($sectionMenuOptions, 50%);
 }
 /*File Watcher Styling*/
@@ -121,8 +165,8 @@ i {
   background: $successColor;
   display: flex;
   font-weight: bold;
-  transition: width 0.22s;
   align-items: center;
+  transition: width 0.22s;
 }
 .file-watcher-progressbar-fill-error {
   background: $errorColor;
@@ -142,7 +186,7 @@ i {
   word-wrap: break-word;
   padding-left: 10px;
   align-self: center;
-  width:100%;
+  width: 100%;
 }
 .file-watcher-action {
   width: calc(#{$uploadBoxesSize} / 2);

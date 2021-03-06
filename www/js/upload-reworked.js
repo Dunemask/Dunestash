@@ -11,8 +11,6 @@ const queuedFiles = document.getElementById("fud-queued-files");
 const fudErrorCount = document.getElementById("fud-error-count");
 const fudStatusRetry = document.getElementById("fud-retry");
 const fudStatusClear = document.getElementById("fud-clear");
-const fudHeaderTitle = document.getElementById("fud-header-title");
-const fudToggleButton = document.getElementById("fud-minimize");
 //Dropzone
 const fileDropzone = document.getElementById("file-dropzone");
 const dropArea = document.getElementById("file-drop-area");
@@ -43,6 +41,7 @@ function handleDrop(e) {
 }
 function handleFiles(files) {
   const loadedFiles = [...files];
+  updateFileDialog();
   loadedFiles.forEach(fileWatcherUpload);
 }
 //Upload Classes
@@ -53,21 +52,18 @@ class FileQueue {
   addWatcher(fileWatcher) {
     this.watchers.push(fileWatcher);
     queuedFiles.append(fileWatcher);
-    this.updateDialog();
   }
   removeWatcher(fileWatcher) {
-    this.updateError(-1);
-    this.watchers.splice(this.watchers.indexOf(fileWatcher), 1);
+    changeErrorValue(-1);
+    //this.fileWatchers.splice(this.watchers.indexOf(fileWatcher),1);
     queuedFiles.removeChild(fileWatcher);
-    this.updateDialog();
-    this.hideDialog();
+    updateFileDialog();
+    hideFileDialog();
   }
   retry(fileWatcher) {
-    this.updateError(-1);
-    this.watchers.splice(this.watchers.indexOf(fileWatcher), 1);
+    changeErrorValue(-1);
     queuedFiles.removeChild(fileWatcher);
     fileWatcherUpload(fileWatcher.file);
-    this.updateDialog();
   }
   cancel(fileWatcher) {
     fileWatcher.xhr.abort();
@@ -75,102 +71,9 @@ class FileQueue {
   clear(fileWatcher) {
     this.removeWatcher(fileWatcher);
   }
-  watcherError(fileWatcher) {
-    this.updateError(1);
-  }
   updateError(count) {
-    let errorValue = parseInt(fudErrorCount.innerHTML);
-    errorValue = isNaN(errorValue) ? 0 : errorValue;
-    errorValue += count;
-    fudErrorCount.innerHTML = errorValue;
-    this.updateDialog();
-  }
-  clearAll() {
-    //Cannot use foreach because we're removing
-    //the objects from the array with the retry function
-    let removedWatcher = false;
-    for (let w = this.watchers.length - 1; w >= 0; w--) {
-      const watcherProgressFill = this.watchers[w].querySelector(
-        ".file-watcher-progressbar-fill-error"
-      );
-      if (watcherProgressFill !== null) {
-        this.clear(this.watchers[w]);
-        removedWatcher = true;
-      }
-    }
-    //If we've removed watchers, we don't need to cancel them all
-    if (removedWatcher) return;
-    this.cancelAll();
-    //If we haven't removed a watcher, we need cancel all the uploads
-  }
-  cancelAll() {
-    this.watchers.forEach((watcher) => {
-      setTimeout(() => this.cancel(watcher), 100);
-    });
-  }
-  retryAll() {
-    //Cannot use foreach because we're removing
-    //the objects from the array with the retry function
-    for (let w = this.watchers.length - 1; w >= 0; w--) {
-      const watcherProgressFill = this.watchers[w].querySelector(
-        ".file-watcher-progressbar-fill-error"
-      );
-      if (watcherProgressFill !== null) this.retry(this.watchers[w]);
-    }
-  }
-  showDialog() {
-    fud.classList.remove(
-      "file-watcher-success",
-      "fud-minimized",
-      "fud-maximized"
-    );
-    fud.style.height = "100%";
-    fud.style.display = "block";
-    fudToggleButton.innerHTML = '<i class="fa fa-angle-down"></a>';
-  }
-  hideDialog() {
-    if (queuedFiles.childElementCount == 0) {
-      if (fud.classList.value == "fud-minimized") {
-        fud.style.height = "50px";
-      }
-      fud.classList.add("file-watcher-success");
-      setTimeout(() => {
-        fud.style.height = 0;
-      }, 700);
-    }
-  }
-  updateDialog() {
-    let errorValue = parseInt(fudErrorCount.innerHTML);
-    const uploadIcon = fudStatusIcon.querySelector(".fud-success-icon");
-    const errorWrapper = fudStatusIcon.querySelector(".fud-error-wrapper");
-    const errorIcon = fudStatusIcon.querySelector(".fud-error-icon");
-    if (errorValue == 0 || isNaN(errorValue)) {
-      fudErrorCount.innerHTML = "";
-      uploadIcon.style.display = "flex";
-      errorIcon.style.display = "none";
-      errorWrapper.style.display = "none";
-    } else if (errorValue > 0) {
-      fudErrorCount.innerHTML = isNaN(errorValue) ? "" : errorValue;
-      uploadIcon.style.display = "none";
-      errorIcon.style.display = "flex";
-      errorWrapper.style.display = "flex";
-      fudStatusIcon.classList.add("fud-status-error");
-    }
-  }
-  toggleMinimize() {
-    const classes = fud.classList;
-    if (fud.classList.value == "fud-minimized") {
-      fudToggleButton.innerHTML = '<i class="fa fa-angle-down"></a>';
-      fud.classList.remove("fud-minimized");
-      fud.classList.add("fud-maximized");
-    } else if (fud.classList.value == "fud-maximized") {
-      fudToggleButton.innerHTML = '<i class="fa fa-angle-up"></a>';
-      fud.classList.remove("fud-maximized");
-      fud.classList.add("fud-minimized");
-    } else {
-      fudToggleButton.innerHTML = '<i class="fa fa-angle-up"></a>';
-      fud.classList.add("fud-minimized");
-    }
+    changeErrorValue(count);
+    updateFileDialog();
   }
 }
 class FileWatcher {
@@ -274,7 +177,10 @@ class FileWatcher {
     this.watcher.append(clearAction);
     retryAction.style.width = "25px";
     clearAction.style.width = "25px";
-    myQueue.watcherError(this.watcher);
+
+    if (queuedFiles.contains(this.watcher))
+      return;
+    else myQueue.updateError(1);
   }
   xhrTimeout() {
     this.watcher.xhrError();
@@ -315,9 +221,19 @@ class FileWatcher {
 }
 //Upload Dialog
 const myQueue = new FileQueue();
-fudStatusClear.addEventListener("click", () => myQueue.clearAll());
-fudStatusRetry.addEventListener("click", () => myQueue.retryAll());
-fudHeaderTitle.addEventListener("click", () => myQueue.toggleMinimize());
+fudStatusClear.addEventListener("click", (e) => {
+  queuedFiles.innerHTML = "";
+  fudErrorCount.innerHTML = 0;
+  updateFileDialog();
+  hideFileDialog();
+});
+fudStatusRetry.addEventListener("click", (e) => {
+  queuedFiles
+    .querySelectorAll(".file-watcher-action-retry")
+    .forEach((retryAction) => {
+      retryAction.click();
+    });
+});
 function fileWatcherUpload(file) {
   let formData = new FormData();
   formData.append("user-selected-file", file);
@@ -325,9 +241,8 @@ function fileWatcherUpload(file) {
   xhr.open("POST", uploadUrl, true);
   xhr.setRequestHeader("filesize", file.size);
   const fileWatcher = new FileWatcher(xhr, file);
+  showFileDialog();
   myQueue.addWatcher(fileWatcher.watcher);
-  myQueue.showDialog();
-
   //
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4) {
@@ -355,5 +270,43 @@ function handleResponse(response, fileWatcher) {
     } else {
       console.log("Unkown Response");
     }
+  }
+}
+function showFileDialog() {
+  fud.classList.remove("file-watcher-success");
+  fud.style.height = "100%";
+  fud.style.display = "block";
+}
+function changeErrorValue(errorChange) {
+  let errorValue = parseInt(fudErrorCount.innerHTML);
+  errorValue = isNaN(errorValue) ? 0 : errorValue;
+  errorValue += errorChange;
+  fudErrorCount.innerHTML = errorValue;
+  return errorValue;
+}
+function hideFileDialog() {
+  if (queuedFiles.childElementCount == 0) {
+    fud.classList.add("file-watcher-success");
+    setTimeout(() => {
+      fud.style.height = 0;
+    }, 700);
+  }
+}
+function updateFileDialog() {
+  let errorValue = parseInt(fudErrorCount.innerHTML);
+  const uploadIcon = fudStatusIcon.querySelector(".fud-success-icon");
+  const errorWrapper = fudStatusIcon.querySelector(".fud-error-wrapper");
+  const errorIcon = fudStatusIcon.querySelector(".fud-error-icon");
+  if (errorValue == 0 || isNaN(errorValue)) {
+    fudErrorCount.innerHTML = "";
+    uploadIcon.style.display = "flex";
+    errorIcon.style.display = "none";
+    errorWrapper.style.display = "none";
+  } else if (errorValue > 0) {
+    fudErrorCount.innerHTML = isNaN(errorValue) ? "" : errorValue;
+    uploadIcon.style.display = "none";
+    errorIcon.style.display = "flex";
+    errorWrapper.style.display = "flex";
+    fudStatusIcon.classList.add("fud-status-error");
   }
 }

@@ -5,37 +5,36 @@ module.exports = class UploadDialog extends React.Component {
   }
   render() {
     return (
-      <div id="file-upload-dialog">
-        <div id="file-upload-dialog-header">
-          <div id="file-upload-dialog-header-status">
-            <span id="file-upload-dialog-status-icon">
-              <i className="fas fa-cloud-upload-alt"></i>
+      <div id="fud">
+        <div id="fud-header">
+          <div id="fud-header-status">
+            <span id="fud-status-icon">
+              <i className="fas fa-cloud-upload-alt fud-success-icon"></i>
+              <i className="fas fa-exclamation-triangle fud-error-icon"></i>
+              <span className="fud-error-wrapper">
+                <i className="fas fa-circle"></i>
+                <span id="fud-error-count"></span>
+              </span>
             </span>
-            <span id="file-upload-dialog-error-count"></span>
           </div>
-
-          <span id="file-upload-dialog-header-title">
-            Uploads
-            <span id="file-upload-dialog-minimize">
-              <i className="fas fa-angle-down"></i>
+          <div className="fud-header-title-wrapper">
+            <span id="fud-header-title">
+              Uploads
+              <span id="fud-minimize">
+                <i className="fas fa-angle-down"></i>
+              </span>
             </span>
-          </span>
-          <div className="file-upload-dialog-actions">
-            <span
-              id="file-upload-dialog-retry"
-              className="file-upload-dialog-action"
-            >
+          </div>
+          <div className="fud-actions">
+            <span id="fud-retry" className="fud-action">
               <i className="fas fa-redo-alt"></i>
             </span>
-            <span
-              id="file-upload-dialog-clear"
-              className="file-upload-dialog-action"
-            >
+            <span id="fud-clear" className="fud-action">
               <i className="fas fa-times"></i>
             </span>
           </div>
         </div>
-        <div id="selected-files"></div>
+        <div id="fud-queued-files"></div>
       </div>
     );
   }

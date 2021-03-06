@@ -2,28 +2,6 @@
 /*Background & Foreground colors*/
 /*Visual "components" (divs, etc)*/
 /*Unique Components*/
-/*$backgroundShade:rgba(23, 23, 23,0.8);
-$backgroundShadeDarker:rgba(20, 20, 20,0.92);
-$sectionHighlightDarker:rgba(30,30,30,.92);*/
-/*$uploadLime:limegreen;
-$sectionHighlight:#313131;
-$boldWhite: white;
-$fadedWhite:$boldWhite;
-$background:#232323;
-$navShimmer:#4c4c4c;
-$dyingGrey:#4D493A;
-$borderColor:#13120e;
-$cornsilkLink:#e0e0e0;
-$javaDownload:aliceblue;
-$circleLetterHighlight:$fadedWhite;
-$dunemaskD:#e20006;
-$dunemaskDarker:rgba(199, 2, 7, 1);
-$sliderColor:#2196F3;
-$backgroundShade:rgba(23, 23, 23,0.8);
-$backgroundShadeDarker:rgba(20, 20, 20,0.92);
-$sectionHighlightDarker:rgba(30,30,30,.92);
-$defaultBorderRadius:10px;
-$optionBlue:#24a0ed;*/
 h1 {
   font-family: "Dejavu Sans";
   font-size: 33px;
@@ -120,6 +98,18 @@ pre {
   100% {
     opacity: 0;
     visibility: hidden; } }
+
+@keyframes upload-dialog-expand {
+  0% {
+    height: 50px; }
+  100% {
+    height: 100%; } }
+
+@keyframes upload-dialog-minimize {
+  0% {
+    height: 50%; }
+  100% {
+    height: 50px; } }
 
 .navbar {
   background-color: rgba(0, 0, 0, 0.8);

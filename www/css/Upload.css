@@ -2,28 +2,6 @@
 /*Background & Foreground colors*/
 /*Visual "components" (divs, etc)*/
 /*Unique Components*/
-/*$backgroundShade:rgba(23, 23, 23,0.8);
-$backgroundShadeDarker:rgba(20, 20, 20,0.92);
-$sectionHighlightDarker:rgba(30,30,30,.92);*/
-/*$uploadLime:limegreen;
-$sectionHighlight:#313131;
-$boldWhite: white;
-$fadedWhite:$boldWhite;
-$background:#232323;
-$navShimmer:#4c4c4c;
-$dyingGrey:#4D493A;
-$borderColor:#13120e;
-$cornsilkLink:#e0e0e0;
-$javaDownload:aliceblue;
-$circleLetterHighlight:$fadedWhite;
-$dunemaskD:#e20006;
-$dunemaskDarker:rgba(199, 2, 7, 1);
-$sliderColor:#2196F3;
-$backgroundShade:rgba(23, 23, 23,0.8);
-$backgroundShadeDarker:rgba(20, 20, 20,0.92);
-$sectionHighlightDarker:rgba(30,30,30,.92);
-$defaultBorderRadius:10px;
-$optionBlue:#24a0ed;*/
 h1 {
   font-family: "Dejavu Sans";
   font-size: 33px;
@@ -120,6 +98,18 @@ pre {
   100% {
     opacity: 0;
     visibility: hidden; } }
+
+@keyframes upload-dialog-expand {
+  0% {
+    height: 50px; }
+  100% {
+    height: 100%; } }
+
+@keyframes upload-dialog-minimize {
+  0% {
+    height: 50%; }
+  100% {
+    height: 50px; } }
 
 .navbar {
   background-color: rgba(0, 0, 0, 0.8);
@@ -256,7 +246,7 @@ button:focus {
   outline: none; }
 
 /*File Upload Dialog Styling*/
-#file-upload-dialog {
+#fud {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -264,16 +254,25 @@ button:focus {
   width: 100%;
   max-width: 540px;
   max-height: 250px;
-  display: none; }
+  display: none;
+  overflow: hidden; }
 
-#file-upload-dialog-header {
+.fud-maximized {
+  animation: upload-dialog-expand 1.2s forwards;
+  animation-timing-function: ease-out; }
+
+.fud-minimized {
+  animation: upload-dialog-minimize 0.4s forwards;
+  animation-timing-function: ease-out; }
+
+#fud-header {
   display: inline-flex;
   height: 50px;
   font-size: 18px;
   background-color: #0f0f0f;
   width: 100%; }
 
-#file-upload-dialog-header-title {
+.fud-header-title-wrapper {
   margin: auto;
   padding: 10px;
   width: 100%;
@@ -281,30 +280,37 @@ button:focus {
   text-align: center;
   padding-left: 10px; }
 
-#file-upload-dialog-header-title:hover {
+#fud-header-title {
+  margin-left: 40px; }
+
+#fud-header-title:hover {
   opacity: 0.8;
   cursor: pointer; }
 
-#file-upload-dialog-minimize {
+#fud-minimize {
   padding: 10px; }
 
-.file-upload-dialog-actions {
+.fud-actions {
   display: inline-flex;
   margin: auto;
   align-items: center;
   text-align: center;
   height: 50px; }
 
-.file-upload-dialog-action {
+.fud-action {
   min-width: 25px;
   padding: 0 5px;
   font-size: 14px; }
 
-.file-upload-dialog-action svg,
+.fud-action svg,
 i {
   margin: auto; }
 
-#file-upload-dialog-header-status {
+.fud-actions span:hover {
+  opacity: 0.8;
+  cursor: pointer; }
+
+#fud-header-status {
   font-size: calc(16px);
   min-width: 50px;
   min-height: 50px;
@@ -312,29 +318,51 @@ i {
   max-height: 50px;
   display: flex; }
 
-#file-upload-dialog-status-icon {
-  margin: auto; }
+/*Error and status icon Start with errors displaying as none*/
+#fud-status-icon {
+  margin: auto;
+  font-size: 18px; }
 
-.file-upload-dialog-status-error {
+.fud-error-wrapper {
+  display: none;
+  position: absolute;
+  top: 9px;
+  left: 32px;
+  font-size: 18px; }
+
+.fud-error-wrapper {
+  color: #e20006;
+  max-width: 18px;
+  max-height: 18px; }
+
+#fud-error-count {
+  font-size: 14px;
+  color: white;
+  position: absolute;
+  top: 0;
+  width: 100%; }
+
+.fud-status-error {
   margin-top: 10px; }
 
-#selected-files {
+#fud-queued-files {
   max-height: 200px;
+  height: 100%;
   overflow-y: scroll; }
 
-#selected-files::-webkit-scrollbar {
+#fud-queued-files::-webkit-scrollbar {
   width: 5px; }
 
-#selected-files::-webkit-scrollbar-track {
+#fud-queued-files::-webkit-scrollbar-track {
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   border-radius: 2px; }
 
-#selected-files::-webkit-scrollbar-thumb {
+#fud-queued-files::-webkit-scrollbar-thumb {
   border-radius: 2px;
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
   background-color: #8f8f8f; }
 
-#selected-files::-webkit-scrollbar-thumb:hover {
+#fud-queued-files::-webkit-scrollbar-thumb:hover {
   background-color: #a8a8a8; }
 
 /*File Watcher Styling*/
@@ -361,8 +389,8 @@ i {
   background: limegreen;
   display: flex;
   font-weight: bold;
-  transition: width 0.22s;
-  align-items: center; }
+  align-items: center;
+  transition: width 0.22s; }
 
 .file-watcher-progressbar-fill-error {
   background: #e20006; }
