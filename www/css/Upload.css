@@ -114,12 +114,12 @@ pre {
 .navbar {
   background-color: rgba(0, 0, 0, 0.8);
   width: 100%;
-  display: inline-block;
-  height: 80px; }
+  display: inline-flex;
+  height: 65px; }
 
 .nav {
   line-height: 36px;
-  padding-top: 24px;
+  margin: auto 0;
   display: inline-block;
   float: left; }
 
@@ -144,7 +144,7 @@ pre {
   -webkit-background-size: 4rem 100%; }
 
 .user-icon-container {
-  padding-top: 19px; }
+  margin-top: 6px; }
 
 #user-icon {
   float: left;
@@ -181,7 +181,7 @@ pre {
   top: 0;
   right: 0px;
   word-wrap: break-word;
-  min-height: calc(56px);
+  min-height: calc(41px);
   overflow: hidden;
   opacity: 0;
   visibility: hidden; }
@@ -476,7 +476,7 @@ i {
   margin: auto;
   height: 100%;
   border-radius: 2px;
-  padding: 20px; }
+  padding: 15px; }
 
 .upload-button:hover {
   background: #5c5c5c; }
