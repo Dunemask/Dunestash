@@ -13,6 +13,7 @@ const fudStatusRetry = document.getElementById("fud-retry");
 const fudStatusClear = document.getElementById("fud-clear");
 const fudHeaderTitle = document.getElementById("fud-header-title");
 const fudToggleButton = document.getElementById("fud-minimize");
+const fudDragDropNotification = document.getElementById("fud-drag-drop-notification");
 //Dropzone
 const fileDropzone = document.getElementById("file-dropzone");
 const dropArea = document.getElementById("file-drop-area");
@@ -33,9 +34,11 @@ function preventDefaults(e) {
 fileDropzone.addEventListener("change", () => handleFiles(fileDropzone.files));
 dropArea.addEventListener("drop", handleDrop, false);
 function highlight(e) {
+  fudDragDropNotification.style.display="flex";
   dropArea.classList.add("highlight");
 }
 function unhighlight(e) {
+    fudDragDropNotification.style.display="none";
   dropArea.classList.remove("highlight");
 }
 function handleDrop(e) {

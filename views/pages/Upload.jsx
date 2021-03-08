@@ -16,6 +16,9 @@ module.exports = class Upload extends Page {
       <>
         {this.BuildPage(
           <div className="upload-files-content">
+            <label className="upload-button" htmlFor="file-dropzone">
+              Upload <i className="fas fa-cloud-upload-alt"></i>
+            </label>
             <div id="file-drop-area">
               <input
                 type="file"
@@ -23,12 +26,14 @@ module.exports = class Upload extends Page {
                 name="file-dropzone"
                 multiple
               ></input>
-              <label className="upload-button" htmlFor="file-dropzone">
-                <span id="file-select">Select Files</span> or Drag {"n'"} Drop
-                them here
-              </label>
             </div>
             <UploadDialog></UploadDialog>
+            <div id="fud-drag-drop-notification">
+              <div id="fud-drag-drop-message">
+                <i class="fas fa-upload"></i>
+                {" Drag and drop files above to upload them."}
+              </div>
+            </div>
           </div>
         )}
       </>

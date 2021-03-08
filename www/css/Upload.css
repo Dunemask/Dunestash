@@ -462,11 +462,11 @@ i {
 #file-drop-area {
   min-width: 100%;
   min-height: 100%;
-  font-family: sans-serif; }
+  font-family: sans-serif;
+  z-index: 1000; }
 
 #file-drop-area.highlight {
-  border-color: purple;
-  background-color: rgba(0, 149, 255, 0.6);
+  background-color: rgba(0, 149, 255, 0.4);
   z-index: 1000; }
 
 .upload-button {
@@ -474,12 +474,27 @@ i {
   background: rgba(66, 66, 66, 0.8);
   cursor: pointer;
   margin: auto;
-  height: 100%;
   border-radius: 2px;
-  padding: 15px; }
+  padding: 15px;
+  box-shadow: 1px 3px 2px #292929; }
 
 .upload-button:hover {
   background: #5c5c5c; }
 
 #file-dropzone {
   display: none; }
+
+#fud-drag-drop-notification {
+  position: absolute;
+  bottom: 40px;
+  width: 100%;
+  display: none; }
+
+#fud-drag-drop-message {
+  font-size: 18px;
+  background: #0095ff;
+  max-width: 400px;
+  width: 100%;
+  padding: 1.25rem;
+  margin: auto;
+  box-shadow: 1px 3px 2px #292929; }

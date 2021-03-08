@@ -25,10 +25,10 @@
   min-width: 100%;
   min-height: 100%;
   font-family: sans-serif;
+  z-index: 1000;
 }
 #file-drop-area.highlight {
-  border-color: purple;
-  background-color: rgba($informationColor, 0.6);
+  background-color: rgba($informationColor, 0.4);
   z-index: 1000;
 }
 .upload-button {
@@ -36,13 +36,29 @@
   background: rgba(lighten($sectionMenuOptions, 10%), 0.8);
   cursor: pointer;
   margin: auto;
-  height: 100%;
   border-radius: $defaultBorderRadius;
   padding: 15px;
+  box-shadow: 1px 3px 2px $sectionMenuOptions;
 }
 .upload-button:hover {
   background: lighten($sectionMenuOptions, 20%);
 }
 #file-dropzone {
   display: none;
+}
+
+#fud-drag-drop-notification {
+  position: absolute;
+  bottom: 40px;
+  width: 100%;
+  display: none;
+}
+#fud-drag-drop-message {
+  font-size: 18px;
+  background: $informationColor;
+  max-width: 400px;
+  width: 100%;
+  padding: 1.25rem;
+  margin: auto;
+  box-shadow: 1px 3px 2px $sectionMenuOptions;
 }
