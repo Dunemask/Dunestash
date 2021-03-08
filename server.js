@@ -74,9 +74,18 @@ app.get("/rawdata", isUser, (req, res) => {
     r.notAuthorized(req, res, "my-files");
   }
 });
-app.all("/delete-file", isUser, (req, res) => {
+app.get("/delete-file", isUser, (req, res) => {
   if (db.authorizedToEditFile(req.query.target, req.session.user_id)) {
     r.deleteFile(req, res);
+  } else {
+    r.notAuthorized(req, res, "my-files");
+  }
+});
+
+app.post("/delete", isUser, (req, res) => {
+  if (db.authorizedToEditFile(req.query.target, req.session.user_id)) {
+    console.log("I SHOULD DELETE");
+    console.log(req.body);
   } else {
     r.notAuthorized(req, res, "my-files");
   }
