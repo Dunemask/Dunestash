@@ -2,28 +2,6 @@
 /*Background & Foreground colors*/
 /*Visual "components" (divs, etc)*/
 /*Unique Components*/
-/*$backgroundShade:rgba(23, 23, 23,0.8);
-$backgroundShadeDarker:rgba(20, 20, 20,0.92);
-$sectionHighlightDarker:rgba(30,30,30,.92);*/
-/*$uploadLime:limegreen;
-$sectionHighlight:#313131;
-$boldWhite: white;
-$fadedWhite:$boldWhite;
-$background:#232323;
-$navShimmer:#4c4c4c;
-$dyingGrey:#4D493A;
-$borderColor:#13120e;
-$cornsilkLink:#e0e0e0;
-$javaDownload:aliceblue;
-$circleLetterHighlight:$fadedWhite;
-$dunemaskD:#e20006;
-$dunemaskDarker:rgba(199, 2, 7, 1);
-$sliderColor:#2196F3;
-$backgroundShade:rgba(23, 23, 23,0.8);
-$backgroundShadeDarker:rgba(20, 20, 20,0.92);
-$sectionHighlightDarker:rgba(30,30,30,.92);
-$defaultBorderRadius:10px;
-$optionBlue:#24a0ed;*/
 h1 {
   font-family: "Dejavu Sans";
   font-size: 33px;
@@ -96,7 +74,7 @@ pre {
     opacity: 0;
     visibility: hidden; } }
 
-@keyframes toast-notification-face-in {
+@keyframes toast-notification-fade-in {
   0% {
     opacity: 0; }
   100% {
@@ -109,15 +87,39 @@ pre {
   100% {
     transform: rotate(360deg); } }
 
+@keyframes file-watcher-fade {
+  0% {
+    opacity: 1; }
+  40% {
+    opacity: 0;
+    visibility: hidden; }
+  80% {
+    background: limegreen; }
+  100% {
+    opacity: 0;
+    visibility: hidden; } }
+
+@keyframes upload-dialog-expand {
+  0% {
+    height: 50px; }
+  100% {
+    height: 100%; } }
+
+@keyframes upload-dialog-minimize {
+  0% {
+    height: 50%; }
+  100% {
+    height: 50px; } }
+
 .navbar {
   background-color: rgba(0, 0, 0, 0.8);
   width: 100%;
-  display: inline-block;
-  height: 80px; }
+  display: inline-flex;
+  height: 65px; }
 
 .nav {
   line-height: 36px;
-  padding: 24px 0px;
+  margin: auto 0;
   display: inline-block;
   float: left; }
 
@@ -142,7 +144,7 @@ pre {
   -webkit-background-size: 4rem 100%; }
 
 .user-icon-container {
-  padding-top: 19px; }
+  margin-top: 6px; }
 
 #user-icon {
   float: left;
@@ -167,7 +169,7 @@ pre {
   color: #fff;
   display: flex;
   box-shadow: 0 3px 6px -1px rgba(0, 0, 0, 0.12), 0 10px 36px -4px rgba(77, 96, 232, 0.3);
-  background: #00b5f7;
+  background: #0095ff;
   border-radius: 2px;
   text-decoration: none;
   min-width: calc(300px - 100px);
@@ -179,7 +181,7 @@ pre {
   top: 0;
   right: 0px;
   word-wrap: break-word;
-  min-height: calc(56px);
+  min-height: calc(41px);
   overflow: hidden;
   opacity: 0;
   visibility: hidden; }
@@ -226,10 +228,7 @@ html {
   margin-top: 0;
   height: 100%;
   color: white;
-  background: linear-gradient(70deg, #141414 0%, #848486 100%) no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
+  background: #e0e0e0;
   background-size: cover;
   width: 100%; }
 
@@ -252,7 +251,7 @@ button:focus {
     color: white; }
   50% {
     background-color: white;
-    color: #00b5f7; }
+    color: #0095ff; }
   100% {
     background-color: #292929;
     color: white; } }

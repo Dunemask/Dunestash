@@ -1,5 +1,6 @@
 import React from "react";
 import Page from "../Page";
+import UploadDialog from "../components/UploadDialog";
 const title = "Upload";
 module.exports = class Upload extends Page {
   constructor(props) {
@@ -15,56 +16,22 @@ module.exports = class Upload extends Page {
       <>
         {this.BuildPage(
           <div className="upload-files-content">
-            <div id="file-wrapper">
-              <div className="file-selection-container">
-                <div className="file-selection">
-                  <form id="file-upload-form">
-                    <h1>Upload your file</h1>
-                    <label>
-                      <input
-                        type="file"
-                        name="user-selected-upload-file"
-                        id="user-selected-upload-file"
-                      />
-                      <br />
-                      <span className="file-select-button">
-                        Select <i className="fa fa-upload"></i>
-                      </span>
-                    </label>
-                    <label>
-                      <span className="file-upload-button">
-                        <input
-                          type="submit"
-                          value="Upload"
-                          id="upload-submit-button"
-                        />
-                      </span>
-                    </label>
-                  </form>
-                </div>
-              </div>
-              <div className="selected-file-container">
-                <div id="lower-file-data">
-                  <div id="selected-file">
-                    <h2>No File Selected!</h2>
-                  </div>
-                  <div id="file-error-indicator"></div>
-                  <div
-                    className="upload-progress-bar"
-                    id="upload-progress-bar"
-                    style={{ display: "none" }}
-                  >
-                    <div className="upload-progress-bar-fill">
-                      <span className="upload-progress-bar-text">0.00%</span>
-                    </div>
-                  </div>
-                  <div className="processing" style={{ display: "none" }}>
-                    <h2>Processing upload</h2>
-                    <div className="loader-wrapper">
-                      <div className="loader"></div>
-                    </div>
-                  </div>
-                </div>
+            <label className="upload-button" htmlFor="file-dropzone">
+              Upload <i className="fas fa-cloud-upload-alt"></i>
+            </label>
+            <div id="file-drop-area">
+              <input
+                type="file"
+                id="file-dropzone"
+                name="file-dropzone"
+                multiple
+              ></input>
+            </div>
+            <UploadDialog></UploadDialog>
+            <div id="fud-drag-drop-notification">
+              <div id="fud-drag-drop-message">
+                <i class="fas fa-upload"></i>
+                {" Drag and drop files above to upload them."}
               </div>
             </div>
           </div>

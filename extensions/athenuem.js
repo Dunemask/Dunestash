@@ -6,9 +6,7 @@ const path = require("path");
 const db = require("./database.js");
 const { Storage, StatusCode } = require("../server-config.json");
 //Constants
-const FILESIZE_MB = Math.pow(1024, 2);
-const uploadSizeLimit = Storage.UploadMaxSize * FILESIZE_MB;
-const imageSizeLimit = Storage.ProfileImageSize * FILESIZE_MB;
+const imageSizeLimit = Storage.ProfileImageSize * Storage.UserStorageUnit;
 const imageFileTypes = /jpeg|jpg|png/;
 //Multer -----------------------------------------------------------------------
 exports.imageStorage = multer.diskStorage({
@@ -36,46 +34,35 @@ exports.imageUpload = multer({
   },
 }).single("user-image");
 //Files Handle-------------------------------------------------------------------
+
+//User Upload Destination
+exports.userUploadDestination = (req, file) => {
+  let destination = path.resolve(Storage.UploadPath, req.session.user_id);
+  if (!fs.existsSync(path.resolve(Storage.UploadPath)))
+    fs.mkdirSync(path.resolve(Storage.UploadPath));
+  if (!fs.existsSync(destination)) fs.mkdirSync(destination);
+  return destination;
+};
 exports.userUploadStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    let destination = path.resolve(Storage.UploadPath, req.session.user_id);
-    if (!fs.existsSync(path.resolve(Storage.UploadPath)))
-      fs.mkdirSync(path.resolve(Storage.UploadPath));
-    if (!fs.existsSync(destination)) fs.mkdirSync(destination);
-
-    cb(null, destination);
+    cb(null, this.userUploadDestination(req, file));
   },
   filename: (req, file, cb) => {
-    let n = file.originalname.split(" ").join("_");
-    cb(null, `${Date.now()}-${n}`);
+    const n = file.originalname.split(" ").join("_");
+    const fileName = `${Date.now()}-${n}`;
+    req.on("aborted", () => {
+      fs.unlinkSync(
+        path.resolve(this.userUploadDestination(req, file), fileName)
+      );
+      const serverStorage = db.getUserStorageObject(req.session.user_id);
+      db.updateUserStorageObject(req.session.user_id, {
+        used: serverStorage.used - parseInt(req.headers.filesize),
+      });
+    });
+    cb(null, fileName);
   },
 });
 exports.userUpload = multer({
   storage: exports.userUploadStorage,
-}).single("user-selected-upload-file");
-exports.approveFile = (req) => {
-  let status = { type: StatusCode.Success, tag: "Upload Successful!" };
-  let file = req.file;
-  if (!file) {
-    status.type = StatusCode.Error;
-    status.tag = "No File Uploaded!";
-    return status;
-  } //Return if there is no File
-  let dirLimit = db.getUserStorageSize(req.session.user_id) * FILESIZE_MB;
-  let size = req.file.size;
-  let files = fs.readdirSync(path.resolve(file.destination));
-  for (f in files) {
-    size += fs.statSync(path.resolve(file.destination, files[f])).size;
-  }
-  if (!!uploadSizeLimit && req.file.size > uploadSizeLimit) {
-    status.type = StatusCode.Error;
-    status.tag = "File Surpasses Upload Size Limit!";
-    fs.unlinkSync(path.resolve(req.file.path));
-  } else if (size > dirLimit) {
-    status.type = StatusCode.Error;
-    status.tag = "File Exceeds User Storage Capacity!";
-    fs.unlinkSync(path.resolve(req.file.path));
-  }
-  return status;
-};
+}).single("user-selected-file");
 //End Multer -------------------------------------------------------------------

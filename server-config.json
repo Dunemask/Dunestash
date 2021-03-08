@@ -13,6 +13,7 @@
     "UserImagePath": "www/images/user-images/",
     "UserImagePathTemporary": "www/images/user-images/",
     "UserStorageSize": "2048",
+    "UserStorageUnit": "1048576",
     "ProfileImageSize": "150",
     "UploadMaxSize": "",
     "DatabasePath": "src/dugdatabase.json",
@@ -20,8 +21,9 @@
   },
   "Server": {
     "Port": 3000,
-    "Debug": false,
+    "Debug": true,
     "BodyLimit": "5mb",
+    "SaltRounds": 10,
     "UpdateInterval": "3600000",
     "AdminConfig": {
       "useAdmin": false,

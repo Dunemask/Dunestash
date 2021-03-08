@@ -1,6 +1,7 @@
 //Imports
 const path = require("path");
 const fs = require("fs");
+const multer = require("multer");
 //Local Imports
 const ath = require("./athenuem.js");
 const db = require("./database.js");
@@ -43,16 +44,55 @@ exports.sharePage = (req, res) => {
 };
 //File Actions
 exports.fileUpload = (req, res) => {
-  ath.userUpload(req, res, (err) => {
-    const status = ath.approveFile(req); //Ensure the file meets criteria
-    if (!req.file || err) {
-    }
-    if (status.type == StatusCode.Success) {
-      db.addFile(req.file.filename, req.session.user_id);
-    }
-    this.setStatus(req, status.type, status.tag);
-    this.redirectTo(req, res, "upload");
-  });
+  const serverStorage = db.getUserStorageObject(req.session.user_id);
+  const convertedTotal = serverStorage.total * Storage.UserStorageUnit;
+  //If no headers then they didn't send the filesize, so we can't let them upload
+  if (!req.headers || req.headers.filesize == undefined) {
+    res.json({
+      status: {
+        type: "Error",
+        tag: "Upload has been tampered with!",
+      },
+      storageUsed: serverStorage.used,
+    });
+    return;
+  }
+  //Test for if the file is going to be bigger than the server can hold.
+  const fileBiggerThanServerStorage =
+    parseInt(req.headers.filesize) > convertedTotal - serverStorage.used;
+  if (fileBiggerThanServerStorage) {
+    res.json({
+      status: {
+        type: "Error",
+        tag: "Not Enough Available Space!",
+      },
+      storageUsed: serverStorage.used,
+    });
+    //Attempt to upload the file
+  } else {
+    let usedStorage = 0;
+    //Add the pending total to the session storage
+    usedStorage = serverStorage.used + parseInt(req.headers.filesize);
+    db.updateUserStorageObject(req.session.user_id, { used: usedStorage });
+    ath.userUpload(req, res, (err) => {
+      let status = {};
+      if (!req.file || err || req.file.size != req.headers.filesize) {
+        status = { type: StatusCode.Error, tag: "Internal Error Occurred!" };
+        db.updateUserStorageObject(req.session.user_id, { used: serverStorage.used});
+      } else {
+        db.addFile(
+          req.session.user_id,
+          req.file.filename,
+          parseInt(req.headers.filesize)
+        );
+        status = { type: StatusCode.Success, tag: "Upload Successful!" };
+      }
+      res.json({
+        status,
+        storageUsed: usedStorage,
+      });
+    });
+  }
 };
 exports.getRawData = (req, res) => {
   const file = db.getFile(req.query.target);

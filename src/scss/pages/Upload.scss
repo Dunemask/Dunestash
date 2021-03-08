@@ -1,4 +1,5 @@
-@import "../global", "../components/UploadCircle.scss";
+@import "../global", "../components/FileWatcher";
+
 @include animation-breathe(
   $sectionMenuOptions,
   $foreground,
@@ -6,6 +7,13 @@
   $successColor
 );
 @include animation-bounce($informationColor, $foreground);
+
+.upload-files-content {
+  width: calc(100%);
+  height: calc(100% - 40px);
+  display: block;
+}
+
 .file-selection {
   border-radius: $defaultBorderRadius;
   background-color: $sectionBackground;
@@ -13,83 +21,44 @@
   padding: 20px;
   margin: 0 auto;
 }
-
-.file-selection input[type="file"] {
+#file-drop-area {
+  min-width: 100%;
+  min-height: 100%;
+  font-family: sans-serif;
+  z-index: 1000;
+}
+#file-drop-area.highlight {
+  background-color: rgba($informationColor, 0.4);
+  z-index: 1000;
+}
+.upload-button {
+  display: inline-block;
+  background: rgba(lighten($sectionMenuOptions, 10%), 0.8);
+  cursor: pointer;
+  margin: auto;
+  border-radius: $defaultBorderRadius;
+  padding: 15px;
+  box-shadow: 1px 3px 2px $sectionMenuOptions;
+}
+.upload-button:hover {
+  background: lighten($sectionMenuOptions, 20%);
+}
+#file-dropzone {
   display: none;
 }
 
-.file-selection label {
-  color: $foreground;
-  line-height: 26px;
-}
-.file-select-button {
-  padding-left: 20px;
-}
-.file-upload-button {
-  padding-left: 20px;
-}
-
-.file-selection input[type="submit"] {
-  padding: 5px 15px;
-  background: $sectionMenuOptions;
-  color: white;
-  border: 0 none;
-  cursor: pointer;
-  font-size: 24px;
-  line-height: 26px;
-}
-
-.file-selection input[type="submit"]:hover {
-  animation: breathe 3s infinite;
-}
-
-
-.file-selection label:hover {
-  cursor: pointer;
-  animation: bounce 4s infinite;
-}
-
-#file-wrapper {
-  display: inline-block;
-  vertical-align: top;
-  padding-top: 50px;
-}
-.file-selection-container {
+#fud-drag-drop-notification {
+  position: absolute;
+  bottom: 40px;
   width: 100%;
+  display: none;
 }
-
-.selected-file-container {
-  padding-top: 20px;
-  display: inline-block;
-}
-#lower-file-data {
-  background-color: $sectionBackground;
-  padding: 20px;
-  border-radius: $defaultBorderRadius;
-}
-
-.upload-progress-bar {
-  border: 2px solid $successColor;
-}
-
-.upload-progress-bar-fill {
-  height: 100%;
-  width: 0%;
-  background: $successColor;
-  display: flex;
-  align-items: center;
-  font-weight: bold;
-  transition: width 0.22s;
-}
-
-.upload-progres-bar-text {
-  color: $foreground;
-}
-
-.processing {
-  display: inline-flex;
-}
-.loader-wrapper {
-  padding-left: 10px;
-  padding-top: 25px;
+#fud-drag-drop-message {
+  font-size: 18px;
+  background: $informationColor;
+  max-width: 400px;
+  width: 100%;
+  padding: 1.25rem;
+  margin: auto;
+  box-shadow: 1px 3px 2px $sectionMenuOptions;
 }

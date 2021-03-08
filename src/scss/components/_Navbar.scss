@@ -1,12 +1,12 @@
 .navbar {
   background-color: $sectionMenu;
   width: 100%;
-  display: inline-block;
+  display: inline-flex;
   height: $navBarHeight;
 }
 .nav {
   line-height: 36px;
-  padding: 24px 0px;
+  margin:auto 0;
   display: inline-block;
   float: left;
 }
@@ -32,7 +32,7 @@
 }
 
 .user-icon-container {
-  padding-top: 19px;
+  margin-top: 6px;
 }
 #user-icon {
   float: left;
