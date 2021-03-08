@@ -30,7 +30,7 @@ module.exports = class Upload extends Page {
             <UploadDialog></UploadDialog>
             <div id="fud-drag-drop-notification">
               <div id="fud-drag-drop-message">
-                <i class="fas fa-upload"></i>
+                <i className="fas fa-upload"></i>
                 {" Drag and drop files above to upload them."}
               </div>
             </div>
