@@ -1,4 +1,4 @@
-@import "../global", "../components/FileWatcher";
+@import "../global", "../components/FileWatcher", "../components/FileDrive";
 
 @include animation-breathe(
   $sectionMenuOptions,
@@ -8,9 +8,9 @@
 );
 @include animation-bounce($informationColor, $foreground);
 
-.upload-files-content {
+.file-drive {
   width: calc(100%);
-  height: calc(100% - 40px);
+  //height: calc(100% - 40px);
   display: block;
 }
 
@@ -22,27 +22,17 @@
   margin: 0 auto;
 }
 #file-drop-area {
+  position: absolute;
+  top: calc(#{$navBarHeight} * 2);
   min-width: 100%;
-  min-height: 100%;
+  min-height: calc(100% - 150px);
   font-family: sans-serif;
-  z-index: 1000;
 }
 #file-drop-area.highlight {
   background-color: rgba($informationColor, 0.4);
   z-index: 1000;
 }
-.upload-button {
-  display: inline-block;
-  background: rgba(lighten($sectionMenuOptions, 10%), 0.8);
-  cursor: pointer;
-  margin: auto;
-  border-radius: $defaultBorderRadius;
-  padding: 15px;
-  box-shadow: 1px 3px 2px $sectionMenuOptions;
-}
-.upload-button:hover {
-  background: lighten($sectionMenuOptions, 20%);
-}
+
 #file-dropzone {
   display: none;
 }
@@ -52,6 +42,7 @@
   bottom: 40px;
   width: 100%;
   display: none;
+  z-index: 1000;
 }
 #fud-drag-drop-message {
   font-size: 18px;

@@ -112,13 +112,16 @@ pre {
     height: 50px; } }
 
 .navbar {
-  background-color: rgba(0, 0, 0, 0.8);
+  top: 0;
+  left: 0;
+  position: fixed;
+  background-color: black;
   width: 100%;
   display: inline-flex;
-  height: 65px; }
+  height: 4.5em;
+  z-index: 200; }
 
 .nav {
-  line-height: 36px;
   margin: auto 0;
   display: inline-block;
   float: left; }
@@ -161,9 +164,6 @@ pre {
   display: block;
   padding: 0px 10px; }
 
-/**
- * Based On toastify.min.css from toastify-js
- */
 .toast-notification {
   padding: 12px 20px;
   color: #fff;
@@ -181,7 +181,7 @@ pre {
   top: 0;
   right: 0px;
   word-wrap: break-word;
-  min-height: calc(41px);
+  min-height: calc(4.5em - 24px);
   overflow: hidden;
   opacity: 0;
   visibility: hidden; }
@@ -228,7 +228,7 @@ html {
   margin-top: 0;
   height: 100%;
   color: white;
-  background: #e0e0e0;
+  background: #eee;
   background-size: cover;
   width: 100%; }
 

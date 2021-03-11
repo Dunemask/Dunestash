@@ -34,7 +34,6 @@ module.exports = class UploadDialog extends React.Component {
             </span>
           </div>
         </div>
-
         <div id="fud-queued-files"></div>
       </div>
     );
