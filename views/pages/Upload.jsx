@@ -59,45 +59,8 @@ module.exports = class Upload extends Page {
               multiple
             ></input>
             <div className="user-files" id="file-drop-area">
-              <h3>Recent Files</h3>
-
-              <div className="files" id="recent-files">
-                {!!this.recentFiles &&
-                  this.recentFiles.map((file, index) => (
-                    <div className="file" key={file.name + file.date}>
-                      <div className="file-contents">
-                        <div className="file-info">
-                          <span className="file-name">{file.name}</span>
-                          <span className="file-date">
-                            {easyDate(file.date)}
-                          </span>
-                        </div>
-                        <span className="file-options">
-                          <i className="fas fa-ellipsis-v"></i>
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-              </div>
               <h3 className="files-header">My Files</h3>
-              <div className="files" id="owned-files">
-                {!!this.files &&
-                  this.files.map((file, index) => (
-                    <div className="file" key={file.name + file.date}>
-                      <div className="file-contents">
-                        <div className="file-info">
-                          <span className="file-name">{file.name}</span>
-                          <span className="file-date">
-                            {easyDate(file.date)}
-                          </span>
-                        </div>
-                        <span className="file-options">
-                          <i className="fas fa-ellipsis-v"></i>
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-              </div>
+              <div className="files" id="owned-files"></div>
             </div>
             <div>
               <UploadDialog></UploadDialog>

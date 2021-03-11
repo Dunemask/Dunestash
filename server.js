@@ -60,6 +60,14 @@ app.get("/share", isUser, (req, res) => {
 app.post("/upload", isUser, (req, res) => {
   r.fileUpload(req, res);
 });
+app.get("/my-files-list", isUser, (req, res) => {
+  let userFiles = [];
+  db.getOwnedFiles(req.session.user_id).forEach((fileUuid) => {
+      userFiles.push(db.getFile(fileUuid));
+  });
+
+  res.json(userFiles);
+});
 app.get("/download", isUser, (req, res) => {
   if (db.authorizedToViewFile(req.query.target, req.session.user_id)) {
     r.getDownload(req, res);
@@ -81,7 +89,6 @@ app.get("/delete-file", isUser, (req, res) => {
     r.notAuthorized(req, res, "my-files");
   }
 });
-
 app.post("/delete", isUser, (req, res) => {
   if (db.authorizedToEditFile(req.query.target, req.session.user_id)) {
     console.log("I SHOULD DELETE");
