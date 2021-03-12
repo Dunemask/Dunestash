@@ -1,6 +1,7 @@
 const userFilesUrl = "my-files-list";
 const ownedList = document.getElementById("owned-files");
 const fileDropArea = document.getElementById("file-drop-area");
+//Generic Methods
 function easyDate(date) {
   let d = new Date(parseInt(date));
   if (isNaN(d.getMonth())) {
@@ -11,12 +12,21 @@ function easyDate(date) {
     }/${d.getDate()}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`;
   }
 }
+function isTouchDevice() {
+  return (
+    "ontouchstart" in window ||
+    navigator.maxTouchPoints > 0 ||
+    navigator.msMaxTouchPoints > 0
+  );
+}
+//File Drive
 class DriveSelector {
   constructor(fileList) {
     this.selectedBoxes = [];
     this.fileBoxes = [];
     this.fileList = fileList;
     this.firstSelection;
+    this.optionPanel = new OptionPane();
   }
   addFilebox(fileBox) {
     fileBox.box.addEventListener("click", (e) => this.boxClick(e, fileBox));
@@ -28,17 +38,38 @@ class DriveSelector {
     this.fileBoxes.splice(this.fileBoxes.indexOf(fileBox), 1);
   }
   boxClick(e, fileBox) {
+    const isTouch = isTouchDevice();
+    const optionsClick = e.target.closest(".file-options");
+    const hasPanel = fileBox.box.contains(this.optionPanel.pane);
+    let highlighted = fileBox.isHighlighted();
+    //Handle Selection
     if (e.shiftKey && this.firstSelection) {
       this.multiSelection(fileBox);
-    } else if (e.ctrlKey && this.firstSelection) {
+    } else if (
+      //Run on touch, and clicking an unhighlighted w/o options OR
+      //A highlighted non options
+      ((isTouch && (!optionsClick || !highlighted)) || e.ctrlKey) &&
+      this.firstSelection
+    ) {
       this.additionalSelection(fileBox);
-    } else {
+    } else if (!highlighted || (!optionsClick && this.firstSelection)) {
       this.singleSelection(fileBox);
     }
+    //Get new selection for displaying the Options Pane
+    highlighted = fileBox.isHighlighted();
+    //Toggle Panel Visibility/Location
+    if (!optionsClick || !highlighted) {
+      this.removeOptionsPane();
+    } else if (optionsClick && highlighted && hasPanel) {
+      this.toggleOptionsPane(fileBox);
+    } else if (optionsClick && highlighted && !hasPanel) {
+      this.removeOptionsPane(); //Another Box Clicked
+      this.addOptionsPane(fileBox);
+    }
   }
+
   singleSelection(fileBox) {
     this.clearAllSelection();
-
     fileBox.highlight();
     this.firstSelection = fileBox;
     this.selectedBoxes = [fileBox];
@@ -68,17 +99,36 @@ class DriveSelector {
     }
   }
   clearAllSelection() {
-    this.selectedBoxes.forEach((fileBox, i) => {
+    this.selectedBoxes.forEach((fileBox) => {
       fileBox.unhighlight();
     });
     this.selectedBoxes = [];
+  }
+  optionsPaneVisible() {
+    return this.optionPanel.pane.parentNode != null;
+  }
+  toggleOptionsPane(fileBox) {
+    if (this.optionsPaneVisible()) {
+      this.removeOptionsPane();
+    } else {
+      this.addOptionsPane(fileBox);
+    }
+  }
+  addOptionsPane(fileBox) {
+    fileBox.box.append(this.optionPanel.pane);
+  }
+  removeOptionsPane() {
+    if (this.optionsPaneVisible())
+      this.optionPanel.pane.parentNode.removeChild(this.optionPanel.pane);
   }
 }
 class FileBox {
   constructor(file) {
     this.file = file;
     this.selected = false;
+    this.optionPane = new OptionPane(file);
     this.box = this.buildBox();
+    //  this.box.append(this.optionPane.pane);
   }
   buildBox() {
     const fileBox = document.createElement("div");
@@ -126,6 +176,82 @@ class FileBox {
     }
   }
 }
+class OptionPane {
+  constructor() {
+    const optionPane = document.createElement("div");
+    const paneList = document.createElement("ul");
+    const viewOption = document.createElement("li");
+    const downloadOption = document.createElement("li");
+    const deleteOption = document.createElement("li");
+    const publicOption = document.createElement("li");
+    const shareOption = document.createElement("li");
+    //Fa Icons
+    const viewIcon = document.createElement("i");
+    const downloadIcon = document.createElement("i");
+    const deleteIcon = document.createElement("i");
+    const publicIcon = document.createElement("i");
+    const shareIcon = document.createElement("i");
+    //Add action ClassLists
+    viewOption.classList.add("view-option");
+    downloadOption.classList.add("download-option");
+    deleteOption.classList.add("delete-option");
+    publicOption.classList.add("public-option");
+    shareOption.classList.add("share-option");
+    //Icon Classlists
+    viewIcon.classList.add("fas", "fa-info-circle");
+    downloadIcon.classList.add("fas", "fa-file-download");
+    deleteIcon.classList.add("fas", "fa-trash");
+    publicIcon.classList.add("fas", "fa-eye");
+    shareIcon.classList.add("fas", "fa-share-square");
+    //Add Fa Icons
+    viewOption.append(viewIcon);
+    downloadOption.append(downloadIcon);
+    deleteOption.append(deleteIcon);
+    publicOption.append(publicIcon);
+    shareOption.append(shareIcon);
+    //Add names for interactive actions
+    viewOption.innerHTML += "View";
+    downloadOption.innerHTML += "Download";
+    deleteOption.innerHTML += "Delete";
+    publicOption.innerHTML += "Public";
+    shareOption.innerHTML += "Share";
+    //Append Children
+    optionPane.classList.add("file-option-pane");
+    paneList.append(viewOption);
+    paneList.append(downloadOption);
+    paneList.append(publicOption);
+    paneList.append(shareOption);
+    paneList.append(deleteOption);
+    optionPane.append(paneList);
+    this.pane = optionPane;
+  }
+  normalListeners() {
+    const viewOption = this.pane.querySelector("view-option");
+    const downloadOption = this.pane.querySelector("download-option");
+    const deleteOption = this.pane.querySelector("delete-option");
+    const publicOption = this.pane.querySelector("public-option");
+    const shareOption = this.pane.querySelector("share-option");
+  }
+
+  displayMultiSelection(count) {
+    const topElement = this.pane.querySelector("ul").childNodes[0];
+    console.log(topElement);
+    paneList.insertBefore(multiSelection, paneList.childNodes[0]);
+  }
+}
+
+function viewFile(file) {
+  let win = window.open(`/rawdata?target=${file.uuid}`);
+  if (!win || win.closed || typeof win.closed == "undefined") {
+    window.location = `/rawdata?target=${file.uuid}`;
+  }
+}
+function downloadFile(file) {
+  window.location = `/download?target=${file.uuid}`;
+}
+function deleteFile(file) {}
+function shareFile(file) {}
+function togglePublicFile(file) {}
 function updateUserFiles(cb) {
   let xhr = new XMLHttpRequest();
   xhr.open("GET", userFilesUrl);
@@ -153,13 +279,14 @@ function updateUserFiles(cb) {
 const driveSelector = new DriveSelector(ownedList);
 fileDropArea.addEventListener("click", (e) => {
   const fileListParent = e.target.closest(".files");
-  if (!fileListParent) {
+  const fileParent = e.target.closest(".file");
+  if (!fileListParent || !fileParent) {
     driveSelector.clearAllSelection();
+    driveSelector.removeOptionsPane();
   }
 });
 updateUserFiles(function (files) {
   files.forEach((file) => {
-    const fileBox = new FileBox(file);
-    driveSelector.addFilebox(fileBox);
+    driveSelector.addFilebox(new FileBox(file));
   });
 });

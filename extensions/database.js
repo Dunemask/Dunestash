@@ -215,9 +215,9 @@ exports.updateAllStorage = function (forceUpdate) {
 //File Control
 exports.authorizedToViewFile = function (target, id) {
   // is user authorized to view a file?
-  if (!this.fileExists(target)) {
-    return false;
-  }
+  if (!this.fileExists(target)) return false;
+
+  if (dugdb.files[target].isPublic) return true;
 
   if (dugdb.files[target].owner == id) {
     return true;
