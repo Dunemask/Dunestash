@@ -19,6 +19,15 @@ function isTouchDevice() {
     navigator.msMaxTouchPoints > 0
   );
 }
+function filePrettyify(serverFile) {
+  let file = { ...serverFile };
+  const path = serverFile.path;
+  const date = path.substring(0, path.indexOf("-"));
+  const name = path.substring(path.indexOf("-") + 1);
+  file.name = name;
+  file.date = date;
+  return file;
+}
 //File Drive
 class DriveSelector {
   constructor(fileList) {
@@ -26,7 +35,7 @@ class DriveSelector {
     this.fileBoxes = [];
     this.fileList = fileList;
     this.firstSelection;
-    this.optionPanel = new OptionPane();
+    this.optionPanel = new OptionPane(this);
   }
   addFilebox(fileBox) {
     fileBox.box.addEventListener("click", (e) => this.boxClick(e, fileBox));
@@ -37,9 +46,17 @@ class DriveSelector {
     this.fileList.removeChild(fileBox.box);
     this.fileBoxes.splice(this.fileBoxes.indexOf(fileBox), 1);
   }
+  removeAllBoxes() {
+    this.fileBoxes.forEach((fileBox) => {
+      this.fileList.removeChild(fileBox.box);
+    });
+    this.selectedBoxes = [];
+    this.fileBoxes = [];
+  }
   boxClick(e, fileBox) {
     const isTouch = isTouchDevice();
     const optionsClick = e.target.closest(".file-options");
+    const insideOptionsClick = optionsClick && optionsClick.contains(e.target);
     const hasPanel = fileBox.box.contains(this.optionPanel.pane);
     let highlighted = fileBox.isHighlighted();
     //Handle Selection
@@ -48,7 +65,7 @@ class DriveSelector {
     } else if (
       //Run on touch, and clicking an unhighlighted w/o options OR
       //A highlighted non options
-      ((isTouch && (!optionsClick || !highlighted)) || e.ctrlKey) &&
+      ((isTouch && (!insideOptionsClick || !highlighted)) || e.ctrlKey) &&
       this.firstSelection
     ) {
       this.additionalSelection(fileBox);
@@ -67,7 +84,6 @@ class DriveSelector {
       this.addOptionsPane(fileBox);
     }
   }
-
   singleSelection(fileBox) {
     this.clearAllSelection();
     fileBox.highlight();
@@ -120,6 +136,66 @@ class DriveSelector {
   removeOptionsPane() {
     if (this.optionsPaneVisible())
       this.optionPanel.pane.parentNode.removeChild(this.optionPanel.pane);
+  }
+}
+class OptionPane {
+  constructor(driveSelector) {
+    this.driveSelector = driveSelector;
+    const optionPane = document.createElement("div");
+    const paneList = document.createElement("ul");
+    const viewOption = document.createElement("li");
+    const downloadOption = document.createElement("li");
+    const deleteOption = document.createElement("li");
+    const publicOption = document.createElement("li");
+    const shareOption = document.createElement("li");
+    //Fa Icons
+    const viewIcon = document.createElement("i");
+    const downloadIcon = document.createElement("i");
+    const deleteIcon = document.createElement("i");
+    const publicIcon = document.createElement("i");
+    const shareIcon = document.createElement("i");
+    //Add action ClassLists
+    viewOption.classList.add("view-option");
+    downloadOption.classList.add("download-option");
+    deleteOption.classList.add("delete-option");
+    publicOption.classList.add("public-option");
+    shareOption.classList.add("share-option");
+    //Icon Classlists
+    viewIcon.classList.add("fas", "fa-info-circle");
+    downloadIcon.classList.add("fas", "fa-file-download");
+    deleteIcon.classList.add("fas", "fa-trash");
+    publicIcon.classList.add("fas", "fa-eye");
+    shareIcon.classList.add("fas", "fa-share-square");
+    //Add onclicks
+    viewOption.onclick = () => viewFile(driveSelector);
+    downloadOption.onclick = () => downloadFile(driveSelector);
+    deleteOption.onclick = () => deleteFile(driveSelector);
+    publicOption.onclick = () => togglePublicFile(driveSelector);
+    shareOption.onclick = () => shareFile(driveSelector);
+    //Add Fa Icons
+    viewOption.append(viewIcon);
+    downloadOption.append(downloadIcon);
+    deleteOption.append(deleteIcon);
+    publicOption.append(publicIcon);
+    shareOption.append(shareIcon);
+    //Add names for interactive actions
+    viewOption.innerHTML += "View";
+    downloadOption.innerHTML += "Download";
+    deleteOption.innerHTML += "Delete";
+    publicOption.innerHTML += "Public";
+    shareOption.innerHTML += "Share";
+    //Append Children
+    optionPane.classList.add("file-option-pane");
+    paneList.append(viewOption);
+    paneList.append(downloadOption);
+    paneList.append(publicOption);
+    paneList.append(shareOption);
+    paneList.append(deleteOption);
+    optionPane.append(paneList);
+    this.pane = optionPane;
+  }
+  updateView() {
+    const topElement = this.pane.querySelector("ul").childNodes[0];
   }
 }
 class FileBox {
@@ -176,82 +252,116 @@ class FileBox {
     }
   }
 }
-class OptionPane {
-  constructor() {
-    const optionPane = document.createElement("div");
-    const paneList = document.createElement("ul");
-    const viewOption = document.createElement("li");
-    const downloadOption = document.createElement("li");
-    const deleteOption = document.createElement("li");
-    const publicOption = document.createElement("li");
-    const shareOption = document.createElement("li");
-    //Fa Icons
-    const viewIcon = document.createElement("i");
-    const downloadIcon = document.createElement("i");
-    const deleteIcon = document.createElement("i");
-    const publicIcon = document.createElement("i");
-    const shareIcon = document.createElement("i");
-    //Add action ClassLists
-    viewOption.classList.add("view-option");
-    downloadOption.classList.add("download-option");
-    deleteOption.classList.add("delete-option");
-    publicOption.classList.add("public-option");
-    shareOption.classList.add("share-option");
-    //Icon Classlists
-    viewIcon.classList.add("fas", "fa-info-circle");
-    downloadIcon.classList.add("fas", "fa-file-download");
-    deleteIcon.classList.add("fas", "fa-trash");
-    publicIcon.classList.add("fas", "fa-eye");
-    shareIcon.classList.add("fas", "fa-share-square");
-    //Add Fa Icons
-    viewOption.append(viewIcon);
-    downloadOption.append(downloadIcon);
-    deleteOption.append(deleteIcon);
-    publicOption.append(publicIcon);
-    shareOption.append(shareIcon);
-    //Add names for interactive actions
-    viewOption.innerHTML += "View";
-    downloadOption.innerHTML += "Download";
-    deleteOption.innerHTML += "Delete";
-    publicOption.innerHTML += "Public";
-    shareOption.innerHTML += "Share";
-    //Append Children
-    optionPane.classList.add("file-option-pane");
-    paneList.append(viewOption);
-    paneList.append(downloadOption);
-    paneList.append(publicOption);
-    paneList.append(shareOption);
-    paneList.append(deleteOption);
-    optionPane.append(paneList);
-    this.pane = optionPane;
+class ProcessIndicator {
+  constructor(indicator) {
+    this.processingIndicator = indicator;
+    this.processCount = 0;
+    this.counter = this.processingIndicator.querySelector("span");
   }
-  normalListeners() {
-    const viewOption = this.pane.querySelector("view-option");
-    const downloadOption = this.pane.querySelector("download-option");
-    const deleteOption = this.pane.querySelector("delete-option");
-    const publicOption = this.pane.querySelector("public-option");
-    const shareOption = this.pane.querySelector("share-option");
+  removeProcess() {
+    this.processCount--;
+    if (this.processCount <= 0) {
+      this.hide();
+    }
+    this.updateCount();
   }
+  addProcess() {
+    this.processCount++;
+    if (this.processCount >= 1) {
+      this.show();
+    }
+    this.updateCount();
+  }
+  updateCount() {
+    if (this.processCount > 1) {
+      this.counter.innerText = this.processCount;
+    } else {
+      this.counter.innerText = "";
+    }
+  }
+  show() {
+    this.processingIndicator.classList.add("active");
+  }
+  hide() {
+    this.processingIndicator.classList.remove("active");
+  }
+}
+const driveSelector = new DriveSelector(ownedList);
+const processIndicator = new ProcessIndicator(
+  document.querySelector(".processing-indicator")
+);
+//Actions
+function viewFile(driveSelector) {
+  const selectedBoxes = driveSelector.selectedBoxes;
+  if (selectedBoxes.length == 1) {
+    let win = window.open(`/rawdata?target=${selectedBoxes[0].file.uuid}`);
+    if (!win || win.closed || typeof win.closed == "undefined") {
+      window.location = `/rawdata?target=${fileBoxes[0].file.uuid}`;
+    }
+  }
+}
+function downloadFile(driveSelector) {
+  const selectedBoxes = driveSelector.selectedBoxes;
+  const url = "download";
+  let files = [];
+  let xhr = new XMLHttpRequest();
+  selectedBoxes.forEach((fileBox) => {
+    files.push(fileBox.file.uuid);
+  });
+  //Send XHR request
 
-  displayMultiSelection(count) {
-    const topElement = this.pane.querySelector("ul").childNodes[0];
-    console.log(topElement);
-    paneList.insertBefore(multiSelection, paneList.childNodes[0]);
-  }
+  xhr.open("POST", url);
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      processIndicator.removeProcess();
+      const res = JSON.parse(xhr.response);
+      if (res.status) {
+        console.log("THERE WAS AN ERROR");
+      } else if (res.downloadUrl) {
+        const openLink = document.createElement("a");
+        openLink.href = res.downloadUrl;
+        openLink.download = true;
+        openLink.click();
+      }
+    }
+  };
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.send(JSON.stringify(files));
+  processIndicator.addProcess();
 }
-
-function viewFile(file) {
-  let win = window.open(`/rawdata?target=${file.uuid}`);
-  if (!win || win.closed || typeof win.closed == "undefined") {
-    window.location = `/rawdata?target=${file.uuid}`;
-  }
+function deleteFile(driveSelector) {
+  const selectedBoxes = driveSelector.selectedBoxes;
+  const url = "delete";
+  let files = [];
+  let xhr = new XMLHttpRequest();
+  selectedBoxes.forEach((fileBox) => {
+    files.push(fileBox.file.uuid);
+  });
+  const staticSelectedBoxes = [...driveSelector.selectedBoxes];
+  //Send XHR request
+  xhr.open("POST", url);
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      processIndicator.removeProcess();
+      const res = JSON.parse(xhr.response);
+      if (res.status) {
+        if (res.status.type == "Error") console.log("Error Deleting File");
+        new Toaster().defaultToast(res.status.tag, res.status.type);
+      }
+      //Reusing files variable
+      files = res.failedFiles || [];
+      staticSelectedBoxes.forEach((fileBox) => {
+        if (!files.includes(fileBox.file.uuid))
+          driveSelector.removeFilebox(fileBox);
+      });
+    }
+  };
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.send(JSON.stringify(files));
+  processIndicator.addProcess();
 }
-function downloadFile(file) {
-  window.location = `/download?target=${file.uuid}`;
-}
-function deleteFile(file) {}
-function shareFile(file) {}
-function togglePublicFile(file) {}
+function shareFile(driveSelector) {}
+function togglePublicFile(driveSelector) {}
 function updateUserFiles(cb) {
   let xhr = new XMLHttpRequest();
   xhr.open("GET", userFilesUrl);
@@ -259,16 +369,9 @@ function updateUserFiles(cb) {
     if (xhr.readyState == 4) {
       if (typeof xhr.response === "string") {
         let files = [];
-        let file;
         let serverFiles = JSON.parse(xhr.response);
         serverFiles.forEach((serverFile) => {
-          file = { ...serverFile };
-          const path = serverFile.path;
-          const date = path.substring(0, path.indexOf("-"));
-          const name = path.substring(path.indexOf("-") + 1);
-          file.name = name;
-          file.date = date;
-          files.push(file);
+          files.push(filePrettyify(serverFile));
         });
         cb(files);
       }
@@ -276,7 +379,7 @@ function updateUserFiles(cb) {
   };
   xhr.send();
 }
-const driveSelector = new DriveSelector(ownedList);
+//Actions
 fileDropArea.addEventListener("click", (e) => {
   const fileListParent = e.target.closest(".files");
   const fileParent = e.target.closest(".file");
@@ -285,8 +388,16 @@ fileDropArea.addEventListener("click", (e) => {
     driveSelector.removeOptionsPane();
   }
 });
-updateUserFiles(function (files) {
-  files.forEach((file) => {
-    driveSelector.addFilebox(new FileBox(file));
+
+const reloadFiles = (driveSelector) => {
+  driveSelector.removeAllBoxes();
+  loadFiles();
+};
+const loadFiles = () => {
+  updateUserFiles(function (files) {
+    files.forEach((file) => {
+      driveSelector.addFilebox(new FileBox(file));
+    });
   });
-});
+};
+loadFiles();

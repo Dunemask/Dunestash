@@ -5,9 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "node server.js --no-warnings",
-    "watch-css": "node-sass -w src/scss/pages/ -o www/css/",
+    "watch-css": "node-sass -w src/scss/pages/ -o www/css/ --output-style compressed",
     "build-css": "node-sass src/scss/pages/ -o www/css/",
-    "test-once": "node-sass scss/pages/ -o ../css/ && node index.js",
     "test": "nodemon server.js"
   },
   "repository": {
@@ -21,6 +20,7 @@
   },
   "homepage": "https://github.com/Dunemask/npmserver#readme",
   "dependencies": {
+    "adm-zip": "^0.5.4",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",

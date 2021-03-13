@@ -10,6 +10,7 @@
   },
   "Storage": {
     "UploadPath": "uploads/",
+    "DownloadZipPath": "uploads/zips/",
     "UserImagePath": "www/images/user-images/",
     "UserImagePathTemporary": "www/images/user-images/",
     "UserStorageSize": "2048",
@@ -17,7 +18,9 @@
     "ProfileImageSize": "150",
     "UploadMaxSize": "",
     "DatabasePath": "src/dugdatabase.json",
-    "DatabasePathTemporary": "src/dugdatabase-tmp.json"
+    "DatabasePathTemporary": "src/dugdatabase-tmp.json",
+    "ZipClickExpire": "20000",
+    "ZipDownloadExpire": "720000"
   },
   "Server": {
     "Port": 3000,
@@ -25,6 +28,7 @@
     "BodyLimit": "5mb",
     "SaltRounds": 10,
     "UpdateInterval": "3600000",
+    "ZipRemovalInterval": "1800000",
     "AdminConfig": {
       "useAdmin": false,
       "email": "abc@xyz.com",

@@ -42,6 +42,81 @@ exports.sharePage = (req, res) => {
   let displayFile = pr.sharePageRender(req.query.target);
   this.loadPage(req, res, "pages/Share.jsx", { groups, displayFile });
 };
+//File Downloads
+exports.multiDownload = (req, res) => {
+  if (!req.body || req.body.length === undefined) {
+    this.setStatus(req, StatusCode.Error, "No Files Specified");
+    res.json({ status: req.session.status });
+    return;
+  }
+  let needZip = req.body.length > 1;
+  let authorized = true;
+  for (let file of req.body) {
+    authorized =
+      authorized && db.authorizedToViewFile(file, req.session.user_id);
+    if (!authorized) break;
+  }
+  let downloadUrl = "download?";
+  if (needZip) {
+    const zipName = db.zipFiles(req.body, req.session.user_id);
+    downloadUrl += `zipTarget=${zipName}`;
+  } else {
+    downloadUrl += `target=${req.body[0]}`;
+  }
+  res.json({ downloadUrl });
+};
+exports.getDownload = (req, res) => {
+  if (!req.query.target && !req.query.zipTarget) {
+    this.setStatus(req, StatusCode.Error, "No Target Specified");
+    res.json({ status: req.session.status });
+    return;
+  }
+  let zipFile, filePath;
+  if (
+    req.query.target &&
+    db.authorizedToViewFile(req.query.target, req.session.user_id)
+  ) {
+    //If Single file and authorized to view, download
+    const file = db.getFile(req.query.target);
+    filePath = path.resolve(Storage.UploadPath, file.owner, file.path);
+  } else if (
+    req.query.zipTarget &&
+    db.getZipFile(req.query.zipTarget).owner == req.session.user_id
+  ) {
+    filePath = path.resolve(Storage.DownloadZipPath, req.query.zipTarget);
+    db.setZipExpire(
+      req.query.zipTarget,
+      Date.now() + parseInt(Storage.ZipDownloadExpire)
+    );
+  }
+
+  if (!fs.existsSync(filePath)) {
+    this.setStatus(req, StatusCode.Error, "Could not find that file!");
+    this.redirectTo(req, res, req.session.lastPage);
+  } else {
+    res.download(filePath);
+  }
+};
+exports.deleteFiles = (req, res) => {
+  if (!req.body || req.body.length === undefined) {
+    this.setStatus(req, StatusCode.Error, "No Files Specified");
+    res.json({ status: req.session.status });
+    return;
+  }
+  let failedFiles = [];
+  let authorized;
+  req.body.forEach((file) => {
+    authorized = db.authorizedToEditFile(file, req.session.user_id);
+    if (!authorized || !db.deleteFile(file)) failedFiles.push(file);
+  });
+  if (failedFiles.length > 0) {
+    this.setStatus(req, StatusCode.Error, "Couldn't Delete Some Files");
+    res.json({ status: req.session.status, failedFiles });
+  } else {
+    this.setStatus(req, StatusCode.Success, "Files Deleted Successfully");
+    res.json({ status: req.session.status });
+  }
+};
 //File Actions
 exports.fileUpload = (req, res) => {
   const serverStorage = db.getUserStorageObject(req.session.user_id);
@@ -71,6 +146,7 @@ exports.fileUpload = (req, res) => {
     //Attempt to upload the file
   } else {
     let usedStorage = 0;
+    let file;
     //Add the pending total to the session storage
     usedStorage = serverStorage.used + parseInt(req.headers.filesize);
     db.updateUserStorageObject(req.session.user_id, { used: usedStorage });
@@ -78,18 +154,27 @@ exports.fileUpload = (req, res) => {
       let status = {};
       if (!req.file || err || req.file.size != req.headers.filesize) {
         status = { type: StatusCode.Error, tag: "Internal Error Occurred!" };
-        db.updateUserStorageObject(req.session.user_id, { used: serverStorage.used});
+        db.updateUserStorageObject(req.session.user_id, {
+          used: serverStorage.used,
+        });
       } else {
-        db.addFile(
-          req.session.user_id,
-          req.file.filename,
-          parseInt(req.headers.filesize)
+        //Add File
+        file = db.getFile(
+          db.addFile(
+            req.session.user_id,
+            req.file.filename,
+            parseInt(req.headers.filesize)
+          )
         );
-        status = { type: StatusCode.Success, tag: "Upload Successful!" };
+        status = {
+          type: StatusCode.Success,
+          tag: "Upload Successful!",
+        };
       }
       res.json({
         status,
         storageUsed: usedStorage,
+        file,
       });
     });
   }
@@ -103,25 +188,6 @@ exports.getRawData = (req, res) => {
   } else {
     res.sendFile(filePath);
   }
-};
-exports.getDownload = (req, res) => {
-  const file = db.getFile(req.query.target);
-  const filePath = path.resolve(Storage.UploadPath, file.owner, file.path);
-  if (!fs.existsSync(filePath)) {
-    this.setStatus(req, StatusCode.Error, "Could not find that file!");
-    this.redirectTo(req, res, req.session.lastPage);
-  } else {
-    res.download(filePath);
-  }
-};
-exports.deleteFile = (req, res) => {
-  const deleted = db.deleteFile(req.query.target);
-  const status = {
-    type: deleted ? StatusCode.Success : StatusCode.Error,
-    tag: deleted ? "File Succesfully Deleted!" : "Error Deleting File!",
-  };
-  this.setStatus(req, status.type, status.tag);
-  this.redirectTo(req, res, req.session.lastPage);
 };
 //Login Events
 exports.register = (req, res) => {

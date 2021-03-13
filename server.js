@@ -29,6 +29,7 @@ app.use(bodyParser.urlencoded({ limit: Server.BodyLimit, extended: false })); //
 const isUser = (req, res, next) => {
   if (debuggingMode && !req.session.user_id)
     req.session.user_id = db.getUuid("admin");
+
   if (!!req.session.user_id || req.path === "/login") {
     next();
   } else {
@@ -63,18 +64,14 @@ app.post("/upload", isUser, (req, res) => {
 app.get("/my-files-list", isUser, (req, res) => {
   let userFiles = [];
   db.getOwnedFiles(req.session.user_id).forEach((fileUuid) => {
-      userFiles.push(db.getFile(fileUuid));
+    userFiles.push(db.getFile(fileUuid));
   });
 
   res.json(userFiles);
 });
-app.get("/download", isUser, (req, res) => {
-  if (db.authorizedToViewFile(req.query.target, req.session.user_id)) {
-    r.getDownload(req, res);
-  } else {
-    r.notAuthorized(req, res, "my-files");
-  }
-});
+app.get("/download", isUser, (req, res) => r.getDownload(req, res));
+app.post("/download", isUser, (req, res) => r.multiDownload(req, res));
+
 app.get("/rawdata", isUser, (req, res) => {
   if (db.authorizedToViewFile(req.query.target, req.session.user_id)) {
     r.getRawData(req, res);
@@ -89,14 +86,7 @@ app.get("/delete-file", isUser, (req, res) => {
     r.notAuthorized(req, res, "my-files");
   }
 });
-app.post("/delete", isUser, (req, res) => {
-  if (db.authorizedToEditFile(req.query.target, req.session.user_id)) {
-    console.log("I SHOULD DELETE");
-    console.log(req.body);
-  } else {
-    r.notAuthorized(req, res, "my-files");
-  }
-});
+app.post("/delete", isUser, (req, res) => r.deleteFiles(req, res));
 app.all("/groupedit", isUser, (req, res) => {
   throw new Error("I HAVE NOT BEEN CODED YET!!!");
   db.groupEditFriendly(req.body.groupName, req.body.gid, req.session.user_id);
@@ -171,5 +161,7 @@ const startServer = () => {
   setInterval(() => {
     db.updateAllStorage();
   }, parseInt(Server.UpdateInterval)); //Update Users Json every hour
+  //Removes Unceccessary Zips every 45 minutes
+  setInterval(() => db.zipAutoRemoval(), Server.ZipRemovalInterval);
 };
 startServer();

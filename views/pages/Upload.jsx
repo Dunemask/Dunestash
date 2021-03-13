@@ -9,24 +9,8 @@ module.exports = class Upload extends Page {
       uuid: props.uuid,
       status: props.status,
       title,
-      scripts: ["upload.js", "files.js"],
+      scripts: ["files.js", "upload.js"],
     });
-    this.recentFiles = [];
-    for (let i = 0; i < 4; i++) {
-      this.recentFiles.push({
-        name: "Recent File.txt",
-        date: Date.now(),
-        size: "1000",
-      });
-    }
-    this.files = [];
-    for (let i = 0; i < 50; i++) {
-      this.files.push({
-        name: "Normal File.txt",
-        date: Date.now(),
-        size: "100",
-      });
-    }
   }
   render() {
     return (
@@ -62,13 +46,17 @@ module.exports = class Upload extends Page {
               <h3 className="files-header">My Files</h3>
               <div className="files" id="owned-files"></div>
             </div>
-            <div>
+            <div className="user-dialogs">
               <UploadDialog></UploadDialog>
               <div id="fud-drag-drop-notification">
                 <div id="fud-drag-drop-message">
                   <i className="fas fa-upload"></i>
                   {" Drag and drop files above to upload them."}
                 </div>
+              </div>
+              <div className="processing-indicator">
+                <i className="fas fa-sync"></i>
+                <span className="processing-counter"></span>
               </div>
             </div>
           </div>
