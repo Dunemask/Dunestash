@@ -83,6 +83,8 @@ class DriveSelector {
       this.removeOptionsPane(); //Another Box Clicked
       this.addOptionsPane(fileBox);
     }
+    //Adjust Menu for selected count
+    this.optionPanel.updateView();
   }
   singleSelection(fileBox) {
     this.clearAllSelection();
@@ -194,8 +196,27 @@ class OptionPane {
     optionPane.append(paneList);
     this.pane = optionPane;
   }
+
   updateView() {
     const topElement = this.pane.querySelector("ul").childNodes[0];
+    if (this.driveSelector.selectedBoxes.length <= 1) this.hideMultiView();
+    else this.showMultiView();
+  }
+  hideMultiView() {
+    const topElement = this.pane.querySelector("ul").childNodes[0];
+    topElement.innerHTML = topElement.innerHTML.replace(
+      topElement.innerText,
+      ""
+    );
+    topElement.innerHTML += "View";
+  }
+  showMultiView() {
+    const topElement = this.pane.querySelector("ul").childNodes[0];
+    topElement.innerHTML = topElement.innerHTML.replace(
+      topElement.innerText,
+      ""
+    );
+    topElement.innerHTML += `${this.driveSelector.selectedBoxes.length} Files Selected`;
   }
 }
 class FileBox {
@@ -360,8 +381,30 @@ function deleteFile(driveSelector) {
   xhr.send(JSON.stringify(files));
   processIndicator.addProcess();
 }
-function shareFile(driveSelector) {}
-function togglePublicFile(driveSelector) {}
+function shareFile(driveSelector) {
+  const selectedBoxes = driveSelector.selectedBoxes;
+  const url = "share";
+  let files = [];
+  //  let xhr = new XMLHttpRequest();
+  selectedBoxes.forEach((fileBox) => {
+    files.push(fileBox.file.uuid);
+  });
+
+  console.log("Would share files:");
+  console.log(files);
+}
+function togglePublicFile(driveSelector) {
+  const selectedBoxes = driveSelector.selectedBoxes;
+  const url = "public";
+  let files = [];
+  //  let xhr = new XMLHttpRequest();
+  selectedBoxes.forEach((fileBox) => {
+    files.push(fileBox.file.uuid);
+  });
+
+  console.log("Would make these files public:");
+  console.log(files);
+}
 function updateUserFiles(cb) {
   let xhr = new XMLHttpRequest();
   xhr.open("GET", userFilesUrl);

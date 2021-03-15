@@ -71,7 +71,6 @@ app.get("/my-files-list", isUser, (req, res) => {
 });
 app.get("/download", isUser, (req, res) => r.getDownload(req, res));
 app.post("/download", isUser, (req, res) => r.multiDownload(req, res));
-
 app.get("/rawdata", isUser, (req, res) => {
   if (db.authorizedToViewFile(req.query.target, req.session.user_id)) {
     r.getRawData(req, res);
@@ -158,6 +157,9 @@ const startServer = () => {
     db.updateAllStorage();
     process.exit();
   });
+  //Remove any cached zips on restart
+  if (debuggingMode) db.zipAutoRemoval();
+  //Start update intervals
   setInterval(() => {
     db.updateAllStorage();
   }, parseInt(Server.UpdateInterval)); //Update Users Json every hour

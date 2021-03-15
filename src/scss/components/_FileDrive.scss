@@ -231,16 +231,21 @@
   box-shadow: 2px 5px 4px darken(#eee, 50%);
   opacity: 1;
   display: none;
+  overflow: hidden;
+  z-index: 450;
 }
 
 .processing-indicator.active {
   display: flex;
 }
 
-.processing-indicator span {
+.processing-indicator.active span {
+  font-size: 1.5rem;
   position: absolute;
-  top:1rem;
-  right:1rem;
+  top: 1rem;
+  right: 1rem;
+  text-align: center;
+  font-style: oblique;
 }
 
 .processing-indicator svg {
