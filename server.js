@@ -47,9 +47,6 @@ app.get("/about", (req, res) => {
 app.get("/upload", isUser, (req, res) => {
   r.loadPage(req, res, "pages/Upload.jsx");
 });
-app.get("/my-files", isUser, (req, res) => {
-  r.filesPage(req, res);
-});
 app.get("/share", isUser, (req, res) => {
   if (db.authorizedToEditFile(req.query.target, req.session.user_id)) {
     r.sharePage(req, res);
