@@ -2,10 +2,17 @@
 const { v4: uuidv4 } = require("uuid"); // Depends on uuid module
 const { Storage } = require("../server-config.json");
 class Dugdb {
-  constructor() {
-    this.users = {};
-    this.files = {};
-    this.groups = {};
+  constructor(obj) {
+    if (obj) {
+      for (const prop in obj) {
+        this[prop] = obj[prop];
+      }
+    } else {
+      this.users = {};
+      this.files = {};
+      this.groups = {};
+      this.zips = {};
+    }
   }
   getUser(uuid) {
     return this.users[uuid];
@@ -102,12 +109,8 @@ class Dugdb {
       users: this.users,
       files: this.files,
       groups: this.groups,
+      zips: this.zips,
     };
-  }
-  loadData(obj) {
-    this.users = obj.users;
-    this.files = obj.files;
-    this.groups = obj.groups;
   }
 }
 module.exports = {

@@ -29,6 +29,7 @@ app.use(bodyParser.urlencoded({ limit: Server.BodyLimit, extended: false })); //
 const isUser = (req, res, next) => {
   if (debuggingMode && !req.session.user_id)
     req.session.user_id = db.getUuid("admin");
+
   if (!!req.session.user_id || req.path === "/login") {
     next();
   } else {
@@ -46,9 +47,6 @@ app.get("/about", (req, res) => {
 app.get("/upload", isUser, (req, res) => {
   r.loadPage(req, res, "pages/Upload.jsx");
 });
-app.get("/my-files", isUser, (req, res) => {
-  r.filesPage(req, res);
-});
 app.get("/share", isUser, (req, res) => {
   if (db.authorizedToEditFile(req.query.target, req.session.user_id)) {
     r.sharePage(req, res);
@@ -60,13 +58,16 @@ app.get("/share", isUser, (req, res) => {
 app.post("/upload", isUser, (req, res) => {
   r.fileUpload(req, res);
 });
-app.get("/download", isUser, (req, res) => {
-  if (db.authorizedToViewFile(req.query.target, req.session.user_id)) {
-    r.getDownload(req, res);
-  } else {
-    r.notAuthorized(req, res, "my-files");
-  }
+app.get("/my-files-list", isUser, (req, res) => {
+  let userFiles = [];
+  db.getOwnedFiles(req.session.user_id).forEach((fileUuid) => {
+    userFiles.push(db.getFile(fileUuid));
+  });
+
+  res.json(userFiles);
 });
+app.get("/download", isUser, (req, res) => r.getDownload(req, res));
+app.post("/download", isUser, (req, res) => r.multiDownload(req, res));
 app.get("/rawdata", isUser, (req, res) => {
   if (db.authorizedToViewFile(req.query.target, req.session.user_id)) {
     r.getRawData(req, res);
@@ -74,13 +75,14 @@ app.get("/rawdata", isUser, (req, res) => {
     r.notAuthorized(req, res, "my-files");
   }
 });
-app.all("/delete-file", isUser, (req, res) => {
+app.get("/delete-file", isUser, (req, res) => {
   if (db.authorizedToEditFile(req.query.target, req.session.user_id)) {
     r.deleteFile(req, res);
   } else {
     r.notAuthorized(req, res, "my-files");
   }
 });
+app.post("/delete", isUser, (req, res) => r.deleteFiles(req, res));
 app.all("/groupedit", isUser, (req, res) => {
   throw new Error("I HAVE NOT BEEN CODED YET!!!");
   db.groupEditFriendly(req.body.groupName, req.body.gid, req.session.user_id);
@@ -152,8 +154,13 @@ const startServer = () => {
     db.updateAllStorage();
     process.exit();
   });
+  //Remove any cached zips on restart
+  if (debuggingMode) db.zipAutoRemoval();
+  //Start update intervals
   setInterval(() => {
     db.updateAllStorage();
   }, parseInt(Server.UpdateInterval)); //Update Users Json every hour
+  //Removes Unceccessary Zips every 45 minutes
+  setInterval(() => db.zipAutoRemoval(), Server.ZipRemovalInterval);
 };
 startServer();

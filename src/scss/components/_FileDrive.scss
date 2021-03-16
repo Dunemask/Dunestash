@@ -1,0 +1,260 @@
+/* {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}*/
+
+.user-files {
+  position: relative;
+  top: calc(#{$navBarHeight} * 2);
+  z-index: 10;
+}
+
+#abar {
+  top: $navBarHeight;
+  position: fixed;
+  box-shadow: 0 4px 2px -2px darken(#eee, 10%);
+  height: 100%;
+  width: 100%;
+  max-height: $navBarHeight;
+  z-index: 200;
+  background: #eee;
+  display: flex;
+}
+
+.abar-actions {
+  width: 100%;
+  display: inline-flex;
+  //margin: 10px 0px;
+  height: 3rem;
+  margin: auto;
+}
+
+.medium-spacer {
+  width: calc(12% - 80px);
+  max-width: 300px;
+}
+
+.file-searchbar {
+  display: inline-flex;
+  background: darken(#eee, 5%);
+  color: $sectionMenuOptions;
+  //Accounting for fa svg
+  max-width: calc(80ch + 1rem);
+  width: 100%;
+  border: 1px solid darken(#eee, 8%);
+  border-radius: $defaultBorderRadius;
+  box-shadow: 1px 3px 2px darken(#eee, 20%);
+}
+.file-searchbar svg {
+  margin: auto 0;
+  padding: 0 0.15rem 0 0.5rem;
+}
+
+#file-search {
+  width: 100%;
+  font-size: 1.125rem;
+  background: darken(#eee, 5%);
+  text-indent: 0.125rem;
+  border: none;
+}
+#file-search::placeholder {
+  color: $sectionMenuOptions;
+}
+
+.upload-button {
+  background: rgba(lighten($sectionMenuOptions, 10%), 0.8);
+  cursor: pointer;
+  border-radius: $defaultBorderRadius;
+  text-align: center;
+  align-items: center;
+  padding: 0.85rem;
+  margin: auto 0;
+  box-shadow: 1px 3px 2px darken(#eee, 20%);
+  font-size: 1rem;
+  width: 100%;
+  max-width: 105px;
+  max-height: 3rem;
+}
+
+.upload-button:hover {
+  background: lighten($sectionMenuOptions, 20%);
+  opacity: 0.85;
+}
+
+.file-drive h3 {
+  width: 100%;
+  color: lighten($sectionMenuOptions, 20%);
+}
+
+.file-wrapper {
+  width: 100%;
+  margin: auto;
+  display: inline-block;
+}
+
+.files {
+  display: inline-flex;
+  flex-flow: row wrap;
+  gap: 0 0.5rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.file {
+  position: relative;
+  display: flex;
+  max-height: 4rem;
+  height: 100%;
+  max-width: 25em;
+  //margin: 0 auto;
+  padding: 0.4rem 0;
+  width: 100%;
+  //float:left;
+  align-self: flex-start;
+}
+
+.file-contents {
+  position: relative;
+  display: flex;
+  background: $sectionMenuOptions;
+  padding: 1rem;
+  box-shadow: 1px 3px 2px $sectionMenuOptions;
+  width: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  overflow: hidden;
+}
+
+.file-contents.highlight {
+  background: $informationColor;
+  box-shadow: 1px 3px 2px darken($informationColor, 20%);
+}
+
+.file-info {
+  display: flex;
+  float: left;
+  flex-flow: row wrap;
+  width: 100%;
+  height: 100%;
+  margin: auto;
+}
+
+.file-info span {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  padding: 0.125rem 0;
+  max-width: 39ch;
+  overflow-x: hidden;
+}
+
+.file-options {
+  position: absolute;
+  right: 0;
+  top: 0;
+  min-width: 2rem;
+  height: 100%;
+  float: right;
+  font-size: 1.5rem;
+}
+
+.file-options svg {
+  margin: auto;
+  height: 100%;
+}
+
+.file-options:hover {
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  opacity: 0.9;
+}
+
+//Optionpane css
+
+.file-option-pane {
+  position: absolute;
+  display: flex;
+  background: lighten($sectionMenuOptions, 10%);
+  box-shadow: 1px 3px 2px lighten ($sectionMenuOptions, 5%);
+  color: $foreground;
+  z-index: 300;
+  width: 50%;
+  max-width: inherit;
+  font-size: 1rem;
+  right: 0;
+  top: 4rem;
+}
+
+.file-option-pane ul {
+  list-style-type: none;
+  padding: 0;
+  width: 100%;
+}
+
+.file-option-pane li:hover {
+  opacity: 0.85;
+  cursor: pointer;
+}
+
+.file-option-pane li {
+  width: inherit;
+  text-align: left;
+  padding: 0 0.5rem;
+}
+
+.file-option-pane svg {
+  min-width: 1rem;
+  padding: 0 0.5rem;
+  height: 100%;
+}
+
+.file-option-pane li:not(:last-child) {
+  margin-bottom: 0.85rem;
+}
+
+.file-option-pane a {
+  color: $foreground;
+  text-decoration: none;
+  font-size: inherit;
+}
+
+.processing-indicator {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  height: 10rem;
+  width: 10rem;
+  background: darken(#eee, 40%);
+  border-radius: $defaultBorderRadius;
+  box-shadow: 2px 5px 4px darken(#eee, 50%);
+  opacity: 1;
+  display: none;
+  overflow: hidden;
+  z-index: 450;
+}
+
+.processing-indicator.active {
+  display: flex;
+}
+
+.processing-indicator.active span {
+  font-size: 1.5rem;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  text-align: center;
+  font-style: oblique;
+}
+
+.processing-indicator svg {
+  font-size: 4rem;
+  margin: auto;
+  width: 100%;
+  height: 100%;
+}
+
+.processing-indicator.active svg {
+  animation: spin 2s linear infinite;
+}

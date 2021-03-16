@@ -1,21 +1,29 @@
 const fs = require("fs");
 const rimraf = require("rimraf");
 const bcrypt = require("bcrypt"); // Hashing
+const AdmZip = require("adm-zip"); // Zipping
+const { v4: uuidv4 } = require("uuid"); // Depends on uuid module
 const path = require("path");
 const { Storage, Web, Server } = require("../server-config.json");
 const dugdblocation = path.resolve(Storage.DatabasePath);
 const dugdbTempPath = path.resolve(Storage.DatabasePathTemporary);
-const ddb = require("./dugdb.js"); // Main Database Object
+const { Dugdb } = require("./dugdb.js"); // Main Database Object
 const adminConfig = Server.AdminConfig;
 let dugdb;
 let dbChanged = false;
 exports.init = () => {
-  dugdb = new ddb.Dugdb();
   if (!fs.existsSync(path.resolve(Storage.UploadPath)))
     fs.mkdirSync(path.resolve(Storage.UploadPath));
+  //Temporary Zip Paths
+  /*if (fs.existsSync(path.resolve(Storage.DownloadZipPath))) {
+    rimraf.sync(path.join(Storage.DownloadZipPath));
+  }
+  fs.mkdirSync(path.resolve(Storage.DownloadZipPath));*/
+  //DB Load/Setup
   if (fs.existsSync(path.resolve(dugdblocation))) {
-    dugdb.loadData(require(path.resolve(dugdblocation)));
+    dugdb = new Dugdb(require(path.resolve(dugdblocation)));
   } else {
+    dugdb = new Dugdb();
     if (adminConfig.useAdmin) {
       const hash = bcrypt.hashSync(adminConfig.pwd, Server.SaltRounds);
       let admin = dugdb.newUser(
@@ -30,6 +38,52 @@ exports.init = () => {
 };
 exports.resourceExists = (path) => {
   return fs.existsSync(path);
+};
+//Zip Actions
+exports.addZip = (target, owner) => {
+  dbChanged = true;
+  dugdb.zips[target] = {};
+  dugdb.zips[target].owner = owner;
+  dugdb.zips[target].expires = Date.now() + parseInt(Storage.ZipClickExpire);
+  return dugdb.zips[target];
+};
+exports.deleteZip = (target) => {
+  dbChanged = true;
+
+  try {
+    delete dugdb.zips[target];
+    fs.unlinkSync(path.resolve(Storage.DownloadZipPath, target));
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+  return true;
+};
+exports.setZipExpire = (target, time) => {
+  if (!dugdb.zips[target]) return;
+  dugdb.zips[target].expires = parseInt(time);
+};
+exports.zipFiles = (files, id) => {
+  const name = `${uuidv4()}.zip`;
+  const filePath = path.resolve(Storage.DownloadZipPath, name);
+  let zip = new AdmZip();
+  //Create zip path if it doesn't exist
+  if (!fs.existsSync(path.resolve(Storage.DownloadZipPath)))
+    fs.mkdirSync(path.resolve(Storage.DownloadZipPath));
+  //Add each file to the zip archive;
+  files.forEach((file) => {
+    let f = this.getFile(file);
+    zip.addLocalFile(path.resolve(Storage.UploadPath, f.owner, f.path));
+  });
+  //Create After so the autoremoval doesn't remove it before it's written
+  zip.writeZip(filePath);
+  this.addZip(name, id);
+  return name;
+};
+exports.getZipFile = (target) => {
+  const filePath = path.resolve(Storage.DownloadZipPath, target);
+  if (!fs.existsSync(filePath) || !dugdb.zips[target]) return false;
+  return dugdb.zips[target];
 };
 // User Creation
 exports.createUser = function (username, password, email) {
@@ -212,12 +266,20 @@ exports.updateAllStorage = function (forceUpdate) {
   // Updates all storage
   exports.updateUserStorage(forceUpdate);
 };
+exports.zipAutoRemoval = function () {
+  const compareDate = Date.now();
+  for (let zip in dugdb.zips) {
+    if (dugdb.zips[zip].expires <= compareDate) {
+      this.deleteZip(zip);
+    }
+  }
+};
 //File Control
 exports.authorizedToViewFile = function (target, id) {
   // is user authorized to view a file?
-  if (!this.fileExists(target)) {
-    return false;
-  }
+  if (!this.fileExists(target)) return false;
+
+  if (dugdb.files[target].isPublic) return true;
 
   if (dugdb.files[target].owner == id) {
     return true;

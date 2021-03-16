@@ -23,7 +23,6 @@ module.exports = class Navbar extends React.Component {
         </div>
         <div className="nav">
           <a href="/">Home</a>
-          <a href="my-files">Files</a>
           <a href="upload">Upload</a>
         </div>
       </div>
