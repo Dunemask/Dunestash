@@ -23,7 +23,7 @@
     "ZipDownloadExpire": "720000"
   },
   "Server": {
-    "Port": 3000,
+    "Port": 4000,
     "Debug": true,
     "BodyLimit": "5mb",
     "SaltRounds": 10,

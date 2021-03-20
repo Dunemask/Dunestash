@@ -373,7 +373,18 @@ exports.deleteFile = function (file) {
     fs.unlinkSync(path.join(Storage.UploadPath, id, this.getFile(file).path));
     deletedProperly = true;
   } catch (err) {
-    console.error(err);
+    console.log(
+      "Error deleting file: {",
+      "\nname:",
+      fileInfo.path,
+      "\nfile-uuid:",
+      file,
+      " \nowner: ",
+      this.getUser(fileInfo.owner),
+      " \nownerid: ",
+      fileInfo.owner,
+      "}"
+    );
   }
   dugdb.users[id].ownedFiles = dugdb.users[id].ownedFiles.filter(
     (item) => item !== file

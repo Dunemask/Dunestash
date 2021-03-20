@@ -3,6 +3,7 @@ const express = require("express");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const { v4: uuidv4 } = require("uuid");
+const cors = require("cors");
 const fs = require("fs");
 const erv = require("express-react-views");
 const path = require("path");
@@ -25,6 +26,7 @@ app.set("view engine", "jsx");
 app.engine("jsx", erv.createEngine(viewOptions));
 app.use(bodyParser.json({ limit: Server.BodyLimit })); // parse application/json
 app.use(bodyParser.urlencoded({ limit: Server.BodyLimit, extended: false })); // parse application/x-www-form-urlencoded
+app.use(cors());
 //Test if there is a
 const isUser = (req, res, next) => {
   if (debuggingMode && !req.session.user_id)
@@ -63,7 +65,6 @@ app.get("/my-files-list", isUser, (req, res) => {
   db.getOwnedFiles(req.session.user_id).forEach((fileUuid) => {
     userFiles.push(db.getFile(fileUuid));
   });
-
   res.json(userFiles);
 });
 app.get("/download", isUser, (req, res) => r.getDownload(req, res));
