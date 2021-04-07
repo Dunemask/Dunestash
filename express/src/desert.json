@@ -1,0 +1,33 @@
+{
+  "desertPath": "desert/",
+  "schema": {
+    "files": {
+      "tokenList": "abcdefghijklmnopqrstuvwxyz0123456789",
+      "tokenSplitters": "0123456789abcdef",
+      "entrySplit": 500,
+      "attr": [
+        "fileUuid",
+        "path",
+        "owner",
+        "name",
+        "date",
+        "size",
+        "public",
+        "edit",
+        "view"
+      ]
+    },
+    "zips": {
+      "tokenList": "abcdefghijklmnopqrstuvwxyz0123456789",
+      "tokenSplitters": "0123456789abcdef",
+      "entrySplit": 500,
+      "attr": ["owner", "path", "exp"]
+    },
+    "uuid": {
+      "tokenList": "abcdefghijklmnopqrstuvwxyz0123456789",
+      "tokenSplitters": "0123456789abcdef",
+      "entrySplit": 500,
+      "attr": ["owned", "shared", "storage", "usedStorage"]
+    }
+  }
+}

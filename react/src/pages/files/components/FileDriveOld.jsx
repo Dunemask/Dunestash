@@ -1,0 +1,327 @@
+import React from "react";
+import FileBox from "./FileBox";
+import Fud from "./FileUploadDialog";
+import { serverUrls } from "../../../api.json";
+import axios from "axios";
+import DriveContextmenu from "./DriveContextMenu";
+import { toast } from "react-toastify";
+const downloadUrl = serverUrls.POST.downloadUrl;
+const deleteUrl = serverUrls.POST.deleteUrl;
+const filesUrl = serverUrls.GET.filesUrl;
+const rawUrl = serverUrls.GET.rawUrl;
+function easyDate(date) {
+  let d = new Date(parseInt(date));
+  if (isNaN(d.getMonth())) {
+    return "";
+  } else {
+    return `${
+      d.getMonth() + 1
+    }/${d.getDate()}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`;
+  }
+}
+export default class FileDrive extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      fileBoxes: [],
+      selectedBoxes: [],
+      firstSelection: null,
+      optionsPane: null,
+      contextMenu: null,
+    };
+    //Bind Select Functions and adding function
+    this.handleSelectAllPress = this.handleSelectAllPress.bind(this);
+    this.deselectAll = this.deselectAll.bind(this);
+    this.addFilebox = this.addFilebox.bind(this);
+    // Bind Context Menu Functions
+    this.contextMenu = this.contextMenu.bind(this);
+    this.preventNormalContextMenu = this.preventNormalContextMenu.bind(this);
+    this.removeDriveContextMenu = this.removeDriveContextMenu.bind(this);
+    this.infoClick = this.infoClick.bind(this);
+    this.downloadClick = this.downloadClick.bind(this);
+    this.deleteClick = this.deleteClick.bind(this);
+    this.deleteHandle = this.deleteHandle.bind(this);
+    this.publicClick = this.publicClick.bind(this);
+    this.shareClick = this.shareClick.bind(this);
+  }
+  preventNormalContextMenu(e) {
+    if (!e.shiftKey && !e.ctrlKey) e.preventDefault();
+    return !e.shiftKey && !e.ctrlKey;
+  }
+  removeDriveContextMenu(e) {
+    if (this.state.contextMenu !== null) this.setState({ contextMenu: null });
+  }
+  componentDidMount() {
+    document.addEventListener("contextmenu", this.preventNormalContextMenu);
+    document.addEventListener("click", this.removeDriveContextMenu);
+    document.onkeyup = this.handleSelectAllPress;
+    fetch(filesUrl)
+      .then((res) => {
+        if (res.status === 401) {
+          console.log("Would redirect to login");
+          return;
+        }
+        res.json().then((data) => {
+          if (data === undefined || data.length === undefined) {
+            toast.error("Error Loading Files");
+            return;
+          }
+          let fileBoxes = new Array(data.length);
+          data.forEach((file, index) => {
+            fileBoxes[index] = {
+              id: file.fileUuid,
+              name: file.name,
+              date: easyDate(file.date),
+              isSelected: false,
+            };
+          });
+          this.setState({ fileBoxes });
+        });
+      })
+      .catch((e) => console.error(e));
+  }
+  componentWillUnmount() {
+    document.removeEventListener("contextmenu", this.preventNormalContextMenu);
+    document.removeEventListener("click", this.removeDriveContextMenu);
+    document.onkeyup = null;
+  }
+  handleSelectAllPress(e) {
+    if (!(this.state.selectedBoxes.length > 0)) return;
+    if (e.key === "a" && e.ctrlKey) {
+      e.stopPropagation();
+      e.preventDefault();
+      this.selectAll();
+    } else if (e.key === "Backspace" || e.key === "Delete") this.deleteClick();
+  }
+  /*Selectino Functions*/
+  getBoxById(id) {
+    for (const fileBox of this.state.fileBoxes) {
+      if (fileBox.id === id) return fileBox;
+    }
+  }
+  selectBox(id, e) {
+    this.removeDriveContextMenu();
+    e.stopPropagation();
+    const firstSelection = this.state.firstSelection;
+    if (e.ctrlKey && firstSelection !== null) this.segmentSelection(id);
+    else if (e.shiftKey && firstSelection !== null) this.multiSelection(id);
+    else this.singleSelection(id);
+  }
+  singleSelection(boxId) {
+    this.deselectAll();
+    let selectedBoxes = this.state.selectedBoxes;
+    let fileBoxes = this.state.fileBoxes;
+    let box = this.getBoxById(boxId);
+    const boxIndex = fileBoxes.indexOf(box);
+    box.isSelected = true;
+    fileBoxes[boxIndex] = box;
+    selectedBoxes = [box];
+    this.setState({ selectedBoxes, fileBoxes, firstSelection: boxId });
+  }
+  multiSelection(boxId) {
+    this.deselectAll();
+    let fileBoxes = this.state.fileBoxes;
+    let box = this.getBoxById(boxId);
+    const firstBox = this.getBoxById(this.state.firstSelection);
+    let boxIndex = fileBoxes.indexOf(box);
+    let firstIndex = fileBoxes.indexOf(firstBox);
+    if (boxIndex < firstIndex) {
+      let tmp = boxIndex;
+      boxIndex = firstIndex;
+      firstIndex = tmp;
+    }
+    //Send selection 1 more for the slice
+    let selectedBoxes = new Array(1 + boxIndex - firstIndex);
+    fileBoxes.slice(firstIndex, boxIndex + 1).forEach((fileBox, i) => {
+      fileBox.isSelected = true;
+      selectedBoxes[i] = fileBox;
+      fileBoxes[firstIndex + i] = fileBox;
+    });
+    this.setState({ selectedBoxes, fileBoxes });
+  }
+  segmentSelection(boxId) {
+    let selectedBoxes = this.state.selectedBoxes;
+    let fileBoxes = this.state.fileBoxes;
+    let box = this.getBoxById(boxId);
+    const boxIndex = fileBoxes.indexOf(box);
+    fileBoxes[boxIndex] = box;
+    //Remove/add to the selected boxes
+    let wasSelected = false;
+    for (const fileBox of selectedBoxes) {
+      if (fileBox.id === boxId) {
+        selectedBoxes.splice(selectedBoxes.indexOf(fileBox), 1);
+        wasSelected = true;
+        break;
+      }
+    }
+    box.isSelected = !wasSelected;
+    if (box.isSelected) selectedBoxes.push(box);
+
+    this.setState({ selectedBoxes, fileBoxes });
+  }
+  deselectAll() {
+    let fileBoxes = this.state.fileBoxes;
+    fileBoxes.forEach((fileBox) => {
+      fileBox.isSelected = false;
+    });
+    this.setState({ fileBoxes, selectedBoxes: [] });
+  }
+  selectAll() {
+    let fileBoxes = this.state.fileBoxes;
+    let firstSelection = this.state.firstSelection;
+    let selectedBoxes = new Array(fileBoxes.length);
+    if (firstSelection === null && fileBoxes.length > 0)
+      firstSelection = fileBoxes[0];
+    fileBoxes.forEach((fileBox, i) => {
+      fileBox.isSelected = true;
+      selectedBoxes.push(fileBox);
+    });
+    this.setState({ fileBoxes, selectedBoxes });
+  }
+  /*Options Menu Functions*/
+  contextMenu(e, ignoreLength) {
+    this.removeDriveContextMenu();
+    if (
+      (this.state.selectedBoxes.length > 0 || ignoreLength) &&
+      this.preventNormalContextMenu(e)
+    )
+      this.setState({
+        contextMenu: {
+          x: e.clientX,
+          y: e.clientY,
+        },
+      });
+  }
+  infoClick() {
+    if (this.state.selectedBoxes.length !== 1) return;
+    const file = this.state.selectedBoxes[0];
+    let win = window.open(`${rawUrl}?target=${file.id}`);
+    if (!win || win.closed || typeof win.closed == "undefined") {
+      window.location = `${rawUrl}?target=${file.id}`;
+    }
+  }
+  downloadClick() {
+    const selectedBoxes = this.state.selectedBoxes;
+    let files = [];
+    selectedBoxes.forEach((fileBox) => {
+      files.push(fileBox.id);
+    });
+
+    if (files.length > 1) toast.info("Zipping Files...");
+    else return this.handleDownload(`${downloadUrl}?target=${files[0]}`);
+    axios
+      .post(downloadUrl, JSON.stringify(files), {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {
+        if (res.status !== 200 || !res.data)
+          return toast.error("Error Zipping Files!");
+        this.handleDownload(`${downloadUrl}?zipTarget=${res.data}`);
+      })
+      .catch((e) => {
+        toast.error("Error Downloading!");
+        console.log(e.response);
+      });
+  }
+  handleDownload(url) {
+    let win = window.open(url);
+    if (!win || win.closed || typeof win.closed == "undefined") {
+      window.location = url;
+    }
+  }
+  deleteClick() {
+    const selectedBoxes = this.state.selectedBoxes;
+    let files = [];
+    selectedBoxes.forEach((fileBox) => {
+      files.push(fileBox.id);
+    });
+    axios
+      .post(deleteUrl, JSON.stringify(files), {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {
+        this.deleteHandle(res, selectedBoxes);
+      })
+      .catch((e) => {
+        this.deleteHandle(e.response, selectedBoxes);
+      });
+  }
+  /**
+   * Handles the response from the deleteClick() function
+   * @param {String} response server response
+   * @param {Array} selectedBoxes Selected Boxes object list
+   *
+   */
+  deleteHandle(res, selectedBoxes) {
+    const failedFiles = res.data || [];
+    if (res.status !== 200) toast.error("Error Deleting Some Files");
+    let fileBoxes = this.state.fileBoxes;
+    selectedBoxes.forEach((selectedBox) => {
+      if (!failedFiles.includes(selectedBox.id)) {
+        fileBoxes.splice(fileBoxes.indexOf(this.getBoxById(selectedBox.id)), 1);
+      } else {
+        fileBoxes[
+          fileBoxes.indexOf(this.getBoxById(selectedBox.id))
+        ].isSelected = true;
+      }
+    });
+    this.setState({ fileBoxes });
+  }
+  addFilebox(file) {
+    let fileBoxes = this.state.fileBoxes;
+    fileBoxes.push({
+      id: file.fileUuid,
+      name: file.name,
+      date: easyDate(file.date),
+      isSelected: false,
+    });
+    this.setState({ fileBoxes });
+  }
+  publicClick() {}
+  shareClick() {}
+  render() {
+    return (
+      <div
+        className="file-drive"
+        onClick={this.deselectAll}
+        onContextMenu={(e) => this.contextMenu(e)}
+        style={{
+          overflowY: this.state.contextMenu === null ? "scroll" : "hidden",
+          right: this.state.contextMenu === null ? "0px" : "2.5px",
+        }}
+      >
+        {this.state.contextMenu !== null && (
+          <DriveContextmenu
+            x={this.state.contextMenu.x}
+            y={this.state.contextMenu.y}
+            selectedCount={this.state.selectedBoxes.length}
+            infoClick={this.infoClick}
+            downloadClick={this.downloadClick}
+            deleteClick={this.deleteClick}
+            publicClick={this.publicClick}
+            shareClick={this.shareClick}
+          />
+        )}
+        <Fud addFilebox={this.addFilebox} />
+        <div className="files" id="owned-files">
+          <h3 className="files-header">My Files</h3>
+          {this.state.fileBoxes.map((file, index) => (
+            <FileBox
+              key={file.id}
+              fileName={file.name}
+              fileDate={file.date}
+              selectBox={(e) => this.selectBox(file.id, e)}
+              isSelected={file.isSelected}
+              onContextMenu={(e) => {
+                if (this.state.selectedBoxes.length < 2)
+                  this.singleSelection(file.id);
+                this.contextMenu(e, true);
+              }}
+              handleSelectAllPress={this.handleSelectAllPress}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+}

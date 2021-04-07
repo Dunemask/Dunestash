@@ -1,2 +1,2 @@
-# dunemask-file-server
- Google Drive inspired file sharing system
+# Dunestash
+  Dunestash is a FOSS application/server for sharing files.

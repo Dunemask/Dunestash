@@ -1,0 +1,55 @@
+@import "../global", "../components/FileWatcher", "../components/FileDrive";
+
+@include animation-breathe(
+  $sectionMenuOptions,
+  $foreground,
+  $foreground,
+  $successColor
+);
+@include animation-bounce($informationColor, $foreground);
+
+.file-drive {
+  width: calc(100%);
+  //height: calc(100% - 40px);
+  display: block;
+}
+
+.file-selection {
+  border-radius: $defaultBorderRadius;
+  background-color: $sectionBackground;
+  display: inline-block;
+  padding: 20px;
+  margin: 0 auto;
+}
+#file-drop-area {
+  position: absolute;
+  top: calc(#{$navBarHeight} * 2);
+  min-width: 100%;
+  min-height: calc(100% - 150px);
+  font-family: sans-serif;
+}
+#file-drop-area.highlight {
+  background-color: rgba($informationColor, 0.4);
+  z-index: 1000;
+}
+
+#file-dropzone {
+  display: none;
+}
+
+#fud-drag-drop-notification {
+  position: absolute;
+  bottom: 40px;
+  width: 100%;
+  display: none;
+  z-index: 1000;
+}
+#fud-drag-drop-message {
+  font-size: 18px;
+  background: $informationColor;
+  max-width: 400px;
+  width: 100%;
+  padding: 1.25rem;
+  margin: auto;
+  box-shadow: 1px 3px 2px $sectionMenuOptions;
+}

@@ -1,0 +1,25 @@
+{
+  "Storage": {
+    "DesertPath": "desert/",
+    "UploadPath": "uploads/",
+    "ZipPath": "zips/",
+    "UserStorageSize": 2048,
+    "UserStorageUnit": 1048576,
+    "UploadMaxSize": "",
+    "ZipClickExpire": 60000,
+    "ZipDownloadExpire": 720000
+  },
+  "Server": {
+    "Port": 4000,
+    "Debug": false,
+    "BodyLimit": "5mb",
+    "ZipRemovalInterval": 1800000,
+    "AdminConfig": {
+      "useAdmin": false,
+      "email": "abc@xyz.com",
+      "pwd": "password",
+      "username": "admin",
+      "storage": 999
+    }
+  }
+}

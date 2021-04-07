@@ -1,0 +1,77 @@
+@import "../global";
+//Imports "_colors.scss","../components/Topbar.scss"
+@include animation-breathe(
+  $sectionMenuOptions,
+  $foreground,
+  $foreground,
+  $successColor
+);
+.login-container {
+  padding-top: $contentTopGap;
+}
+.login-box {
+  background-color: $sectionBackground;
+  display: inline-block;
+  padding: 12px;
+  border-radius: $defaultBorderRadius;
+  max-width: $pageMaxWidth;
+  min-width: $pageMinWidth;
+}
+.login-form {
+  padding-top: 30px;
+  display: inline-block;
+}
+.login-form-entry {
+  text-align: left;
+  padding: 1px 5px;
+}
+
+.login-form-entry input {
+  float: right;
+  color: $foreground;
+  border: 1px solid $sectionMenuOptions;
+  border-radius: $defaultBorderRadius;
+  background-color: $sectionMenu;
+  width: 170px;
+  margin-left: 10px;
+  line-height: 28px;
+  font-size: 22px;
+}
+
+.login-form-entry {
+  text-align: right;
+}
+
+.login-form-submit-button {
+  padding-top: 8px;
+  padding-left: 64%;
+}
+
+.login-form-actions {
+  margin-top: 20px;
+}
+
+.register-link {
+  float: left;
+  text-align: center;
+  width: 170px;
+}
+
+input[type="submit"],
+.login-form-actions a {
+  padding: 5px 15px;
+  background: $sectionMenuOptions;
+  border: 0 none;
+  cursor: pointer;
+  -webkit-border-radius: 5px;
+  border-radius: $defaultBorderRadius;
+  font-size: 24px;
+  line-height: 26px;
+  color: white;
+  text-decoration: none;
+}
+input[type="submit"]:hover,
+,
+.login-form-actions a:hover {
+  animation: breathe 4s infinite;
+}
