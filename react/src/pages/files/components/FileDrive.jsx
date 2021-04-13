@@ -1,14 +1,22 @@
 import React from "react";
 import FileBox from "./FileBox";
 import Fud from "./FileUploadDialog";
-import { serverUrls } from "../../../api.json";
+import { serverUrls, constants } from "../../../api.json";
 import axios from "axios";
 import DriveContextmenu from "./DriveContextMenu";
 import { toast } from "react-toastify";
 const downloadUrl = serverUrls.POST.downloadUrl;
 const deleteUrl = serverUrls.POST.deleteUrl;
+const publicUrl = serverUrls.POST.publicUrl;
 const filesUrl = serverUrls.GET.filesUrl;
 const rawUrl = serverUrls.GET.rawUrl;
+const jwtHeader = constants.jwtHeader;
+const authToken = localStorage.getItem("authToken");
+const defaultAxiosConfig = {
+  headers: { "Content-Type": "application/json" },
+};
+defaultAxiosConfig.headers[jwtHeader] = authToken;
+
 function easyDate(date) {
   let d = new Date(parseInt(date));
   if (isNaN(d.getMonth())) {
@@ -135,14 +143,15 @@ export default class FileDrive extends React.Component {
   }
   downloadClick() {
     const selectedBoxes = this.state.selectedBoxes;
-    if (selectedBoxes.length > 1) toast.info("Zipping Files...");
+    //ZIPS ARE NOT SUPPORTED YET
+    if (selectedBoxes.length > 1)
+      return toast.error("Downloading multiple files is not yet supported!");
     else
       return this.handleDownload(`${downloadUrl}?target=${selectedBoxes[0]}`);
     axios
-      .post(downloadUrl, JSON.stringify(selectedBoxes), {
-        headers: { "Content-Type": "application/json" },
-      })
+      .post(downloadUrl, JSON.stringify(selectedBoxes), defaultAxiosConfig)
       .then((res) => {
+        console.log("GOT RESPONSE");
         if (res.status !== 200 || !res.data)
           return toast.error("Error Zipping Files!");
         this.handleDownload(`${downloadUrl}?zipTarget=${res.data}`);
@@ -161,9 +170,7 @@ export default class FileDrive extends React.Component {
   deleteClick() {
     const selectedBoxes = this.state.selectedBoxes;
     axios
-      .post(deleteUrl, JSON.stringify(selectedBoxes), {
-        headers: { "Content-Type": "application/json" },
-      })
+      .post(deleteUrl, JSON.stringify(selectedBoxes), defaultAxiosConfig)
       .then((res) => {
         this.deleteHandle(res, selectedBoxes);
       })
@@ -197,11 +204,37 @@ export default class FileDrive extends React.Component {
       name: file.name,
       date: easyDate(file.date),
       size: file.size,
+      public: file.public,
       isSelected: false,
     };
     this.setState({ fileBoxes });
   }
-  publicClick() {}
+  publicClick() {
+    const selectedBoxes = this.state.selectedBoxes;
+    axios
+      .post(publicUrl, JSON.stringify(selectedBoxes), defaultAxiosConfig)
+      .then((res) => {
+        this.publicHandle(res, selectedBoxes);
+      })
+      .catch((e) => {
+        this.publicHandle(e.response, selectedBoxes);
+      });
+  }
+  publicHandle(res, selectedBoxes) {
+    const failedFiles = res.data || [];
+    if (res.status !== 200)
+      toast.error("There was an issue making some files public!");
+    let fileBoxes = this.state.fileBoxes;
+    selectedBoxes.forEach((selectedBoxId) => {
+      if (!failedFiles.includes(selectedBoxId)) {
+        fileBoxes[selectedBoxId].public = !fileBoxes[selectedBoxId].public;
+      } else {
+        fileBoxes[selectedBoxId].isSelected = true;
+      }
+    });
+    this.setState({ fileBoxes });
+  }
+
   shareClick() {}
   render() {
     return (
@@ -236,6 +269,7 @@ export default class FileDrive extends React.Component {
               fileDate={file.date}
               selectBox={(e) => this.selectBox(file.id, e)}
               isSelected={file.isSelected}
+              public={file.public}
               onContextMenu={(e) => {
                 if (this.state.selectedBoxes.length < 2)
                   this.singleSelection(file.id);
@@ -276,27 +310,29 @@ export default class FileDrive extends React.Component {
     } else if (e.key === "Backspace" || e.key === "Delete") this.deleteClick();
   }
   initializeFileBoxes() {
-    fetch(filesUrl)
+    axios
+      .get(filesUrl, defaultAxiosConfig)
       .then((res) => {
         if (res.status === 401) {
           console.log("Would redirect to login");
           return;
         }
-        res.json().then((data) => {
-          if (data === undefined || data.length === undefined) {
-            toast.error("Error Loading Files");
-            return;
-          }
-          let fileBoxes = {};
-          data.forEach((file, index) => {
-            fileBoxes[file.fileUuid] = {
-              id: file.fileUuid,
-              name: file.name,
-              date: easyDate(file.date),
-              size: file.size,
-              isSelected: false,
-            };
-          });
+
+        if (res.data === undefined || res.data.length === undefined) {
+          toast.error("Error Loading Files");
+          return;
+        }
+        let fileBoxes = {};
+        res.data.forEach((file, index) => {
+          fileBoxes[file.fileUuid] = {
+            id: file.fileUuid,
+            name: file.name,
+            date: easyDate(file.date),
+            size: file.size,
+            public: file.public,
+            isSelected: false,
+          };
+
           this.setState({ fileBoxes }, () => {});
         });
       })

@@ -11,7 +11,7 @@ import {
   faAngleUp,
   faAngleDown,
 } from "@fortawesome/free-solid-svg-icons";
-import { serverUrls, serverFields } from "../../../api.json";
+import { serverUrls, serverFields, constants } from "../../../api.json";
 //Icons List
 const successIcon = <FontAwesomeIcon icon={faCloudUploadAlt} />;
 const errorIcon = <FontAwesomeIcon icon={faExclamationTriangle} />;
@@ -23,6 +23,13 @@ const downIcon = <FontAwesomeIcon icon={faAngleDown} />;
 const uploadUrl = serverUrls.POST.uploadUrl;
 const uploadField = serverFields.uploadField;
 const successClearTime = 200;
+const jwtHeader = constants.jwtHeader;
+const authToken = localStorage.getItem("authToken");
+const defaultAxiosConfig = {
+  headers: { "Content-Type": "application/json" },
+};
+
+defaultAxiosConfig.headers[jwtHeader] = authToken;
 export default class FileUploadDialog extends React.Component {
   constructor(props) {
     super(props);
@@ -123,15 +130,12 @@ export default class FileUploadDialog extends React.Component {
 
     const data = new FormData();
     data.append(uploadField, file);
+    var config = Object.assign({}, defaultAxiosConfig);
+    config.headers.filesize = file.size;
+    config.onUploadProgress = (e) => this.uploadProgress(e, uploadObj.id);
+    config.cancelToken = cancelToken;
     axios
-      .post(uploadUrl, data, {
-        headers: {
-          //Send data to server to prevent the server from uploading the entire file first
-          filesize: file.size,
-        },
-        onUploadProgress: (e) => this.uploadProgress(e, uploadObj.id),
-        cancelToken,
-      })
+      .post(uploadUrl, data, config)
       .then((res) => {
         this.uploadDone(res, uploadObj.id);
       })

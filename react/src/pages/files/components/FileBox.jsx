@@ -1,4 +1,10 @@
 import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUsers,
+  faEye,
+  faShareSquare,
+} from "@fortawesome/free-solid-svg-icons";
 export default class FileDrive extends React.Component {
   render() {
     return (
@@ -14,8 +20,19 @@ export default class FileDrive extends React.Component {
           }
         >
           <div className="file-info">
-            <span className="file-name">{this.props.fileName}</span>
-            <span className="file-date">{this.props.fileDate}</span>
+            <div className="file-info-details">
+              <span className="file-name">{this.props.fileName}</span>
+            </div>
+            <div className="file-info-details">
+              <span className="file-date file-subinfo-details">
+                {this.props.fileDate}
+              </span>
+              {this.props.public && (
+                <span className="file-indicators file-subinfo-details">
+                  {this.props.public && <FontAwesomeIcon icon={faEye} />}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>

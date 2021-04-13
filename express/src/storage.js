@@ -21,7 +21,7 @@ const zipDir = resolvePath("./", config.Storage.ZipPath);
 exports.addFile = (fileData) => {
   fileStorage.addEntry(fileData.fileUuid, "files", fileData);
   fileStorage.updateEntry(fileData.owner, "uuid", (entry) => {
-    if (entry == null) return;
+    if (entry == null) this.createUser(ownerUuid);
     entry.owned.push(fileData.fileUuid);
     return entry;
   });
@@ -64,15 +64,17 @@ exports.modifyFile = (fileUuid, cb) => {
 };
 exports.zipFiles = (files) => {};
 exports.createUser = (uuid) => {
+  const userData = {
+    owned: [],
+    shared: [],
+    storage: config.Storage.UserStorageSize * config.Storage.UserStorageUnit,
+    usedStorage: 0,
+  };
   fileStorage.updateEntry(uuid, "uuid", (entry) => {
     if (entry != null) return;
-    return {
-      owned: [],
-      shared: [],
-      storage: config.Storage.UserStorageSize * config.Storage.UserStorageUnit,
-      usedStorage: 0,
-    };
+    return userData;
   });
+  return userData;
 };
 exports.updateUser = (ownerUuid, cb) => {
   fileStorage.updateEntry(ownerUuid, "uuid", cb);
@@ -89,12 +91,14 @@ exports.getSharedFileList = (ownerUuid) => {
 };
 exports.setMaxStorage = (ownerUuid, newMax) => {
   fileStorage.updateEntry(ownerUuid, "uuid", (entry) => {
+    if (entry == null) this.createUser(ownerUuid);
     entry.storage = newMax;
     return entry;
   });
 };
 exports.modifyUsedStorage = (ownerUuid, cb) => {
   fileStorage.updateEntry(ownerUuid, "uuid", (entry) => {
+    if (entry == null) entry = this.createUser(ownerUuid);
     const maxStorage = entry.storage;
     const newUsed =
       cb(entry.storage, entry.usedStorage ?? 0) ?? entry.usedStorage;
@@ -104,32 +108,41 @@ exports.modifyUsedStorage = (ownerUuid, cb) => {
     return entry;
   });
 };
-exports.buildZip = async (ownerUuid, paths) => {
+exports.buildZip = async (ownerUuid, paths, zipUuid) => {
   //Create directory and build zip with adm zip
+  const zipPath = resolvePath(zipDir, `${zipUuid}.zip`);
+  var zip = {
+    owner: ownerUuid,
+    path: zipPath,
+    building: true,
+  };
+  fileStorage.addEntry(zipUuid, "zips", zip);
+  createZip(paths, zipPath).then(() => {
+    fileStorage.updateEntry(zipUuid, "zips", (entry) => {
+      if (entry == null) return;
+      entry.exp = Date.now() + config.Storage.ZipClickExpire;
+      delete entry.building;
+      return entry;
+    });
+  });
+};
+async function createZip(paths, zipPath) {
   if (!fexists(zipDir)) mkdir(zipDir);
   let zipFile = new AdmZip();
   paths.forEach((filePath) => {
     zipFile.addLocalFile(filePath);
   });
-  const zipUuid = uuidGen.v4() + Date.now();
-  const zipPath = resolvePath(zipDir, `${zipUuid}.zip`);
-  zipFile.writeZip(zipPath);
-  var zip = {
-    owner: ownerUuid,
-    path: zipPath,
-    exp: Date.now() + config.Storage.ZipClickExpire,
-  };
-  fileStorage.addEntry(zipUuid, "zips", zip);
-  return zipUuid;
-};
+  setTimeout(() => zipFile.writeZip(zipPath), 0);
+}
 exports.getZip = (ownerUuid, zipUuid) => {
-  var zipPath;
+  var zipPath, building;
   fileStorage.updateEntry(zipUuid, "zips", (entry) => {
-    if (entry == null) return;
+    if (entry == null || (building = entry.building)) return;
     entry.exp = Date.now() + config.Storage.ZipDownloadExpire;
     zipPath = entry.path;
     return entry;
   });
+  if (building === true) return building;
   if (zipPath == null || !fexists(zipPath)) return;
   return zipPath;
 };
@@ -140,6 +153,7 @@ exports.cleanZips = () => {
     zipUuid = file.substring(0, file.indexOf(".zip"));
     fileStorage.updateEntry(zipUuid, "zips", (entry, deleteEntry) => {
       if (entry == null) return;
+      if (entry.building === true) return;
       if (entry.exp <= time) {
         deleteEntry();
         fremove(entry.path);

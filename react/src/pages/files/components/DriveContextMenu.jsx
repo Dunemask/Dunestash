@@ -49,7 +49,7 @@ export default class DriveContextMenu extends React.Component {
           </li>
           <li onClick={this.props.publicClick}>
             <FontAwesomeIcon icon={faEye} />
-            Make Public
+            Toggle Public
           </li>
           <li onClick={this.props.shareClick}>
             <FontAwesomeIcon icon={faShareSquare} />

@@ -160,20 +160,24 @@
 
 .file-info {
   display: flex;
-  float: left;
   flex-flow: row wrap;
   width: 100%;
   height: 100%;
   margin: auto;
+  justify-content: center;
 }
 
-.file-info span {
+.file-info-details {
   overflow: hidden;
   white-space: nowrap;
   width: 100%;
   padding: 0.125rem 0;
   max-width: 39ch;
   overflow-x: hidden;
+}
+
+.file-subinfo-details {
+  padding: 0 5px;
 }
 
 .file-options {

@@ -14,12 +14,7 @@
     "Debug": false,
     "BodyLimit": "5mb",
     "ZipRemovalInterval": 1800000,
-    "AdminConfig": {
-      "useAdmin": false,
-      "email": "abc@xyz.com",
-      "pwd": "password",
-      "username": "admin",
-      "storage": 999
-    }
+    "jwtHeader": "authorization",
+    "authServer": "http://localhost:4001/api/user/data"
   }
 }

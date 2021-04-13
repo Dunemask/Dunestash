@@ -7,6 +7,9 @@ const tokenDecode = require("jwt-decode");
 const storage = require("./storage");
 const config = require("../config.json");
 
+function createUser(uuid) {
+  storage.createUser(uuid);
+}
 function bypassLogin(uuid) {
   storage.createUser(uuid);
 }
@@ -39,7 +42,7 @@ function uploadFile(uuid, fileData) {
   return file;
 }
 //TODO ASYNC?
-function updateUserEntries(files) {
+function removeEntryLinks(files) {
   for (var o in files.owner) {
     storage.updateUser(o, (entry) => {
       if (entry == null) return;
@@ -108,7 +111,7 @@ function deleteFiles(uuid, targetFiles) {
     });
   });
   //Updates user entries using the clumpedFiles
-  updateUserEntries(clumpedFiles);
+  removeEntryLinks(clumpedFiles);
   //Return the new used storage to update the database
   return deleteFails.length > 0 && deleteFails;
 }
@@ -119,14 +122,14 @@ function getFilePath(uuid, targetFile) {
 }
 function getOwnedFiles(uuid) {
   const fileList = storage.getOwnedFileList(uuid);
+  if (fileList == null) return [];
   var files = new Array(fileList.length);
   fileList.forEach((file, i) => {
     files[i] = storage.getFile(file);
   });
   return files;
 }
-//TODO THIS CAN BE ASYNCIFIED
-function requestZip(uuid, targetFiles) {
+async function requestZip(uuid, targetFiles, cb) {
   var zipPath, fileData;
   var filePaths = new Array(targetFiles.length);
   for (var file of targetFiles) {
@@ -135,7 +138,10 @@ function requestZip(uuid, targetFiles) {
     if (!fexists(fileData.path)) return;
     filePaths.push(fileData.path);
   }
-  return storage.buildZip(uuid, filePaths);
+  const zipUuid = uuidGen.v4() + Date.now();
+  cb(zipUuid);
+  setTimeout(() => storage.buildZip(uuid, filePaths, zipUuid), 0);
+  return zipUuid;
 }
 function getZip(uuid, targetZip) {
   return storage.getZip(uuid, targetZip);
@@ -158,11 +164,28 @@ function authorizedToViewFile(client, fileData) {
   if (fileData.owner === client) return true;
   return fileData.edit.includes(client) || fileData.view.includes(client);
 }
+function publicfyFiles(uuid, files) {
+  var publicfyFails = [];
+  files.forEach((file, i) => {
+    storage.modifyFile(file, (entry) => {
+      if (entry == null || entry.owner !== uuid) {
+        publicfyFails.push(file);
+        return;
+      }
+      entry.public = !entry.public;
+      return entry;
+    });
+  });
+  //Return the new used storage to update the database
+  return publicfyFails.length > 0 && publicfyFails;
+}
 module.exports = {
+  createUser,
   uploadFile,
   deleteFiles,
   getFilePath,
   getOwnedFiles,
+  publicfyFiles,
   shareFile,
   getSharedFiles,
   requestZip,

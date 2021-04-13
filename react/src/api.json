@@ -4,7 +4,8 @@
     "POST": {
       "uploadUrl": "api/stash/upload",
       "downloadUrl": "api/stash/download",
-      "deleteUrl": "api/stash/delete"
+      "deleteUrl": "api/stash/delete",
+      "publicUrl": "api/stash/public"
     },
     "GET": {
       "filesUrl": "api/stash/files",
@@ -14,5 +15,6 @@
   },
   "serverFields": {
     "uploadField": "user-selected-file"
-  }
+  },
+  "constants": { "jwtHeader": "authorization" }
 }
