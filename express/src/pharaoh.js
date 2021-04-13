@@ -1,6 +1,5 @@
 //Module Imports
 const {
-  mkdirSync: mkdir,
   existsSync: fexists,
   readFileSync: fread,
   writeFileSync: fwrite,
@@ -27,7 +26,10 @@ module.exports = class Pharoah {
 
   addEntry(query, pyramidName, entry) {
     this.pyramids[pyramidName].pyramid.addStorageEntry(query, entry);
-    if (!(this.pyramids[pyramidName] instanceof Array)) return;
+    if (!(this.pyramids[pyramidName].refs instanceof Array)) {
+      console.log("SKIPPING ADDING REFS");
+      return;
+    }
     for (var r of this.pyramids[pyramidName].refs) {
       if (entry[r] != null)
         this.pyramids[r].pyramid.addStorageEntry(entry[r], query);
@@ -37,7 +39,7 @@ module.exports = class Pharoah {
   deleteEntry(query, pyramidName) {
     const entry = this.pyramids[pyramidName].pyramid.removeStorageEntry(query);
     if (entry == null) return;
-    if (!(this.pyramids[pyramidName] instanceof Array)) return entry;
+    if (!(this.pyramids[pyramidName].refs instanceof Array)) return entry;
     for (var r of this.pyramids[pyramidName].refs) {
       if (entry[r] != null)
         this.pyramids[r].pyramid.removeStorageEntry(entry[r]);
