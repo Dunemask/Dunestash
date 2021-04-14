@@ -11,7 +11,7 @@ import {
   faAngleUp,
   faAngleDown,
 } from "@fortawesome/free-solid-svg-icons";
-import { serverUrls, serverFields, constants } from "../../../api.json";
+import { serverUrls, serverFields, constants } from "../api.json";
 //Icons List
 const successIcon = <FontAwesomeIcon icon={faCloudUploadAlt} />;
 const errorIcon = <FontAwesomeIcon icon={faExclamationTriangle} />;

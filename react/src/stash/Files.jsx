@@ -1,6 +1,6 @@
 import DriveBar from "./components/DriveBar";
 import FileDrive from "./components/FileDrive";
-import "../../scss/pages/Upload.scss";
+import "../scss/Files.scss";
 
 localStorage.setItem(
   "authToken",
@@ -8,12 +8,15 @@ localStorage.setItem(
 );
 function Files() {
   return (
-    <div className="file-drive">
-      <DriveBar></DriveBar>
-      <div className="user-files" id="file-drop-area">
-        <FileDrive />
+    <>
+      <div className="stashbar"></div>
+      <div className="file-drive">
+        <DriveBar></DriveBar>
+        <div className="user-files" id="file-drop-area">
+          <FileDrive />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 export default Files;

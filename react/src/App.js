@@ -1,5 +1,5 @@
 import React from "react";
-import Navbar from "./components/Navbar";
+import Files from "./stash/Files.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 export default class App extends React.Component {
@@ -17,7 +17,7 @@ export default class App extends React.Component {
           draggable
           pauseOnHover={false}
         />
-        <Navbar />
+            <Files />
       </div>
     );
   }

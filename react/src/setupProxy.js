@@ -1,5 +1,5 @@
 const createProxyMiddleware = require("http-proxy-middleware");
-const { serverAddress } = require("./api.json");
+const { serverAddress } = require("./stash/api.json");
 module.exports = (app) => {
   app.use(
     "/api",

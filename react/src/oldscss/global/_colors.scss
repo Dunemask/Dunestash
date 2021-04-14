@@ -1,0 +1,16 @@
+/*Status Colors*/
+$successColor: limegreen;
+$errorColor: #e20006;
+$informationColor: #0095ff;
+/*Background & Foreground colors*/
+$background: rgba(20, 20, 20, 1);
+$backgroundGradientStart: $background;
+$backgroundGradientEnd: #848486;
+$foreground: white;
+$sectionForeground: $foreground;
+/*Visual "components" (divs, etc)*/
+$sectionBackground: rgba($background, 0.95);
+$sectionMenu: darken(rgba($background, 0.8), 10%);
+$sectionMenuOptions: rgba(lighten($sectionMenu, 16%), 98%);
+$borderColor: #13120e;
+/*Unique Components*/
