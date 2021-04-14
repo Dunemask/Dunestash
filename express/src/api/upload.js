@@ -4,14 +4,7 @@ const { resolve: resolvePath } = require("path");
 const multer = require("multer");
 //Local Imports
 const config = require("../config.json");
-
-const userUploadDestination = (req) => {
-  if (!fs.existsSync(resolvePath(config.Storage.UploadPath)))
-    fs.mkdirSync(resolvePath(config.Storage.UploadPath));
-  const destination = resolvePath(config.Storage.UploadPath, req.session.uuid);
-  if (!fs.existsSync(destination)) fs.mkdirSync(destination);
-  return destination;
-};
+//Multer Configs
 const userUploadStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, userUploadDestination(req));
@@ -25,11 +18,24 @@ const userUploadStorage = multer.diskStorage({
     cb(null, fileName);
   },
 });
-
-exports.userUpload = multer({
+const userUpload = multer({
   storage: userUploadStorage,
 }).single("user-selected-file");
 
-exports.cancelUpload = (path) => {
+//Helper Methods
+function userUploadDestination(req) {
+  if (!fs.existsSync(resolvePath(config.Storage.UploadPath)))
+    fs.mkdirSync(resolvePath(config.Storage.UploadPath));
+  const destination = resolvePath(config.Storage.UploadPath, req.session.uuid);
+  if (!fs.existsSync(destination)) fs.mkdirSync(destination);
+  return destination;
+}
+
+function cancelUpload(path) {
   if (path != null && fs.existsSync(path)) fs.unlinkSync(path);
+}
+
+module.exports = {
+  userUpload,
+  cancelUpload,
 };

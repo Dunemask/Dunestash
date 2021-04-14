@@ -7,11 +7,9 @@
     "test": "tests"
   },
   "scripts": {
-    "start": "node server.js --no-warnings",
+    "start": "node src/server.js --no-warnings",
     "test": "nodemon tests/test.js",
-    "watch-css": "node-sass -w src/scss/pages/ -o www/css/ --output-style compressed",
-    "build-css": "node-sass src/scss/pages/ -o www/css/",
-    "test-server": "nodemon server.js"
+    "test-server": "nodemon src/server.js"
   },
   "repository": {
     "type": "git",
@@ -28,18 +26,12 @@
     "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
-    "cors": "^2.8.5",
     "express": "^4.17.1",
-    "express-react-views": "^0.11.0",
     "express-session": "^1.17.1",
-    "fs": "0.0.1-security",
-    "jwt-decode": "^3.1.2",
+    "lodash": "^4.17.21",
     "multer": "^1.4.2",
     "path": "^0.12.7",
     "rimraf": "^3.0.2",
-    "uuid": "^8.3.2"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.3"
+    "uuid-with-v6": "^1.1.2"
   }
 }

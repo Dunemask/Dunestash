@@ -1,18 +1,15 @@
 const express = require("express");
-const path = require("path");
-const fs = require("fs");
-const jwtDecode = require("jwt-decode");
 const axios = require("axios");
 //Local Imports & Configs
-const asUser = require("../src/user");
-const upload = require("../src/upload");
+const asUser = require("../api/user");
+const upload = require("../api/upload");
 const config = require("../config.json");
 //Establish path and create router
 /** Absolute Router Path /api/stash*/
 const router = express.Router();
 
 const authMiddleware = (req, res, next) => {
-  if (req.session.uuid != null) next();
+  if (req.session.uuid != null) return next();
   var headers = {};
   var authToken = req.get(config.Server.jwtHeader);
   if (authToken == null) return res.sendStatus(401);
@@ -28,8 +25,8 @@ const authMiddleware = (req, res, next) => {
       } else res.sendStatus(401);
     })
     .catch((e) => {
-      console.log(e);
-      res.sendStatus(e.response.status);
+      if (e.response != null) res.sendStatus(e.response.status);
+      else res.sendStatus(401);
     });
 };
 

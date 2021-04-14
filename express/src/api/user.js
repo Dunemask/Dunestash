@@ -1,25 +1,31 @@
 //Module Imports
 const { resolve: resolvePath } = require("path");
 const { existsSync: fexists, unlinkSync: fremove } = require("fs");
-const uuidGen = require("uuid");
-const tokenDecode = require("jwt-decode");
+const uuidGen = require("uuid-with-v6").v6;
 //Local Imports
 const storage = require("./storage");
 const config = require("../config.json");
-
+/**
+ * Generates a new uuid.v6() and reverses the uuid so the timestamp is at the end
+ * This should provide an additional layer of "randomness" and decrease the chances
+ * of duplicate uuid's being generated.
+ * This is reversed to force the custom DB to expand faster at first rather than
+ * later when there are lots of entries.
+ */
+function generateUuid() {
+  return [...uuidGen()].reverse().join("");
+}
+/**
+ * Create a user with a uuid (should use Dunestorm API to login)
+ */
 function createUser(uuid) {
   storage.createUser(uuid);
 }
-function bypassLogin(uuid) {
-  storage.createUser(uuid);
-}
-function login(token) {
-  const decoded = tokenDecode(token);
-  if (decoded == null || decoded.uuid == null) return;
-  storage.createUser(decoded.uuid);
-}
+/**
+ * Creates file entry given aspects of a file updated
+ */
 function uploadFile(uuid, fileData) {
-  const fileUuid = uuidGen.v4();
+  const fileUuid = generateUuid();
   var sizeAccepted;
   storage.modifyUsedStorage(uuid, (max, used) => {
     const oldUsed = used;
@@ -41,7 +47,10 @@ function uploadFile(uuid, fileData) {
   storage.addFile(file);
   return file;
 }
-//TODO ASYNC?
+/**
+  TODO: ASYNCIFY?
+  Removes user references to files that are being deleted
+ */
 function removeEntryLinks(files) {
   for (var o in files.owner) {
     storage.updateUser(o, (entry) => {
@@ -72,10 +81,15 @@ function removeEntryLinks(files) {
     });
   }
 }
+/**
+ * Deletes files.
+ * Requires Uuid to garuntee permission to delete a file
+ * Sorts files by user before deleting to speed up reference updates
+ */
 function deleteFiles(uuid, targetFiles) {
   var deleteFails = [];
   //Sort files by fileuuid to remove entries from the various users
-  var clumpedFiles = {
+  var filesSortedByUser = {
     owner: {},
     edit: {},
     view: {},
@@ -84,9 +98,9 @@ function deleteFiles(uuid, targetFiles) {
     storage.modifyFile(targetFile, (entry, deleteEntry) => {
       if (!authorizedToEditFile(uuid, entry)) return;
       //Add owner and file size to the update object
-      if (clumpedFiles.owner[entry.owner] == null)
-        clumpedFiles.owner[entry.owner] = [];
-      clumpedFiles.owner[entry.owner].push({
+      if (filesSortedByUser.owner[entry.owner] == null)
+        filesSortedByUser.owner[entry.owner] = [];
+      filesSortedByUser.owner[entry.owner].push({
         fileUuid: targetFile,
         size: entry.size,
       });
@@ -110,16 +124,23 @@ function deleteFiles(uuid, targetFiles) {
       }
     });
   });
-  //Updates user entries using the clumpedFiles
-  removeEntryLinks(clumpedFiles);
+  //Updates user entries using the filesSortedByUser
+  removeEntryLinks(filesSortedByUser);
   //Return the new used storage to update the database
   return deleteFails.length > 0 && deleteFails;
 }
+/**
+ * Checks that a user is authourized to view the file and then
+ * Returns the physical filePath of a desired file (uses entry to find path)
+ */
 function getFilePath(uuid, targetFile) {
   const fileData = storage.getFile(targetFile);
   if (!authorizedToViewFile(uuid, fileData)) return;
   if (fexists(fileData.path)) return fileData.path;
 }
+/**
+ * Returns a list of fileUuids that the user owns
+ */
 function getOwnedFiles(uuid) {
   const fileList = storage.getOwnedFileList(uuid);
   if (fileList == null) return [];
@@ -129,6 +150,10 @@ function getOwnedFiles(uuid) {
   });
   return files;
 }
+/**
+ * TODO: Impliment Zips
+ * Creates a zip file and returns the zipUuid to the client.
+ */
 async function requestZip(uuid, targetFiles, cb) {
   var zipPath, fileData;
   var filePaths = new Array(targetFiles.length);
@@ -138,32 +163,53 @@ async function requestZip(uuid, targetFiles, cb) {
     if (!fexists(fileData.path)) return;
     filePaths.push(fileData.path);
   }
-  const zipUuid = uuidGen.v4() + Date.now();
+  const zipUuid = generateUuid();
   cb(zipUuid);
   setTimeout(() => storage.buildZip(uuid, filePaths, zipUuid), 0);
   return zipUuid;
 }
-function getZip(uuid, targetZip) {
-  return storage.getZip(uuid, targetZip);
+/**
+ * TODO: Impliment Zips
+ * Returns zip path from a zipUuid
+ */
+function getZipPath(uuid, targetZip) {
+  return storage.getZipPath(uuid, targetZip);
 }
+/**
+ * TODO: Impliment Advanced Sharing
+ * Shares file with various people, and various permissions
+ */
 function shareFile(uuid, targetFile) {
   console.log(uuid, "requesting to share file");
   console.log(targetFile);
 }
+/**
+ * TODO: Impliment Advanced Sharing
+ * Returns all files shared with a user
+ */
 function getSharedFiles(uuid) {
   return storage.getSharedFileList(uuid);
 }
+/**
+ * Checks is a user is authorized to edit a particular file
+ */
 function authorizedToEditFile(client, fileData) {
   if (fileData == null) return false;
   if (fileData.owner === client) return true;
   return fileData.edit.includes(client);
 }
+/**
+ * Checks is a user is authorized to view a particular file
+ */
 function authorizedToViewFile(client, fileData) {
   if (fileData == null) return false;
   if (fileData.public === true) return true;
   if (fileData.owner === client) return true;
   return fileData.edit.includes(client) || fileData.view.includes(client);
 }
+/**
+ * Checks if a the user is the owner and then toggles the list of files to public
+ */
 function publicfyFiles(uuid, files) {
   var publicfyFails = [];
   files.forEach((file, i) => {
@@ -189,6 +235,5 @@ module.exports = {
   shareFile,
   getSharedFiles,
   requestZip,
-  getZip,
-  bypassLogin,
+  getZipPath,
 };

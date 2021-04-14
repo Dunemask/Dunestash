@@ -27,7 +27,6 @@ module.exports = class Pharoah {
   addEntry(query, pyramidName, entry) {
     this.pyramids[pyramidName].pyramid.addStorageEntry(query, entry);
     if (!(this.pyramids[pyramidName].refs instanceof Array)) {
-      console.log("SKIPPING ADDING REFS");
       return;
     }
     for (var r of this.pyramids[pyramidName].refs) {
