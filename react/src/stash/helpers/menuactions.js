@@ -10,16 +10,29 @@ const deleteUrl = serverUrls.POST.deleteUrl;
 const publicUrl = serverUrls.POST.publicUrl;
 const rawUrl = serverUrls.GET.rawUrl;
 
+function removeFiltered(fileBoxes, selectedBoxes) {
+  //Removing so decrementing
+  for (var i = selectedBoxes.length - 1; i >= 0; i--) {
+    if (!fileBoxes[selectedBoxes[i]].isFiltered) selectedBoxes.splice(i, 1);
+  }
+  return selectedBoxes;
+}
+
+function getSelectedBoxes(self) {
+  return removeFiltered(self.state.fileBoxes, self.state.selectedBoxes);
+}
+
 function infoClick(e) {
-  if (this.state.selectedBoxes.length !== 1) return;
-  const file = this.state.selectedBoxes[0];
+  const selectedBoxes = getSelectedBoxes(this);
+  if (selectedBoxes.length !== 1) return;
+  const file = selectedBoxes[0];
   let win = window.open(`${rawUrl}?target=${file}`);
   if (!win || win.closed || typeof win.closed == "undefined") {
     window.location = `${rawUrl}?target=${file}`;
   }
 }
 function downloadClick() {
-  const selectedBoxes = this.state.selectedBoxes;
+  const selectedBoxes = getSelectedBoxes(this);
   //ZIPS ARE NOT SUPPORTED YET
   if (selectedBoxes.length > 1)
     return toast.error("Downloading multiple files is not yet supported!");
@@ -38,7 +51,7 @@ function downloadClick() {
     });
 }
 function deleteClick() {
-  const selectedBoxes = this.state.selectedBoxes;
+  const selectedBoxes = getSelectedBoxes(this);
   axios
     .post(deleteUrl, JSON.stringify(selectedBoxes), defaultAxiosConfig)
     .then((res) => {
@@ -49,7 +62,7 @@ function deleteClick() {
     });
 }
 function publicClick() {
-  const selectedBoxes = this.state.selectedBoxes;
+  const selectedBoxes = getSelectedBoxes(this);
   axios
     .post(publicUrl, JSON.stringify(selectedBoxes), defaultAxiosConfig)
     .then((res) => {

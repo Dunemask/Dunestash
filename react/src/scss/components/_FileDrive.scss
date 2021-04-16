@@ -1,86 +1,11 @@
-/* {
-  width: 100%;
-  height: 100%;
-  display: flex;
-}*/
+@import "./DriveBar";
 
 .user-files {
-  position: fixed;
-  top: calc(#{$navBarHeight} * 2);
   z-index: 10;
-  height: 80%;
-}
-
-#abar {
-  top: $navBarHeight;
-  position: fixed;
-  box-shadow: 0 4px 2px -2px darken(#eee, 10%);
-  height: 100%;
-  width: 100%;
-  max-height: $navBarHeight;
-  z-index: 200;
-  background: #eee;
-  display: flex;
-}
-
-.abar-actions {
-  width: 100%;
-  display: inline-flex;
-  height: 3rem;
-  margin: auto;
-}
-
-.abar-action {
-  margin-left: calc(12% - 3rem);
-}
-
-.file-searchbar {
-  display: inline-flex;
-  background: darken(#eee, 5%);
-  color: $sectionMenuOptions;
-  //Accounting for fa svg
-  max-width: calc(80ch + 1rem);
-  width: 100%;
-  border: 1px solid darken(#eee, 8%);
-  border-radius: $defaultBorderRadius;
-  box-shadow: 1px 3px 2px darken(#eee, 20%);
-}
-.file-searchbar svg {
-  margin: auto 0;
-  padding: 0 0.15rem 0 0.5rem;
-}
-
-#file-search {
-  width: 100%;
-  font-size: 1.125rem;
-  background: darken(#eee, 5%);
-  text-indent: 0.125rem;
-  border: none;
-}
-#file-search::placeholder {
-  color: $sectionMenuOptions;
-}
-
-.upload-button {
-  background: rgba(lighten($sectionMenuOptions, 10%), 0.8);
-  cursor: pointer;
-  border-radius: $defaultBorderRadius;
-  text-align: center;
-  align-items: center;
-  padding: 0.85rem;
-  box-shadow: 1px 3px 2px darken(#eee, 20%);
-  font-size: 1rem;
-  width: 100%;
-  max-width: 105px;
-  max-height: 3rem;
-}
-
-.upload-button:hover {
-  background: lighten($sectionMenuOptions, 20%);
-  opacity: 0.85;
 }
 
 .file-drive h3 {
+  line-height: 20%;
   width: 100%;
   color: lighten($sectionMenuOptions, 20%);
 }
@@ -100,25 +25,21 @@
 }
 
 .file {
-  position: relative;
   display: flex;
   max-height: 4rem;
   height: 100%;
   max-width: 25em;
-  //margin: 0 auto;
   padding: 0.4rem 0;
   width: 100%;
-  //float:left;
   align-self: flex-start;
 }
 
 .file-drive {
+  position: fixed;
   height: 100%;
-  min-height: 100%;
-  position: absolute;
-  top: 0;
-  right: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 
 .file-drive::-webkit-scrollbar {
@@ -147,6 +68,7 @@
 }
 
 .file-contents:hover {
+  cursor: pointer;
   background: lighten($sectionMenuOptions, 3%);
 }
 
@@ -201,7 +123,7 @@
 
 //Optionpane css
 
-.file-option-pane {
+.drive-context-menu {
   position: fixed;
   display: flex;
   background: lighten($sectionMenuOptions, 10%);
@@ -216,34 +138,34 @@
   min-height: 11em;
 }
 
-.file-option-pane ul {
+.drive-context-menu ul {
   list-style-type: none;
   padding: 0;
   width: 100%;
 }
 
-.file-option-pane li:hover {
+.drive-context-menu li:hover {
   opacity: 0.85;
   cursor: pointer;
 }
 
-.file-option-pane li {
+.drive-context-menu li {
   width: inherit;
   text-align: left;
   padding: 0 0.5rem;
 }
 
-.file-option-pane svg {
+.drive-context-menu svg {
   min-width: 1rem;
   padding: 0 0.5rem;
   height: 100%;
 }
 
-.file-option-pane li:not(:last-child) {
+.drive-context-menu li:not(:last-child) {
   margin-bottom: 0.85rem;
 }
 
-.file-option-pane a {
+.drive-context-menu a {
   color: $foreground;
   text-decoration: none;
   font-size: inherit;

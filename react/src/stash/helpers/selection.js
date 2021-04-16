@@ -1,3 +1,14 @@
+//Local Imports
+import Search from "./search";
+function updateSelectedFilters() {
+  console.log(
+    "ATTEMPTING TO ADD FILTER WITH LENGTH",
+    this.state.selectedBoxes.length
+  );
+  console.log("HAS FILTERS", this.state.searchFilters);
+  if (this.state.selectedBoxes.length > 0) this.addFilter(Search.filters[0]);
+}
+
 function selectBox(id, e) {
   this.removeDriveContextMenu();
   e.stopPropagation();
@@ -12,7 +23,11 @@ function singleSelection(boxId) {
   let fileBoxes = this.state.fileBoxes;
   fileBoxes[boxId].isSelected = true;
   selectedBoxes = [boxId];
-  this.setState({ selectedBoxes, fileBoxes, firstSelection: boxId });
+
+  this.setState(
+    { selectedBoxes, fileBoxes, firstSelection: boxId },
+    this.updateSelectedFilters
+  );
 }
 function multiSelection(boxId) {
   this.deselectAll();
@@ -31,7 +46,7 @@ function multiSelection(boxId) {
     fileBoxes[boxId].isSelected = true;
     selectedBoxes[i] = boxId;
   });
-  this.setState({ selectedBoxes, fileBoxes });
+  this.setState({ selectedBoxes, fileBoxes }, this.updateSelectedFilters);
 }
 function segmentSelection(boxId) {
   let selectedBoxes = this.state.selectedBoxes;
@@ -40,7 +55,7 @@ function segmentSelection(boxId) {
   fileBoxes[boxId].isSelected = !wasSelected;
   if (wasSelected) selectedBoxes.splice(selectedBoxes.indexOf(boxId), 1);
   else selectedBoxes.push(boxId);
-  this.setState({ selectedBoxes, fileBoxes });
+  this.setState({ selectedBoxes, fileBoxes }, this.updateSelectedFilters);
 }
 
 function deselectAll() {
@@ -48,7 +63,17 @@ function deselectAll() {
   for (var boxId in fileBoxes) {
     fileBoxes[boxId].isSelected = false;
   }
-  this.setState({ fileBoxes, selectedBoxes: [] });
+
+  var searchFilters = this.state.searchFilters;
+  var selectIndex;
+  if ((selectIndex = searchFilters.indexOf(Search.filters[0])) != -1)
+    searchFilters.splice(selectIndex, 1);
+
+  this.setState({
+    fileBoxes,
+    selectedBoxes: [],
+    searchFilters,
+  });
 }
 function selectAll() {
   let fileBoxes = this.state.fileBoxes;
@@ -61,10 +86,12 @@ function selectAll() {
     fileBoxes[boxId].isSelected = true;
     selectedBoxes.push(boxId);
   }
-  this.setState({ fileBoxes, selectedBoxes });
+  this.setState({ fileBoxes, selectedBoxes }, this.updateSelectedFilters);
 }
 
 function handleSelectAllPress(e) {
+  if (e.target.tagName.toLowerCase() === "textarea") return;
+  if (e.target.tagName.toLowerCase() === "input") return;
   if (!(this.state.selectedBoxes.length > 0)) return;
   if (e.key === "a" && e.ctrlKey) {
     e.stopPropagation();
@@ -79,6 +106,7 @@ const selectionExports = {
   multiSelection,
   deselectAll,
   selectAll,
+  updateSelectedFilters,
   handleSelectAllPress,
 };
 export default selectionExports;

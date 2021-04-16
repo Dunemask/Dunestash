@@ -9,9 +9,9 @@
 @include animation-bounce($informationColor, $foreground);
 
 .file-drive {
-  width: calc(100%);
-  //height: calc(100% - 40px);
+  width: 100%;
   display: block;
+  height: 100%;
 }
 
 .file-selection {
@@ -22,8 +22,8 @@
   margin: 0 auto;
 }
 #file-drop-area {
-  position: absolute;
-  top: calc(#{$navBarHeight} * 2);
+  height: calc(100% - #{$navBarHeight});
+  margin-top: $navBarHeight;
   min-width: 100%;
   min-height: calc(100% - 150px);
   font-family: sans-serif;

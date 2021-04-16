@@ -1,0 +1,122 @@
+.drivebar {
+  top: 0;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  max-height: $navBarHeight;
+  z-index: 200;
+  background-color: rgba($sectionMenu, 1);
+  display: flex;
+}
+
+.drivebar-content {
+  width: 100%;
+  height: 100%;
+  display: inline-flex;
+}
+
+.drivebar-actions {
+  width: 100%;
+  display: inline-flex;
+  height: 3rem;
+  margin: auto;
+}
+
+.drivebar-action {
+  font-size: 1.25rem;
+}
+
+.drivebar-action label {
+  font-size: inherit;
+}
+.drivebar-action label:hover {
+  cursor: pointer;
+}
+
+.drivebar-action:hover {
+  opacity: 0.85;
+  cursor: pointer;
+}
+
+.file-searchbar {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  background: darken(#eee, 5%);
+}
+
+.file-searchbox {
+  margin: 0 auto;
+  display: inline-flex;
+  background: darken(#eee, 5%);
+  color: $sectionMenuOptions;
+  width: 100%;
+  border: 1px solid darken(#eee, 8%);
+  border-radius: $defaultBorderRadius;
+  box-shadow: 1px 3px 2px darken(#eee, 20%);
+}
+.file-searchbar svg {
+  margin: auto 0;
+  padding: 0 0.15rem 0 0.5rem;
+}
+
+.file-filters {
+  margin-top: 2px;
+  width: 100%;
+  display: inline-flex;
+  flex-grow: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  overflow-x: auto;
+  margin-bottom: 3px;
+}
+.file-filter {
+  justify-content: center;
+  text-align: center;
+  display: inline-flex;
+  margin: auto 0.5rem;
+  padding: 0 5px;
+  width: 5rem;
+  background: $informationColor;
+  box-shadow: 0.375px 1.125px 0.75px darken($informationColor, 20%);
+}
+
+.file-filter svg {
+  margin: auto 0;
+  width: 0.8rem;
+  height: 0.8rem;
+}
+.file-filter svg:hover {
+  cursor: pointer;
+}
+
+#file-search {
+  width: 100%;
+  font-size: 1.125rem;
+  background: darken(#eee, 5%);
+  text-indent: 0.125rem;
+  border: none;
+}
+#file-search::placeholder {
+  color: $sectionMenuOptions;
+}
+.search-back {
+  padding: 0 5px;
+  height: 100%;
+  display: flex;
+}
+.search-back svg {
+  margin: auto;
+  height: 100%;
+}
+.search-back:hover {
+  cursor: pointer;
+}
+
+.upload-button {
+  max-height: 3rem;
+}
+
+.upload-button:hover {
+}

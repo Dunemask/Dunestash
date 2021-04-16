@@ -15,25 +15,22 @@ export default class DriveContextMenu extends React.Component {
   }
 
   styleCalc() {
-    const fileDriveTopMargin = 144; //px
     const estimatedHeight = 180; //px
     const esetimatedWidth = 290; //px
-    const body = document.body;
-    const bodyWidth = body.offsetWidth;
-    const bodyHeight = body.offsetHeight;
+    const bodyWidth = document.body.offsetWidth;
+    const bodyHeight = document.documentElement.offsetHeight;
     let top = this.props.y;
     let left = this.props.x;
     const overFlowX = left + esetimatedWidth > bodyWidth;
-    const overFlowY = top + fileDriveTopMargin > bodyHeight;
+    const overFlowY = top + estimatedHeight > bodyHeight;
     if (overFlowX) left = left - esetimatedWidth;
     if (overFlowY) top = top - estimatedHeight;
-
     return { top: `${top}px`, left: `${left}px` };
   }
 
   render() {
     return (
-      <div className="file-option-pane" style={this.styleCalc()}>
+      <div className="drive-context-menu" style={this.styleCalc()}>
         <ul>
           <li onClick={this.props.infoClick}>
             <FontAwesomeIcon icon={faInfoCircle} />

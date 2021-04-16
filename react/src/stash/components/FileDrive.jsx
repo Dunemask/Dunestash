@@ -3,23 +3,18 @@ import React from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 //Local Imports
+import DriveBar from "./DriveBar";
 import DriveContextmenu from "./DriveContextMenu";
 import FileBox from "./FileBox";
 import Fud from "./FileUploadDialog";
 import Selection from "../helpers/selection";
-import MenuActions from "../helpers/menuactions.js";
+import MenuActions from "../helpers/menuactions";
+import Search from "../helpers/search";
 import defaultAxiosConfig from "../helpers/axiosconfig";
 import { serverUrls } from "../api.json";
 //Constants
 const filesUrl = serverUrls.GET.filesUrl;
 
-function readableDate(date) {
-  let d = new Date(parseInt(date));
-  if (isNaN(d.getMonth())) return "";
-  return `${
-    d.getMonth() + 1
-  }/${d.getDate()}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`;
-}
 export default class FileDrive extends React.Component {
   constructor(props) {
     super(props);
@@ -28,6 +23,7 @@ export default class FileDrive extends React.Component {
       selectedBoxes: [],
       firstSelection: null,
       contextMenu: null,
+      searchFilters: [],
       storage: 0,
       maxStorage: 0,
     };
@@ -35,6 +31,7 @@ export default class FileDrive extends React.Component {
     this.selectAll = Selection.selectAll.bind(this);
     this.deselectAll = Selection.deselectAll.bind(this);
     this.handleSelectAllPress = Selection.handleSelectAllPress.bind(this);
+    this.updateSelectedFilters = Selection.updateSelectedFilters.bind(this);
     //Selection Methods
     this.singleSelection = Selection.singleSelection.bind(this);
     this.multiSelection = Selection.multiSelection.bind(this);
@@ -54,6 +51,13 @@ export default class FileDrive extends React.Component {
     this.contextMenu = this.contextMenu.bind(this);
     this.preventNormalContextMenu = this.preventNormalContextMenu.bind(this);
     this.removeDriveContextMenu = this.removeDriveContextMenu.bind(this);
+    //Search Actions
+    this.addFilter = Search.addFilter.bind(this);
+    this.removeFilter = Search.removeFilter.bind(this);
+    this.tagAdd = Search.tagAdd.bind(this);
+    this.tagQuery = Search.tagQuery.bind(this);
+    this.markAllFiltered = Search.markAllFiltered.bind(this);
+    this.searchBarChanged = Search.searchBarChanged.bind(this);
     //Filebox method
     this.addFilebox = this.addFilebox.bind(this);
   }
@@ -72,48 +76,65 @@ export default class FileDrive extends React.Component {
       });
   }
 
-  render() {
-    return (
-      <div
-        className="file-drive"
-        onClick={this.deselectAll}
-        onContextMenu={(e) => this.contextMenu(e)}
-        style={{
-          overflowY: this.state.contextMenu === null ? "scroll" : "hidden",
-          right: this.state.contextMenu === null ? "0px" : "2.5px",
-        }}
-      >
-        {this.state.contextMenu != null && (
-          <DriveContextmenu
-            x={this.state.contextMenu.x}
-            y={this.state.contextMenu.y}
-            selectedCount={this.state.selectedBoxes.length}
-            infoClick={this.infoClick}
-            downloadClick={this.downloadClick}
-            deleteClick={this.deleteClick}
-            publicClick={this.publicClick}
-            shareClick={this.shareClick}
+  fileDisplay() {
+    var fileBoxes = this.state.fileBoxes;
+    return Object.values(fileBoxes).map((file, index) => (
+      <React.Fragment key={file.id}>
+        {file.isFiltered && (
+          <FileBox
+            fileName={file.name}
+            fileDate={file.date}
+            selectBox={(e) => this.selectBox(file.id, e)}
+            isSelected={file.isSelected}
+            public={file.public}
+            onContextMenu={(e) => {
+              if (this.state.selectedBoxes.length < 2)
+                this.singleSelection(file.id);
+              this.contextMenu(e, true);
+            }}
+            handleSelectAllPress={this.handleSelectAllPress}
           />
         )}
-        <Fud addFilebox={this.addFilebox} />
-        <div className="files" id="owned-files">
-          <h3 className="files-header">My Files</h3>
-          {Object.values(this.state.fileBoxes).map((file, index) => (
-            <FileBox
-              key={file.id}
-              fileName={file.name}
-              fileDate={file.date}
-              selectBox={(e) => this.selectBox(file.id, e)}
-              isSelected={file.isSelected}
-              public={file.public}
-              onContextMenu={(e) => {
-                if (this.state.selectedBoxes.length < 2)
-                  this.singleSelection(file.id);
-                this.contextMenu(e, true);
-              }}
-              handleSelectAllPress={this.handleSelectAllPress}
-            />
-          ))}
+      </React.Fragment>
+    ));
+  }
+
+  render() {
+    return (
+      <div className="file-stash">
+        <DriveBar
+          searchFilters={this.state.searchFilters}
+          addFilter={this.addFilter}
+          removeFilter={this.removeFilter}
+          markAllFiltered={this.markAllFiltered}
+          tagAdd={this.tagAdd}
+          tagQuery={this.tagQuery}
+          searchBarChanged={this.searchBarChanged}
+        />
+        <div className="user-files" id="file-drop-area">
+          <div
+            className="file-drive"
+            onClick={this.deselectAll}
+            onContextMenu={(e) => this.contextMenu(e)}
+          >
+            {this.state.contextMenu != null && (
+              <DriveContextmenu
+                x={this.state.contextMenu.x}
+                y={this.state.contextMenu.y}
+                selectedCount={this.state.selectedBoxes.length}
+                infoClick={this.infoClick}
+                downloadClick={this.downloadClick}
+                deleteClick={this.deleteClick}
+                publicClick={this.publicClick}
+                shareClick={this.shareClick}
+              />
+            )}
+            <Fud addFilebox={this.addFilebox} />
+            <div className="files" id="owned-files">
+              <h3 className="files-header">My Stash</h3>
+              {this.fileDisplay()}
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -157,6 +178,7 @@ export default class FileDrive extends React.Component {
       })
       .catch((e) => console.error(e));
   }
+
   addFilebox(file) {
     let fileBoxes = this.state.fileBoxes;
     fileBoxes[file.fileUuid] = this.buildFilebox(file);
@@ -166,10 +188,11 @@ export default class FileDrive extends React.Component {
     return {
       id: file.fileUuid,
       name: file.name,
-      date: readableDate(file.date),
+      date: file.date,
       size: file.size,
       public: file.public,
       isSelected: false,
+      isFiltered: true,
     };
   }
 }
