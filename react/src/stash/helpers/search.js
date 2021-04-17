@@ -1,32 +1,34 @@
 //Constants
-const filters = ["Selected", "Public"];
+const filters = ["Selected", "Public", "Shared"];
 const tagChar = "#";
 function addFilter(filter) {
+  if (filter == null) return;
   var filters = this.state.searchFilters;
   if (filters.indexOf(filter) == -1) filters.push(filter);
   this.setState({ searchFilters: filters });
 }
 
 function removeFilter(filter) {
-  console.log("CALLED TO REMOVE FILTER");
+  if (filter == null) return;
   var filters = this.state.searchFilters;
   filters.splice(filters.indexOf(filter), 1);
   this.setState({ searchFilters: filters });
 }
 
-async function markAllFiltered() {
+function markAllFiltered() {
   var fileBoxes = this.state.fileBoxes;
   Object.keys(fileBoxes).forEach((boxId, i) => {
     fileBoxes[boxId].isFiltered = true;
   });
-  await this.setState({ fileBoxes });
+  this.setState({ fileBoxes });
+  return fileBoxes;
 }
 
-async function searchBarChanged(text, e) {
+function searchBarChanged(text) {
   text = text.toLowerCase();
+  if (text[0] === tagChar) return;
   const activeFilters = this.state.searchFilters;
-  await this.markAllFiltered();
-  var fileBoxes = this.state.fileBoxes;
+  var fileBoxes = this.markAllFiltered();
   Object.keys(fileBoxes).forEach((boxId, i) => {
     //If file isn't selected
     if (
@@ -49,7 +51,7 @@ async function searchBarChanged(text, e) {
 function tagAdd(text, e) {
   if (e.key !== "Enter" || text == null || text[0] !== tagChar) return;
   const space = " ";
-  text = text.substring(1, text.length);
+  text = text.substring(1, text.length).toLowerCase();
   //Skip the "selected filter" which should only be triggered when there are
   //files already selected.
   var i = 1;
@@ -71,7 +73,6 @@ function tagQuery(text) {
   for (i; i < filters.length; i++) {
     if (filters[i].toLowerCase().includes(text)) tags.push(filters[i]);
   }
-  console.log("TAGS:", tags);
   return tags;
 }
 

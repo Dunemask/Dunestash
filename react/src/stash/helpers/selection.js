@@ -1,11 +1,6 @@
 //Local Imports
 import Search from "./search";
 function updateSelectedFilters() {
-  console.log(
-    "ATTEMPTING TO ADD FILTER WITH LENGTH",
-    this.state.selectedBoxes.length
-  );
-  console.log("HAS FILTERS", this.state.searchFilters);
   if (this.state.selectedBoxes.length > 0) this.addFilter(Search.filters[0]);
 }
 
@@ -43,6 +38,7 @@ function multiSelection(boxId) {
   //Send selection 1 more for the slice
   let selectedBoxes = new Array(1 + boxIndex - firstIndex);
   fileBoxKeys.slice(firstIndex, boxIndex + 1).forEach((boxId, i) => {
+    if (!fileBoxes[boxId].isFiltered) return;
     fileBoxes[boxId].isSelected = true;
     selectedBoxes[i] = boxId;
   });

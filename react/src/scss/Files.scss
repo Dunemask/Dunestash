@@ -8,10 +8,12 @@
 );
 @include animation-bounce($informationColor, $foreground);
 
-.file-drive {
+.files {
+  display: inline-flex;
+  flex-flow: row wrap;
+  gap: 0 0.5rem;
   width: 100%;
-  display: block;
-  height: 100%;
+  justify-content: center;
 }
 
 .file-selection {
@@ -22,11 +24,12 @@
   margin: 0 auto;
 }
 #file-drop-area {
-  height: calc(100% - #{$navBarHeight});
+  position: fixed;
+  height: 100%;
   margin-top: $navBarHeight;
   min-width: 100%;
-  min-height: calc(100% - 150px);
   font-family: sans-serif;
+  overflow: hidden;
 }
 #file-drop-area.highlight {
   background-color: rgba($informationColor, 0.4);

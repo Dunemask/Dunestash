@@ -129,11 +129,11 @@ export default class FileDrive extends React.Component {
                 shareClick={this.shareClick}
               />
             )}
-            <Fud addFilebox={this.addFilebox} />
             <div className="files" id="owned-files">
               <h3 className="files-header">My Stash</h3>
               {this.fileDisplay()}
             </div>
+            <Fud addFilebox={this.addFilebox} />
           </div>
         </div>
       </div>
