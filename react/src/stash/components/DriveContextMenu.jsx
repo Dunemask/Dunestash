@@ -13,7 +13,6 @@ export default class DriveContextMenu extends React.Component {
     if (this.props.selectedCount > 1)
       return `${this.props.selectedCount} files selected`;
   }
-
   styleCalc() {
     const estimatedHeight = 180; //px
     const esetimatedWidth = 290; //px

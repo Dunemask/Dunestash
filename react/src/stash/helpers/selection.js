@@ -62,7 +62,7 @@ function deselectAll() {
 
   var searchFilters = this.state.searchFilters;
   var selectIndex;
-  if ((selectIndex = searchFilters.indexOf(Search.filters[0])) != -1)
+  if ((selectIndex = searchFilters.indexOf(Search.filters[0])) !== -1)
     searchFilters.splice(selectIndex, 1);
 
   this.setState({

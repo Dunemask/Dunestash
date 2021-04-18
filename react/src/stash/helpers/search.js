@@ -4,7 +4,7 @@ const tagChar = "#";
 function addFilter(filter) {
   if (filter == null) return;
   var filters = this.state.searchFilters;
-  if (filters.indexOf(filter) == -1) filters.push(filter);
+  if (filters.indexOf(filter) === -1) filters.push(filter);
   this.setState({ searchFilters: filters });
 }
 

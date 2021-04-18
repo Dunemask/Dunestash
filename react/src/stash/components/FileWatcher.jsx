@@ -13,16 +13,18 @@ const cancelIcon = <FontAwesomeIcon icon={faTimes} />;
 export default class FileWatcher extends React.Component {
   constructor(props) {
     super(props);
-    this.isUploading = () =>
-      this.props.uploadProgress > 0 && this.props.uploadProgress !== 100;
     this.retryUpload = props.retryUpload;
     this.clearUpload = props.clearUpload;
+  }
+
+  isUploading() {
+    return this.props.uploadProgress > 0 && this.props.uploadProgress !== 100;
   }
 
   progressIndicator() {
     if (this.props.uploadStatus === "Success") return successIcon;
     if (this.props.uploadStatus === "Error") return errorIcon;
-    if (this.isUploading)
+    if (this.isUploading())
       return (
         <span className="file-watcher-progressbar-text">
           {this.props.uploadProgress}%
@@ -32,8 +34,8 @@ export default class FileWatcher extends React.Component {
   }
 
   watcherStatus() {
-    let className = "file-watcher";
-    if (this.isUploading && this.props.uploadStatus !== "Error")
+    var className = "file-watcher";
+    if (this.isUploading() && this.props.uploadStatus !== "Error")
       className += " active";
     if (this.props.uploadStatus === "Success") className += " success";
     return className;

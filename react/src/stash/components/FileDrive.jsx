@@ -27,37 +27,27 @@ export default class FileDrive extends React.Component {
       storage: 0,
       maxStorage: 0,
     };
-    //Bind Select Functions and adding function
-    this.selectAll = Selection.selectAll.bind(this);
-    this.deselectAll = Selection.deselectAll.bind(this);
-    this.handleSelectAllPress = Selection.handleSelectAllPress.bind(this);
-    this.updateSelectedFilters = Selection.updateSelectedFilters.bind(this);
-    //Selection Methods
-    this.singleSelection = Selection.singleSelection.bind(this);
-    this.multiSelection = Selection.multiSelection.bind(this);
-    this.segmentSelection = Selection.segmentSelection.bind(this);
-    this.selectBox = Selection.selectBox.bind(this);
-    //Context Menu Actions
-    this.infoClick = MenuActions.infoClick.bind(this);
-    this.downloadClick = MenuActions.downloadClick.bind(this);
-    this.deleteClick = MenuActions.deleteClick.bind(this);
-    this.publicClick = MenuActions.publicClick.bind(this);
-    this.shareClick = MenuActions.shareClick.bind(this);
-    //Context Menu Action Handlers
-    this.handlePublic = MenuActions.handlePublic.bind(this);
-    this.handleDelete = MenuActions.handleDelete.bind(this);
-    this.handlePublic = MenuActions.handlePublic.bind(this);
+    var f;
+    //Bind all Select Functions
+    for (f in Selection) {
+      if (typeof Search[f] !== "function") continue;
+      this[f] = Selection[f].bind(this);
+    }
+    //Bind all ContextMenu Actions
+    for (f in MenuActions) {
+      if (typeof Search[f] !== "function") continue;
+      this[f] = MenuActions[f].bind(this);
+    }
+    //Bind all Search Functions
+    for (f in Search) {
+      if (typeof Search[f] !== "function") continue;
+      this[f] = Search[f].bind(this);
+    }
+
     //Context Menu Display
     this.contextMenu = this.contextMenu.bind(this);
     this.preventNormalContextMenu = this.preventNormalContextMenu.bind(this);
     this.removeDriveContextMenu = this.removeDriveContextMenu.bind(this);
-    //Search Actions
-    this.addFilter = Search.addFilter.bind(this);
-    this.removeFilter = Search.removeFilter.bind(this);
-    this.tagAdd = Search.tagAdd.bind(this);
-    this.tagQuery = Search.tagQuery.bind(this);
-    this.markAllFiltered = Search.markAllFiltered.bind(this);
-    this.searchBarChanged = Search.searchBarChanged.bind(this);
     //Filebox method
     this.addFilebox = this.addFilebox.bind(this);
   }

@@ -37,7 +37,7 @@ function downloadClick() {
   if (selectedBoxes.length > 1)
     return toast.error("Downloading multiple files is not yet supported!");
   else return this.handleDownload(`${downloadUrl}?target=${selectedBoxes[0]}`);
-  axios
+  /*  axios
     .post(downloadUrl, JSON.stringify(selectedBoxes), defaultAxiosConfig)
     .then((res) => {
       console.log("GOT RESPONSE");
@@ -48,7 +48,7 @@ function downloadClick() {
     .catch((e) => {
       toast.error("Error Downloading!");
       console.log(e.response);
-    });
+    });*/
 }
 function deleteClick() {
   const selectedBoxes = getSelectedBoxes(this);

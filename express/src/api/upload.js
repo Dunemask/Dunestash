@@ -13,7 +13,7 @@ const userUploadStorage = multer.diskStorage({
     const n = file.originalname.replaceAll(" ", "_");
     const fileName = `${Date.now()}-${n}`;
     req.on("aborted", () => {
-      this.cancelUpload(resolvePath(userUploadDestination(req), fileName));
+      cancelUpload(resolvePath(userUploadDestination(req), fileName));
     });
     cb(null, fileName);
   },
