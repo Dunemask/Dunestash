@@ -30,12 +30,12 @@ export default class FileDrive extends React.Component {
     var f;
     //Bind all Select Functions
     for (f in Selection) {
-      if (typeof Search[f] !== "function") continue;
+      if (typeof Selection[f] !== "function") continue;
       this[f] = Selection[f].bind(this);
     }
     //Bind all ContextMenu Actions
     for (f in MenuActions) {
-      if (typeof Search[f] !== "function") continue;
+      if (typeof MenuActions[f] !== "function") continue;
       this[f] = MenuActions[f].bind(this);
     }
     //Bind all Search Functions
