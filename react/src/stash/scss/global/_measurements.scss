@@ -1,0 +1,13 @@
+/*Spacing*/
+$contentTopGap: 0px;
+/*Size*/
+$pageMinWidth: 300px;
+$pageMaxWidth: 780px;
+$defaultBoxPadding: 15px;
+/*Components*/
+$stashbarHeight: 4rem;
+$fileFiltersHeight: 1.5rem;
+$toastMinWidth: calc(#{$pageMinWidth} - 100px);
+$toastMaxWidth: calc(50% - 20px);
+/*Misc*/
+$defaultBorderRadius: 2px;

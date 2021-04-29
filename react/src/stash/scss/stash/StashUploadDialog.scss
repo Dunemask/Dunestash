@@ -1,0 +1,161 @@
+@import "../global";
+//Variables
+$watcherIndicatorSize: 18px;
+$watcherActionSize: 14px;
+$uploadBoxesSize: 50px;
+$actionButtonSize: 25px;
+/*File Upload Dialog Styling*/
+.fud {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background-color: $sectionMenuOptions;
+  width: 100%;
+  height: 100%;
+  max-width: 540px;
+  max-height: 250px;
+  overflow: hidden;
+  -webkit-transform: translate3d(0, 0, 0);
+  z-index: 100;
+  display: block;
+  visibility: hidden;
+}
+
+.fud-fade {
+  visibility: visible;
+  animation: file-watcher-fade 2s forwards;
+}
+
+.fud-maximized {
+  visibility: visible;
+  animation: upload-dialog-expand 1.2s forwards;
+  animation-timing-function: ease-out;
+}
+
+.fud-minimized {
+  visibility: visible;
+  animation: upload-dialog-minimize 0.4s forwards;
+  animation-timing-function: ease-out;
+}
+
+#fud-header {
+  display: inline-flex;
+  height: $uploadBoxesSize;
+  font-size: $watcherIndicatorSize;
+  background-color: darken($sectionMenuOptions, 10%);
+  width: 100%;
+}
+
+.fud-header-title-wrapper {
+  margin: auto;
+  padding: 10px;
+  width: 100%;
+  overflow: hidden;
+  text-align: center;
+  padding-left: 10px;
+}
+
+#fud-header-title {
+  margin-left: 40px;
+}
+#fud-header-title:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+#fud-minimize {
+  padding: 10px;
+}
+
+#header-actions {
+  margin-right: 5px;
+}
+
+.fud-actions {
+  //width: calc(#{$actionButtonSize} * 3);
+  display: inline-flex;
+  margin: auto;
+  align-items: center;
+  text-align: center;
+  height: $uploadBoxesSize;
+}
+
+.fud-action {
+  min-width: $actionButtonSize;
+  padding: 0 5px;
+
+  font-size: $watcherActionSize;
+}
+
+.fud-action svg,
+i {
+  margin: auto;
+}
+
+.fud-actions span:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+#fud-header-status {
+  font-size: calc(#{$watcherIndicatorSize - 2px});
+  min-width: $uploadBoxesSize;
+  min-height: $uploadBoxesSize;
+  max-width: $uploadBoxesSize;
+  max-height: $uploadBoxesSize;
+  display: flex;
+}
+
+/*Error and status icon Start with errors displaying as none*/
+#fud-status-icon {
+  margin: auto;
+  font-size: 18px;
+}
+
+.fud-error-wrapper {
+  display: none;
+  position: absolute;
+  top: 9px;
+  left: 32px;
+  font-size: 18px;
+}
+.fud-error-wrapper {
+  color: $errorColor;
+  max-width: 18px;
+  max-height: 18px;
+}
+
+#fud-error-count {
+  font-size: 14px;
+  color: $foreground;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.fud-status-error {
+  margin-top: 10px;
+}
+
+#fud-queued-files {
+  max-height: 200px;
+  height: 100%;
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll;
+}
+#fud-queued-files::-webkit-scrollbar {
+  width: 5px;
+}
+#fud-queued-files::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: $defaultBorderRadius;
+}
+#fud-queued-files::-webkit-scrollbar-thumb {
+  border-radius: $defaultBorderRadius;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+  background-color: lighten($sectionMenuOptions, 40%);
+}
+#fud-queued-files::-webkit-scrollbar-thumb:hover {
+  background-color: lighten($sectionMenuOptions, 50%);
+}

@@ -1,0 +1,34 @@
+@import "../global";
+
+.stashbar {
+  width: 100%;
+  z-index: 200;
+}
+.stashbar-menu {
+  width: 100%;
+  height: $stashbarHeight;
+  display: inline-flex;
+  background-color: rgba($sectionMenu, 1);
+}
+
+.stashbar-action {
+  font-size: 1.25rem;
+  width: 100%;
+}
+
+.stashbar-action svg {
+  height: 100%;
+  width: 100%;
+}
+
+.stashbar-action label {
+  font-size: inherit;
+}
+.stashbar-action label:hover {
+  cursor: pointer;
+}
+
+.stashbar-action:hover {
+  opacity: 0.85;
+  cursor: pointer;
+}

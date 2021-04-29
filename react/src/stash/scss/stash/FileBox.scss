@@ -1,0 +1,61 @@
+@import "../global";
+.filebox {
+  margin: 0.4rem 0.4rem;
+  display: flex;
+  max-height: 4rem;
+  height: 100%;
+  max-width: 25em;
+  padding: 0.4rem 0;
+  width: 100%;
+  align-self: flex-start;
+  position: relative;
+  background: $sectionMenuOptions;
+  box-shadow: 1px 3px 2px $sectionMenuOptions;
+}
+
+.filebox:hover {
+  cursor: pointer;
+  background: lighten($sectionMenuOptions, 3%);
+}
+
+.filebox.selected {
+  background: $informationColor;
+  box-shadow: 1px 3px 2px darken($informationColor, 20%);
+}
+
+.filebox.selected:hover {
+  background: lighten($informationColor, 3%);
+}
+
+.file {
+  color: white;
+  justify-content: center;
+  text-align: center;
+  max-height: 4rem;
+  height: 100%;
+  max-width: 25em;
+  padding: 0.4rem 0;
+  width: 100%;
+}
+
+.file-details {
+  display: flex;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  height: 50%;
+  margin: auto;
+  justify-content: center;
+}
+
+.file-info-details {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  padding: 0.125rem 0;
+  max-width: 39ch;
+}
+
+.file-subinfo-details {
+  padding: 0 5px;
+}

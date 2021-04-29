@@ -1,0 +1,35 @@
+@import "global/colors", "global/fonts", "global/measurements",
+  "global/animations";
+html,
+body {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  margin-top: 0;
+  color: $foreground;
+  background: #eee;
+  height: 100%;
+  width: 100%;
+}
+*::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+*::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: $defaultBorderRadius;
+}
+*::-webkit-scrollbar-thumb {
+  border-radius: $defaultBorderRadius;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+  background-color: lighten($sectionMenuOptions, 40%);
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: lighten($sectionMenuOptions, 50%);
+}
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: none;
+}

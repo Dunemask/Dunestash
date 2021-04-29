@@ -1,0 +1,17 @@
+@import "./global";
+
+.dunestash {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+.stash {
+  width: 100%;
+  height: calc(100% - #{$stashbarHeight});
+  position: relative;
+  margin: auto;
+  display: flex;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}

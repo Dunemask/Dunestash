@@ -1,0 +1,120 @@
+@import "../global";
+$searchIndent: 0.125rem;
+
+.file-searchbar {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  background: darken(#eee, 5%);
+  box-shadow: 0.25px 1px 0.5px darken(#eee, 8%);
+}
+
+.file-searchbox {
+  margin: 0 auto;
+  display: inline-flex;
+  background: inherit;
+  color: $sectionMenuOptions;
+  width: 100%;
+  border-bottom: 1px darken(#eee, 22%) solid;
+}
+.file-searchbar svg {
+  margin: auto 0;
+  height: 100%;
+  padding: 0 0.15rem 0 0.5rem;
+}
+
+#file-search {
+  width: 100%;
+  font-size: 1.125rem;
+  background: inherit;
+  text-indent: $searchIndent;
+  border: none;
+}
+#file-search::placeholder {
+  color: $sectionMenuOptions;
+}
+.file-searchbox-action {
+  padding: 0 0.325rem;
+  height: inherit;
+  display: block;
+}
+
+.file-searchbox-action svg {
+  margin: auto;
+  height: 100%;
+}
+
+#file-searchbox-hashtag {
+  padding-right: calc(0.325rem + #{$searchIndent} * 4);
+}
+
+.file-searchbox-action:hover {
+  cursor: pointer;
+}
+
+.file-searchbar-extensions {
+  width: 100%;
+}
+
+.file-filters {
+  background: darken(#eee, 10%);
+  width: 100%;
+  display: inline-flex;
+  flex-grow: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  overflow-x: auto;
+  border-bottom: 1px darken(#eee, 12%) solid;
+}
+.file-filter {
+  justify-content: center;
+  text-align: center;
+  display: inline-flex;
+  margin: auto 0.5rem;
+  padding: 2px;
+  width: 5rem;
+  background: $informationColor;
+  box-shadow: 0.375px 1.125px 0.75px darken($informationColor, 20%);
+}
+
+.file-filter svg {
+  margin: auto 0;
+  width: 0.8rem;
+  height: 0.8rem;
+}
+.file-filter svg:hover {
+  cursor: pointer;
+}
+
+.query-filters {
+  width: 100%;
+  background: darken(#eee, 10%);
+  border-bottom: 1px darken(#eee, 20%) solid;
+}
+
+.query-filter-list {
+  width: 100%;
+  height: 1.5rem;
+  display: inline-flex;
+  flex-grow: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.query-filter {
+  display: inline-flex;
+  align-items: center;
+  color: $sectionMenuOptions;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  text-align: center;
+  display: inline-flex;
+  border: 1px darken(#eee, 22%) solid;
+}
+
+.query-filter-list span:first-child {
+  border-left: 0px;
+}

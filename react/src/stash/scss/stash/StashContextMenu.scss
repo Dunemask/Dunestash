@@ -1,0 +1,48 @@
+@import "../global";
+//Context Menu
+.drive-context-menu {
+  position: fixed;
+  display: flex;
+  background: lighten($sectionMenuOptions, 10%);
+  box-shadow: 1px 3px 2px lighten ($sectionMenuOptions, 5%);
+  color: $foreground;
+  z-index: 300;
+  width: 100%;
+  max-width: inherit;
+  font-size: 1rem;
+  max-width: 18em;
+  min-height: 11em;
+}
+
+.drive-context-menu ul {
+  list-style-type: none;
+  padding: 0;
+  width: 100%;
+}
+
+.drive-context-menu li:hover {
+  opacity: 0.85;
+  cursor: pointer;
+}
+
+.drive-context-menu li {
+  width: inherit;
+  text-align: left;
+  padding: 0 0.5rem;
+}
+
+.drive-context-menu svg {
+  min-width: 1rem;
+  padding: 0 0.5rem;
+  height: 100%;
+}
+
+.drive-context-menu li:not(:last-child) {
+  margin-bottom: 0.85rem;
+}
+
+.drive-context-menu a {
+  color: $foreground;
+  text-decoration: none;
+  font-size: inherit;
+}
