@@ -71,7 +71,6 @@ class FileDisplay extends React.Component {
     if (this.props.getSelectedBoxes().length > 1) return;
     this.onSelection({}, boxUuid);
   }
-
   deselectAll() {
     var fileBoxes = this.props.fileBoxes;
     for (var f in fileBoxes) fileBoxes[f].selected = false;
@@ -89,7 +88,6 @@ class FileDisplay extends React.Component {
     e.stopPropagation();
     this.selectAll();
   }
-
   render() {
     return (
       <div
