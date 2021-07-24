@@ -13,7 +13,7 @@ const filesUrl = serverUrls.GET.filesUrl;
 //Class
 function getConfig() {
   var authToken = localStorage.getItem("authToken");
-  return { headers: { authorization: authToken } };
+  return { headers: { authorization: `Bearer ${authToken}`} };
 }
 function buildFilebox(file, index) {
   return {
@@ -33,23 +33,30 @@ class Stash extends React.Component {
   }
 
   componentDidMount() {
-    axios.get(filesUrl, getConfig()).then((res) => {
-      if (res.status === 401) {
-        console.log("Would redirect to login");
-        return;
-      }
-      if (res.data === undefined || res.data.length === undefined) {
-        toast.error("Error Loading Files");
-        return;
-      }
-      var fileBoxes = {};
-      var counter = 0;
-      res.data.forEach((file, index) => {
-        fileBoxes[file.fileUuid] = buildFilebox(file, index);
+    axios
+      .get(filesUrl, getConfig())
+      .then((res) => {
+        if (res.status === 401) {
+          console.log("Would redirect to login");
+          return;
+        }
+        if (res.data === undefined || res.data.length === undefined) {
+          toast.error("Error Loading Files");
+          return;
+        }
+        var fileBoxes = {};
+        res.data.forEach((file, index) => {
+          fileBoxes[file.fileUuid] = buildFilebox(file, index);
+        });
+        this.setState({ fileBoxes });
+      })
+      .catch((error) => {
+        if (error.response.status === 401)
+          console.log("Would redirect to login");
+        else console.error(error)
       });
-      this.setState({ fileBoxes });
-    });
   }
+
   fileBoxesChanged(fileBoxes) {
     this.setState({ fileBoxes });
   }

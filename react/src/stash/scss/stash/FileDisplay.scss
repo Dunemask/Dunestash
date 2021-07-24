@@ -1,5 +1,10 @@
 @import "../global";
 .file-display {
+
+  height: 100%;
+}
+
+.box-display{
   display: flex;
   flex-flow: row;
   flex-wrap: wrap;

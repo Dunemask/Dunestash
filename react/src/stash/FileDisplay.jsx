@@ -95,23 +95,25 @@ class FileDisplay extends React.Component {
         onClick={this.displayClick.bind(this)}
         onContextMenu={this.props.contextMenu}
       >
-        {this.fileBoxKeysByPosition().map((boxUuid, index) => (
-          <React.Fragment key={boxUuid}>
-            {this.props.fileBoxes[boxUuid].filtered && (
-              <FileBox
-                file={this.props.fileBoxes[boxUuid].file}
-                boxUuid={boxUuid}
-                selected={this.props.fileBoxes[boxUuid].selected}
-                contextMenu={this.props.contextMenu}
-                contextSelect={this.contextSelect.bind(this)}
-                removeDriveContextMenu={this.props.removeDriveContextMenu}
-                onSelection={this.onSelection.bind(this)}
-                onBoxKeyPress={this.onBoxKeyPress.bind(this)}
-              />
-            )}
-          </React.Fragment>
-        ))}
-        <div className="file-display-spacer"/>
+        <div className="box-display">
+          {this.fileBoxKeysByPosition().map((boxUuid, index) => (
+            <React.Fragment key={boxUuid}>
+              {this.props.fileBoxes[boxUuid].filtered && (
+                <FileBox
+                  file={this.props.fileBoxes[boxUuid].file}
+                  boxUuid={boxUuid}
+                  selected={this.props.fileBoxes[boxUuid].selected}
+                  contextMenu={this.props.contextMenu}
+                  contextSelect={this.contextSelect.bind(this)}
+                  removeDriveContextMenu={this.props.removeDriveContextMenu}
+                  onSelection={this.onSelection.bind(this)}
+                  onBoxKeyPress={this.onBoxKeyPress.bind(this)}
+                />
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+        <div className="file-display-spacer" />
       </div>
     );
   }

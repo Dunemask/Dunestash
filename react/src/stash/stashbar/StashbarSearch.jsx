@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  faSearch,
   faTimes,
   faArrowLeft,
   faHashtag,
@@ -99,7 +98,6 @@ class StashbarSearch extends React.Component {
   }
 
   getAvailableTags() {
-    var newLength = searchFilters.length - this.state.tags.length;
     var availableFilters = [];
     searchFilters.forEach((filter, i) => {
       if (i === 0) return; //Ignore first filter 'Selected' triggered by selecting

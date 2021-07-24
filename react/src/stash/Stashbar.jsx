@@ -1,14 +1,5 @@
 //Module Imports
 import React from "react";
-import {
-  faSearch,
-  faCloudUploadAlt,
-  faTimes,
-  faBars,
-  faArrowLeft,
-  faHashtag,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 //Local Imports
 import StashbarMenu from "./stashbar/StashbarMenu.jsx";
 import StashbarSearch from "./stashbar/StashbarSearch.jsx";
@@ -28,7 +19,6 @@ class Stashbar extends React.Component {
     if (this.state.searchMode)
       return (
         <StashbarSearch
-          setSearchMode={this.setSearchMode.bind(this)}
           fileBoxes={this.props.fileBoxes}
           fileBoxesChanged={this.props.fileBoxesChanged}
           setSearchMode={this.setSearchMode.bind(this)}

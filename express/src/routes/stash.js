@@ -11,10 +11,9 @@ const router = express.Router();
 const authMiddleware = (req, res, next) => {
   if (req.session.uuid != null) return next();
   var headers = {};
-  var authToken = req.get(config.Server.jwtHeader);
-  if (authToken == null) return res.sendStatus(401);
-  authToken = authToken.replace("Bearer ", "");
-  headers[config.Server.jwtHeader] = authToken;
+  var bearerToken = req.get(config.Server.jwtHeader);
+  if (bearerToken == null) return res.sendStatus(401);
+  headers[config.Server.jwtHeader] = bearerToken;
   axios
     .get(config.Server.authServer, { headers })
     .then((authRes) => {

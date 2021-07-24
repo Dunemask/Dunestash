@@ -7,7 +7,7 @@ import Stash from "./Stash";
 //Constants
 localStorage.setItem(
   "authToken",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1dWlkIjoiOTMwYzJhOWZjMTc0LWQ1YjEtMDJiNi01NWYxLTAwM2Q5YmUxIiwidXNlcm5hbWUiOiJkdW5lbWFzayIsImlhdCI6MTYxODQxMTUwOCwiZXhwIjoxNjIxMDAzNTA4fQ.VC7OM904sCRTFabU-qHOFFh52itO6dQIbmp93biqXDc"
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1dWlkIjoiNGJiMDE4ZWUxYWJhLTE0NjYtMDc3Ni04M2RlLTE0ZWFkYmUxIiwiaWF0IjoxNjI1MTk1ODg2LCJleHAiOjE2Mjc3ODc4ODZ9.wU7F8ykFMJWznxB3MLpZjaQxUtyL7gFf3SlKr6V_P2o"
 );
 class App extends React.Component {
   render() {
